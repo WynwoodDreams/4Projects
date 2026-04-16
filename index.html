@@ -333,6 +333,32 @@
   }
   .reset-btn:hover { color: var(--accent); }
 
+  .backup-controls {
+    display: flex;
+    gap: 6px;
+    margin-right: 16px;
+  }
+  .backup-btn {
+    font-family: inherit;
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 6px 10px;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-elev);
+    color: var(--ink-soft);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .backup-btn:hover:not(:disabled) {
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+  .backup-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
   /* ===== PROJECT GRID ===== */
   .projects-section { padding-bottom: 80px; }
   .path-header {
@@ -410,6 +436,41 @@
   .level-beginner { color: var(--green); }
   .level-intermediate { color: var(--gold); }
   .level-advanced { color: var(--accent); }
+
+  .time-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--ink-muted);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .path-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line-strong);
+  }
+  .path-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .path-meta-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-muted);
+    font-weight: 600;
+  }
+  .path-meta-value {
+    font-size: 13.5px;
+    color: var(--ink);
+    font-weight: 500;
+    font-family: 'Fraunces', serif;
+  }
 
   .bookmark-btn {
     position: absolute;
@@ -645,6 +706,200 @@
     color: var(--ink);
   }
   .modal-card p { font-size: 13px; color: var(--ink-soft); line-height: 1.55; }
+
+  /* ===== RESUME / PITCH / QUESTIONS ===== */
+  .resume-bullets {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-right: 70px;
+  }
+  .resume-bullets li {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink);
+    padding-left: 18px;
+    position: relative;
+  }
+  .resume-bullets li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .pitch-box {
+    background: var(--bg-sunken);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 10px 10px 0;
+    padding: 18px 22px;
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .pitch-row {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 14px;
+    align-items: baseline;
+  }
+  .pitch-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .pitch-row p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  .interview-qs {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .interview-qs li {
+    padding: 12px 16px;
+    background: var(--bg-sunken);
+    border-radius: 8px;
+    border-left: 2px solid var(--line-strong);
+  }
+  .interview-qs strong {
+    display: block;
+    font-size: 14px;
+    color: var(--ink);
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .interview-qs span {
+    font-size: 12.5px;
+    color: var(--ink-muted);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  /* ===== SHIP-IT TOOLKIT ===== */
+  .toolkit-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .toolkit-tab {
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 10px 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--ink-muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .toolkit-tab:hover { color: var(--ink); }
+  .toolkit-tab.active {
+    color: var(--ink);
+    border-bottom-color: var(--accent);
+  }
+  .toolkit-panel { display: none; }
+  .toolkit-panel.active { display: block; }
+
+  .template-box {
+    background: var(--bg-sunken);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 20px 20px 20px;
+    position: relative;
+    margin-top: 8px;
+  }
+  .template-box pre {
+    margin: 0;
+    max-height: 380px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  .template-box code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .copy-template-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--bg-elev);
+    border: 1px solid var(--line-strong);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.15s;
+    z-index: 2;
+  }
+  .copy-template-btn:hover { border-color: var(--ink); background: var(--bg); }
+  .copy-template-btn.copied { background: var(--green); border-color: var(--green); color: white; }
+
+  .deploy-list {
+    list-style: none;
+    counter-reset: deploy;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 8px;
+    padding-left: 0;
+  }
+  .deploy-list li {
+    counter-increment: deploy;
+    padding: 14px 16px 14px 52px;
+    background: var(--bg-sunken);
+    border-radius: 10px;
+    position: relative;
+  }
+  .deploy-list li::before {
+    content: counter(deploy);
+    position: absolute;
+    left: 14px;
+    top: 14px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .deploy-list strong {
+    display: block;
+    font-size: 14px;
+    color: var(--ink);
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .deploy-list span {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
 
   .showcase-list {
     list-style: none;
@@ -965,6 +1220,12 @@
         <button class="filter-chip" data-status="done">Done</button>
       </div>
       <div class="filter-spacer"></div>
+      <div class="backup-controls">
+        <button class="backup-btn" id="share-btn" title="Copy a shareable link to your list">🔗 Share list</button>
+        <button class="backup-btn" id="export-btn" title="Download your list as a JSON file">⬇ Export</button>
+        <button class="backup-btn" id="import-btn" title="Load a previously exported list">⬆ Import</button>
+        <input type="file" id="import-file" accept="application/json" style="display:none" />
+      </div>
       <button class="reset-btn" id="reset-btn">Reset filters</button>
     </div>
   </div>
@@ -1026,15 +1287,29 @@
   // ===== DATA =====
   const PATHS = [
     { id: 'all', icon: '✦', name: 'All Projects', short: 'All', desc: 'Every project across every path.' },
-    { id: 'tech-it', icon: '🛠', name: 'Tech / IT Support', short: 'IT Support', desc: 'Where hardware meets automation.' },
-    { id: 'cyber', icon: '🛡', name: 'Cybersecurity', short: 'Cyber', desc: 'Defending against the next generation of attacks.' },
-    { id: 'ai', icon: '🤖', name: 'AI Engineer', short: 'AI', desc: 'Building autonomous systems that go beyond chat.' },
-    { id: 'data', icon: '📊', name: 'Data Analyst', short: 'Data', desc: 'Turning raw data into real business strategy.' },
-    { id: 'swe', icon: '💻', name: 'Software Engineer', short: 'Software', desc: 'Production-grade systems that scale.' },
-    { id: 'helpdesk', icon: '🎧', name: 'Help Desk', short: 'Help Desk', desc: 'The AI-augmented first line of support.' },
-    { id: 'cs', icon: '🎓', name: 'Computer Science', short: 'CS', desc: 'Research-grade systems with real rigor.' },
-    { id: 'cloud', icon: '☁️', name: 'Cloud Computing', short: 'Cloud', desc: 'Serverless, multi-cloud, platform engineering.' }
+    { id: 'tech-it', icon: '🛠', name: 'Tech / IT Support', short: 'IT Support', desc: 'Where hardware meets automation.',
+      salary: '$52k – $85k', roles: ['IT Support Specialist', 'Systems Administrator', 'IT Automation Engineer'] },
+    { id: 'cyber', icon: '🛡', name: 'Cybersecurity', short: 'Cyber', desc: 'Defending against the next generation of attacks.',
+      salary: '$75k – $135k', roles: ['SOC Analyst', 'Security Engineer', 'AI Security Researcher'] },
+    { id: 'ai', icon: '🤖', name: 'AI Engineer', short: 'AI', desc: 'Building autonomous systems that go beyond chat.',
+      salary: '$110k – $180k', roles: ['AI Engineer', 'ML Engineer', 'Applied Research Engineer'] },
+    { id: 'data', icon: '📊', name: 'Data Analyst', short: 'Data', desc: 'Turning raw data into real business strategy.',
+      salary: '$65k – $110k', roles: ['Data Analyst', 'BI Developer', 'Analytics Engineer'] },
+    { id: 'swe', icon: '💻', name: 'Software Engineer', short: 'Software', desc: 'Production-grade systems that scale.',
+      salary: '$85k – $150k', roles: ['Software Engineer', 'Full-Stack Developer', 'Backend Engineer'] },
+    { id: 'helpdesk', icon: '🎧', name: 'Help Desk', short: 'Help Desk', desc: 'The AI-augmented first line of support.',
+      salary: '$42k – $65k', roles: ['Help Desk Technician', 'Tier 1 / 2 Support', 'Customer Support Engineer'] },
+    { id: 'cs', icon: '🎓', name: 'Computer Science', short: 'CS', desc: 'Research-grade systems with real rigor.',
+      salary: '$80k – $140k', roles: ['Software Engineer', 'Systems Engineer', 'Research Engineer'] },
+    { id: 'cloud', icon: '☁️', name: 'Cloud Computing', short: 'Cloud', desc: 'Serverless, multi-cloud, platform engineering.',
+      salary: '$95k – $160k', roles: ['Cloud Engineer', 'DevOps Engineer', 'Platform Engineer'] }
   ];
+
+  const LEVEL_META = {
+    beginner:     { time: 'Weekend · 6–10 hrs',    label: 'Beginner' },
+    intermediate: { time: '1–2 weeks · 15–25 hrs', label: 'Intermediate' },
+    advanced:     { time: '3–4 weeks · 40–60 hrs', label: 'Advanced' }
+  };
 
   const PROJECTS = [
     // TECH / IT SUPPORT
@@ -1699,6 +1974,151 @@
     } catch (e) { /* ignore */ }
   }
 
+  // ===== TEMPLATE GENERATORS =====
+  function readmeTemplate(p) {
+    const skillsList = p.skills.split(',').map(s => `- ${s.trim()}`).join('\n');
+    const techList = p.tech.map(t => `- ${t}`).join('\n');
+    const stepsList = p.steps ? p.steps.map((s, i) => `${i + 1}. **${s.title}** — ${s.desc}`).join('\n') : '';
+    return `# ${p.title}
+
+${p.summary}
+
+![Demo](./demo.gif)
+
+> 🔗 **Live demo:** [your-deploy-url.com](#)
+> 📺 **Walkthrough video:** [YouTube link](#)
+
+## Why I Built This
+${p.why}
+
+## Real-World Use Case
+${p.useCase}
+
+## Tech Stack
+${techList}
+
+## Skills Demonstrated
+${skillsList}
+
+## Getting Started
+
+\`\`\`bash
+# 1. Clone
+git clone https://github.com/YOUR_USERNAME/${p.id}.git
+cd ${p.id}
+
+# 2. Install dependencies
+# (adjust for your stack)
+
+# 3. Configure environment
+cp .env.example .env
+
+# 4. Run
+# (your run command here)
+\`\`\`
+
+## Roadmap
+${stepsList}
+
+## Built With AI Assistants
+${p.aiAssist}
+
+## License
+MIT
+`;
+  }
+
+  function linkedinTemplate(p) {
+    const firstSkill = p.skills.split(',')[0].trim();
+    const techShort = p.tech.slice(0, 3).join(', ');
+    const hashtagMap = {
+      'tech-it': '#ITSupport #Automation',
+      'cyber': '#Cybersecurity #AISecurity',
+      'ai': '#AIEngineering #LLM',
+      'data': '#DataAnalytics #BusinessIntelligence',
+      'swe': '#SoftwareEngineering #BuildingInPublic',
+      'helpdesk': '#HelpDesk #ITSupport',
+      'cs': '#ComputerScience #SystemsDesign',
+      'cloud': '#CloudEngineering #DevOps'
+    };
+    const tags = hashtagMap[p.path] || '#Tech';
+    return `🚀 Just shipped a new project: ${p.title}
+
+${p.summary}
+
+Why it matters:
+${p.why}
+
+What I learned:
+• ${p.skills.split(',').slice(0, 3).map(s => s.trim()).join('\n• ')}
+
+Built with: ${techShort}
+
+🔗 Live demo: [add your URL]
+💻 GitHub: [add your repo link]
+📺 Walkthrough: [optional video link]
+
+Huge thanks to AI pair-programming tools that helped me ship faster.
+
+${tags} #BuildingInPublic #OpenToWork`;
+  }
+
+  function resumeBullets(p) {
+    const topTech = p.tech.slice(0, 3).join(', ');
+    const skillList = p.skills.split(',').map(s => s.trim());
+    const firstSkill = skillList[0] || 'technical design';
+    const secondSkill = skillList[1] || 'systems thinking';
+    return [
+      `Designed and shipped ${p.title.toLowerCase()} using ${topTech}, demonstrating ${firstSkill} and ${secondSkill} in a production-style codebase.`,
+      `Delivered a real-world use case: ${p.useCase.toLowerCase().replace(/\.$/, '')}, backed by a public GitHub repo, README, and live demo.`,
+      `Leveraged AI coding assistants (Claude Code / Cursor) to accelerate delivery and write tests, reflecting the 2026 AI-augmented developer workflow.`
+    ];
+  }
+
+  function interviewPitch(p) {
+    const skillList = p.skills.split(',').map(s => s.trim());
+    const topTech = p.tech.slice(0, 3).join(', ');
+    return {
+      situation: `I wanted a portfolio project that would prove I could handle the kind of problem a ${p.path === 'ai' ? 'junior AI engineer' : p.path === 'cyber' ? 'security engineer' : p.path === 'data' ? 'data analyst' : 'junior engineer'} actually sees on day one — not a toy tutorial.`,
+      task: `The goal was to ${p.summary.toLowerCase().replace(/\.$/, '')}, in a way that mirrors ${p.useCase.toLowerCase().replace(/\.$/, '')}.`,
+      action: `I built it with ${topTech}, and used AI pair-programming to move faster on the boilerplate so I could focus on the hard parts — specifically ${skillList.slice(0, 2).join(' and ')}.`,
+      result: `The project is live, documented, and has a short demo video. More importantly, I can walk through every decision I made — why I picked this stack, what I'd change, and where it would break under real load.`,
+      closing: `That's why I'm excited about roles where I can keep building things like this — ${p.why.split('.')[0].toLowerCase()}.`
+    };
+  }
+
+  const INTERVIEW_QUESTIONS = [
+    { q: 'What problem does this project solve?', hint: 'Lead with the use case, not the tech.' },
+    { q: 'Why did you pick this tech stack?', hint: 'Mention one alternative you considered and why you rejected it.' },
+    { q: 'What was the hardest part?', hint: "Be specific. 'Debugging API rate limits' beats 'it was challenging.'" },
+    { q: "What would you do differently?", hint: 'Interviewers love self-awareness. Pick one real trade-off.' },
+    { q: 'How does this scale?', hint: 'Know your bottleneck — database, API calls, memory, or cost.' }
+  ];
+
+  function deployChecklist(p) {
+    const stack = p.tech.join(' ').toLowerCase();
+    let platform = 'Vercel';
+    let notes = 'Great for static sites, Next.js, and serverless APIs.';
+    if (/aws|lambda|terraform|kubernetes|eks|k8s|istio|argocd/.test(stack)) {
+      platform = 'AWS (free tier) or Railway';
+      notes = 'Your stack is infrastructure-heavy — use AWS free tier or containerize and deploy to Railway/Render.';
+    } else if (/fastapi|flask|django|python/.test(stack)) {
+      platform = 'Railway or Render';
+      notes = 'Both have free tiers and handle Python web frameworks with zero config.';
+    } else if (/docker/.test(stack)) {
+      platform = 'Railway, Render, or Fly.io';
+      notes = 'Push your Dockerfile, they build and host it automatically.';
+    }
+    return [
+      { step: 'Pick a host', desc: `${platform}. ${notes}` },
+      { step: 'Create a public GitHub repo', desc: `Name it clearly: e.g., "${p.id}-${p.title.toLowerCase().split(' ').slice(0, 3).join('-')}". Add a detailed README.` },
+      { step: 'Set up environment variables', desc: 'Move all API keys and secrets out of code. Add a .env.example file listing the required vars.' },
+      { step: 'Wire up the deploy', desc: 'Connect your GitHub repo to the host. Enable auto-deploy on push to main.' },
+      { step: 'Add a demo GIF or video', desc: 'Record a 30-second screen capture. Upload to the repo and link it at the top of your README.' },
+      { step: 'Share the live URL', desc: 'Post it on your resume, LinkedIn, and portfolio. A clickable link beats a GitHub link every time.' }
+    ];
+  }
+
   // ===== TOAST =====
   let toastTimeout;
   function toast(msg) {
@@ -1779,6 +2199,12 @@
         <div class="path-header">
           <div class="path-title"><span class="icon">${g.path.icon}</span>${g.path.name}</div>
           <div class="path-desc">${g.path.desc}</div>
+          ${g.path.salary ? `
+          <div class="path-meta">
+            <div class="path-meta-item"><span class="path-meta-label">Miami / FL Salary</span><span class="path-meta-value">${g.path.salary}</span></div>
+            <div class="path-meta-item"><span class="path-meta-label">Typical Roles</span><span class="path-meta-value">${g.path.roles.join(' · ')}</span></div>
+          </div>
+          ` : ''}
         </div>
         <div class="project-grid">
           ${g.items.map(p => cardHTML(p)).join('')}
@@ -1810,11 +2236,16 @@
     const isBookmarked = state.bookmarks.includes(p.id);
     const progress = state.progress[p.id] || 'none';
     const statusClass = progress === 'started' ? 'started' : progress === 'done' ? 'done' : '';
+    const meta = LEVEL_META[p.level] || LEVEL_META.intermediate;
     return `
       <article class="project-card ${statusClass}" data-id="${p.id}">
         <button class="bookmark-btn ${isBookmarked ? 'active' : ''}" aria-label="Bookmark">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="${isBookmarked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
         </button>
+        <div class="card-top">
+          <span class="level-badge level-${p.level}">${meta.label}</span>
+          <span class="time-badge">⏱ ${meta.time}</span>
+        </div>
         <h3>${p.title}</h3>
         <p class="summary">${p.summary}</p>
         <div class="tech-tags">
@@ -1860,6 +2291,7 @@
     document.getElementById('bookmark-count').textContent = state.bookmarks.length;
     const doneCount = Object.values(state.progress).filter(v => v === 'done').length;
     document.getElementById('done-count').textContent = doneCount;
+    refreshBackupButtons();
   }
 
   // ===== MODAL =====
@@ -1957,6 +2389,51 @@
         </ul>
       </div>
 
+      <div class="modal-section">
+        <h4>Resume Bullets (STAR-ready)</h4>
+        <p style="margin-bottom:10px;">Copy these straight into your resume's Projects section. Replace the placeholders with your real numbers.</p>
+        <div class="template-box">
+          <button class="copy-template-btn" data-copy="resume">Copy</button>
+          <ul class="resume-bullets" id="tpl-resume"></ul>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <h4>Interview Pitch (60-second answer)</h4>
+        <p style="margin-bottom:10px;">When a recruiter asks "tell me about a project," use this structure. Practice it out loud three times.</p>
+        <div class="pitch-box" id="tpl-pitch"></div>
+      </div>
+
+      <div class="modal-section">
+        <h4>Expect These Follow-up Questions</h4>
+        <ul class="interview-qs" id="tpl-questions"></ul>
+      </div>
+
+      <div class="modal-section">
+        <h4>Ship-It Toolkit</h4>
+        <p style="margin-bottom:14px;">Copy-paste starters to move from "it works on my laptop" to "recruiters can click it."</p>
+        <div class="toolkit-tabs">
+          <button class="toolkit-tab active" data-tab="readme">README.md</button>
+          <button class="toolkit-tab" data-tab="linkedin">LinkedIn Post</button>
+          <button class="toolkit-tab" data-tab="deploy">Deploy Checklist</button>
+        </div>
+        <div class="toolkit-panel active" data-panel="readme">
+          <div class="template-box">
+            <button class="copy-template-btn" data-copy="readme">Copy</button>
+            <pre><code id="tpl-readme"></code></pre>
+          </div>
+        </div>
+        <div class="toolkit-panel" data-panel="linkedin">
+          <div class="template-box">
+            <button class="copy-template-btn" data-copy="linkedin">Copy</button>
+            <pre><code id="tpl-linkedin"></code></pre>
+          </div>
+        </div>
+        <div class="toolkit-panel" data-panel="deploy">
+          <ol class="deploy-list" id="tpl-deploy"></ol>
+        </div>
+      </div>
+
       <div class="modal-actions">
         <button class="btn-primary" id="modal-bookmark">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="${isBookmarked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
@@ -1999,6 +2476,62 @@
         toast('Prompt copied to clipboard');
       });
     };
+
+    // ===== Resume bullets =====
+    const bullets = resumeBullets(p);
+    document.getElementById('tpl-resume').innerHTML = bullets.map(b => `<li>${b}</li>`).join('');
+    const resumeText = bullets.map(b => `• ${b}`).join('\n');
+
+    // ===== Interview pitch =====
+    const pitch = interviewPitch(p);
+    document.getElementById('tpl-pitch').innerHTML = `
+      <div class="pitch-row"><span class="pitch-label">Situation</span><p>${pitch.situation}</p></div>
+      <div class="pitch-row"><span class="pitch-label">Task</span><p>${pitch.task}</p></div>
+      <div class="pitch-row"><span class="pitch-label">Action</span><p>${pitch.action}</p></div>
+      <div class="pitch-row"><span class="pitch-label">Result</span><p>${pitch.result}</p></div>
+      <div class="pitch-row"><span class="pitch-label">Close</span><p>${pitch.closing}</p></div>
+    `;
+
+    // ===== Follow-up questions =====
+    document.getElementById('tpl-questions').innerHTML = INTERVIEW_QUESTIONS.map(item =>
+      `<li><strong>${item.q}</strong><span>${item.hint}</span></li>`
+    ).join('');
+
+    // ===== Ship-It Toolkit =====
+    const readmeText = readmeTemplate(p);
+    const linkedinText = linkedinTemplate(p);
+    const deploySteps = deployChecklist(p);
+    document.getElementById('tpl-readme').textContent = readmeText;
+    document.getElementById('tpl-linkedin').textContent = linkedinText;
+    document.getElementById('tpl-deploy').innerHTML = deploySteps.map(s =>
+      `<li><strong>${s.step}</strong><span>${s.desc}</span></li>`
+    ).join('');
+
+    const toolkitContent = { readme: readmeText, linkedin: linkedinText, resume: resumeText };
+    modal.querySelectorAll('.toolkit-tab').forEach(tab => {
+      tab.onclick = () => {
+        const target = tab.dataset.tab;
+        modal.querySelectorAll('.toolkit-tab').forEach(t => t.classList.toggle('active', t === tab));
+        modal.querySelectorAll('.toolkit-panel').forEach(panel => {
+          panel.classList.toggle('active', panel.dataset.panel === target);
+        });
+      };
+    });
+    modal.querySelectorAll('.copy-template-btn').forEach(btn => {
+      btn.onclick = (e) => {
+        const key = btn.dataset.copy;
+        navigator.clipboard.writeText(toolkitContent[key]).then(() => {
+          btn.classList.add('copied');
+          btn.textContent = 'Copied ✓';
+          setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.textContent = 'Copy';
+          }, 2000);
+          const labels = { readme: 'README', linkedin: 'LinkedIn post', resume: 'Resume bullets' };
+          toast((labels[key] || 'Template') + ' copied to clipboard');
+        });
+      };
+    });
     document.getElementById('modal-bookmark').onclick = () => {
       toggleBookmark(p.id);
       openModal(p.id); // re-render
@@ -2019,14 +2552,122 @@
     if (e.key === 'Escape') closeModal();
   });
 
+  // ===== BACKUP / SHARE =====
+  function refreshBackupButtons() {
+    const hasData = state.bookmarks.length > 0 || Object.keys(state.progress).length > 0;
+    document.getElementById('export-btn').disabled = !hasData;
+    document.getElementById('share-btn').disabled = state.bookmarks.length === 0;
+  }
+
+  function exportList() {
+    const payload = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      bookmarks: state.bookmarks,
+      progress: state.progress
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `my-portfolio-list-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast('Exported — keep the file safe as your backup');
+  }
+
+  function importList(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (!Array.isArray(data.bookmarks) || typeof data.progress !== 'object') {
+          throw new Error('Invalid format');
+        }
+        const validIds = new Set(PROJECTS.map(p => p.id));
+        state.bookmarks = [...new Set(data.bookmarks.filter(id => validIds.has(id)))];
+        state.progress = {};
+        Object.entries(data.progress).forEach(([id, val]) => {
+          if (validIds.has(id) && (val === 'started' || val === 'done')) {
+            state.progress[id] = val;
+          }
+        });
+        saveState();
+        renderAll();
+        refreshBackupButtons();
+        toast(`Imported ${state.bookmarks.length} bookmarks`);
+      } catch (err) {
+        toast('Import failed — file is not a valid export');
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function shareList() {
+    if (state.bookmarks.length === 0) return;
+    const encoded = btoa(state.bookmarks.join(',')).replace(/=+$/, '');
+    const url = `${location.origin}${location.pathname}#list=${encoded}`;
+    navigator.clipboard.writeText(url).then(() => {
+      toast('Shareable link copied — anyone can open your list');
+    }).catch(() => {
+      prompt('Copy this link:', url);
+    });
+  }
+
+  function readSharedList() {
+    if (!location.hash.startsWith('#list=')) return;
+    try {
+      const encoded = location.hash.slice(6);
+      const decoded = atob(encoded);
+      const incoming = decoded.split(',').filter(Boolean);
+      const validIds = new Set(PROJECTS.map(p => p.id));
+      const filtered = incoming.filter(id => validIds.has(id));
+      if (filtered.length === 0) return;
+
+      const existing = state.bookmarks.length;
+      if (existing > 0) {
+        const replace = confirm(
+          `You opened a shared list of ${filtered.length} projects.\n\n` +
+          `Click OK to MERGE with your current ${existing} bookmarks, or Cancel to keep your list unchanged.`
+        );
+        if (replace) {
+          state.bookmarks = [...new Set([...state.bookmarks, ...filtered])];
+          saveState();
+          toast(`Merged — ${state.bookmarks.length} bookmarks total`);
+        }
+      } else {
+        state.bookmarks = filtered;
+        saveState();
+        toast(`Loaded shared list — ${filtered.length} bookmarks`);
+      }
+      history.replaceState(null, '', location.pathname);
+    } catch (err) { /* ignore */ }
+  }
+
+  function wireBackupControls() {
+    document.getElementById('export-btn').onclick = exportList;
+    document.getElementById('share-btn').onclick = shareList;
+    document.getElementById('import-btn').onclick = () => document.getElementById('import-file').click();
+    document.getElementById('import-file').onchange = (e) => {
+      const file = e.target.files[0];
+      if (file) importList(file);
+      e.target.value = '';
+    };
+  }
+
   // ===== INIT =====
   function renderAll() {
     renderTabs();
     renderFilters();
     renderProjects();
     renderStats();
+    refreshBackupButtons();
   }
   loadState();
+  readSharedList();
+  wireBackupControls();
   renderAll();
 </script>
 </body>

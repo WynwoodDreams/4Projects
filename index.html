@@ -1255,14 +1255,14 @@
       <div class="footer-col">
         <h5>Paths</h5>
         <ul>
-          <li>Tech / IT Support</li>
-          <li>Cybersecurity</li>
           <li>AI Engineer</li>
-          <li>Data Analyst</li>
-          <li>Software Engineer</li>
-          <li>Help Desk</li>
-          <li>Computer Science</li>
           <li>Cloud Computing</li>
+          <li>Computer Science</li>
+          <li>Cybersecurity</li>
+          <li>Data Analyst</li>
+          <li>Help Desk</li>
+          <li>Software Engineer</li>
+          <li>Tech / IT Support</li>
         </ul>
       </div>
       <div class="footer-col">
@@ -1287,22 +1287,22 @@
   // ===== DATA =====
   const PATHS = [
     { id: 'all', icon: '✦', name: 'All Projects', short: 'All', desc: 'Every project across every path.' },
-    { id: 'tech-it', icon: '🛠', name: 'Tech / IT Support', short: 'IT Support', desc: 'Where hardware meets automation.',
-      salary: '$52k – $85k', roles: ['IT Support Specialist', 'Systems Administrator', 'IT Automation Engineer'] },
-    { id: 'cyber', icon: '🛡', name: 'Cybersecurity', short: 'Cyber', desc: 'Defending against the next generation of attacks.',
-      salary: '$75k – $135k', roles: ['SOC Analyst', 'Security Engineer', 'AI Security Researcher'] },
     { id: 'ai', icon: '🤖', name: 'AI Engineer', short: 'AI', desc: 'Building autonomous systems that go beyond chat.',
       salary: '$110k – $180k', roles: ['AI Engineer', 'ML Engineer', 'Applied Research Engineer'] },
-    { id: 'data', icon: '📊', name: 'Data Analyst', short: 'Data', desc: 'Turning raw data into real business strategy.',
-      salary: '$65k – $110k', roles: ['Data Analyst', 'BI Developer', 'Analytics Engineer'] },
-    { id: 'swe', icon: '💻', name: 'Software Engineer', short: 'Software', desc: 'Production-grade systems that scale.',
-      salary: '$85k – $150k', roles: ['Software Engineer', 'Full-Stack Developer', 'Backend Engineer'] },
-    { id: 'helpdesk', icon: '🎧', name: 'Help Desk', short: 'Help Desk', desc: 'The AI-augmented first line of support.',
-      salary: '$42k – $65k', roles: ['Help Desk Technician', 'Tier 1 / 2 Support', 'Customer Support Engineer'] },
+    { id: 'cloud', icon: '☁️', name: 'Cloud Computing', short: 'Cloud', desc: 'Serverless, multi-cloud, platform engineering.',
+      salary: '$95k – $160k', roles: ['Cloud Engineer', 'DevOps Engineer', 'Platform Engineer'] },
     { id: 'cs', icon: '🎓', name: 'Computer Science', short: 'CS', desc: 'Research-grade systems with real rigor.',
       salary: '$80k – $140k', roles: ['Software Engineer', 'Systems Engineer', 'Research Engineer'] },
-    { id: 'cloud', icon: '☁️', name: 'Cloud Computing', short: 'Cloud', desc: 'Serverless, multi-cloud, platform engineering.',
-      salary: '$95k – $160k', roles: ['Cloud Engineer', 'DevOps Engineer', 'Platform Engineer'] }
+    { id: 'cyber', icon: '🛡', name: 'Cybersecurity', short: 'Cyber', desc: 'Defending against the next generation of attacks.',
+      salary: '$75k – $135k', roles: ['SOC Analyst', 'Security Engineer', 'AI Security Researcher'] },
+    { id: 'data', icon: '📊', name: 'Data Analyst', short: 'Data', desc: 'Turning raw data into real business strategy.',
+      salary: '$65k – $110k', roles: ['Data Analyst', 'BI Developer', 'Analytics Engineer'] },
+    { id: 'helpdesk', icon: '🎧', name: 'Help Desk', short: 'Help Desk', desc: 'The AI-augmented first line of support.',
+      salary: '$42k – $65k', roles: ['Help Desk Technician', 'Tier 1 / 2 Support', 'Customer Support Engineer'] },
+    { id: 'swe', icon: '💻', name: 'Software Engineer', short: 'Software', desc: 'Production-grade systems that scale.',
+      salary: '$85k – $150k', roles: ['Software Engineer', 'Full-Stack Developer', 'Backend Engineer'] },
+    { id: 'tech-it', icon: '🛠', name: 'Tech / IT Support', short: 'IT Support', desc: 'Where hardware meets automation.',
+      salary: '$52k – $85k', roles: ['IT Support Specialist', 'Systems Administrator', 'IT Automation Engineer'] }
   ];
 
   const LEVEL_META = {
@@ -2184,14 +2184,15 @@ ${tags} #BuildingInPublic #OpenToWork`;
     }
 
     // Group by path if "all" is selected
+    const sortByTitle = (a, b) => a.title.localeCompare(b.title);
     const groups = state.currentPath === 'all'
       ? PATHS.filter(p => p.id !== 'all').map(p => ({
           path: p,
-          items: filtered.filter(x => x.path === p.id)
+          items: filtered.filter(x => x.path === p.id).sort(sortByTitle)
         })).filter(g => g.items.length > 0)
       : [{
           path: PATHS.find(p => p.id === state.currentPath),
-          items: filtered
+          items: [...filtered].sort(sortByTitle)
         }];
 
     container.innerHTML = groups.map(g => `

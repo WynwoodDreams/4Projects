@@ -2184,14 +2184,15 @@ ${tags} #BuildingInPublic #OpenToWork`;
     }
 
     // Group by path if "all" is selected
+    const sortByTitle = (a, b) => a.title.localeCompare(b.title);
     const groups = state.currentPath === 'all'
       ? PATHS.filter(p => p.id !== 'all').map(p => ({
           path: p,
-          items: filtered.filter(x => x.path === p.id)
+          items: filtered.filter(x => x.path === p.id).sort(sortByTitle)
         })).filter(g => g.items.length > 0)
       : [{
           path: PATHS.find(p => p.id === state.currentPath),
-          items: filtered
+          items: [...filtered].sort(sortByTitle)
         }];
 
     container.innerHTML = groups.map(g => `

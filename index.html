@@ -411,21 +411,21 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background:
-      radial-gradient(circle at 82% -10%, rgba(201, 163, 80, 0.28), rgba(196, 110, 58, 0.10) 38%, transparent 68%),
-      radial-gradient(circle at 20% 110%, rgba(196, 110, 58, 0.14), transparent 55%);
+    background: radial-gradient(ellipse at center, rgba(201, 163, 80, 0.09), rgba(196, 110, 58, 0.04) 55%, transparent 78%);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.45s ease;
+    transition: opacity 0.5s ease;
   }
   .project-card > * { position: relative; z-index: 1; }
   .project-card:hover {
-    border-color: rgba(201, 163, 80, 0.55);
+    border-color: rgba(201, 163, 80, 0.5);
     transform: translateY(-4px);
     box-shadow:
-      0 0 0 1px rgba(201, 163, 80, 0.22),
-      0 14px 32px rgba(196, 110, 58, 0.22),
-      0 22px 60px rgba(0, 0, 0, 0.55);
+      0 0 0 1px rgba(201, 163, 80, 0.32),
+      0 0 18px rgba(201, 163, 80, 0.22),
+      0 0 42px rgba(196, 110, 58, 0.20),
+      0 0 90px rgba(196, 110, 58, 0.10),
+      0 18px 42px rgba(0, 0, 0, 0.50);
   }
   .project-card:hover::before { opacity: 1; }
   @media (prefers-reduced-motion: reduce) {
@@ -444,7 +444,9 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    gap: 12px;
     margin-bottom: 18px;
+    padding-right: 34px;
   }
   .level-badge {
     font-size: 10px;

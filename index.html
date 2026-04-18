@@ -250,7 +250,7 @@
     color: var(--ink-soft);
     cursor: pointer;
     border-radius: 8px;
-    transition: all 0.15s ease;
+    transition: color 0.2s ease, border-color 0.35s ease, box-shadow 0.45s ease, background 0.25s ease;
     white-space: nowrap;
     display: inline-flex;
     align-items: center;
@@ -259,7 +259,12 @@
   }
   .path-tab:hover {
     color: var(--fg);
-    border-color: var(--fg);
+    border-color: rgba(201, 163, 80, 0.5);
+    box-shadow:
+      inset 0 0 14px rgba(201, 163, 80, 0.10),
+      0 0 0 1px rgba(201, 163, 80, 0.22),
+      0 0 12px rgba(201, 163, 80, 0.22),
+      0 0 30px rgba(196, 110, 58, 0.14);
   }
   .path-tab.active {
     background: var(--ink);
@@ -314,9 +319,17 @@
     color: var(--ink-soft);
     cursor: pointer;
     border-radius: 100px;
-    transition: all 0.15s ease;
+    transition: color 0.2s ease, border-color 0.35s ease, box-shadow 0.45s ease, background 0.25s ease;
   }
-  .filter-chip:hover { border-color: var(--fg); }
+  .filter-chip:hover {
+    color: var(--fg);
+    border-color: rgba(201, 163, 80, 0.5);
+    box-shadow:
+      inset 0 0 12px rgba(201, 163, 80, 0.10),
+      0 0 0 1px rgba(201, 163, 80, 0.22),
+      0 0 10px rgba(201, 163, 80, 0.20),
+      0 0 26px rgba(196, 110, 58, 0.12);
+  }
   .filter-chip.active {
     background: var(--accent);
     color: white;
@@ -349,11 +362,16 @@
     color: var(--ink-soft);
     border-radius: 6px;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: color 0.2s ease, border-color 0.35s ease, box-shadow 0.45s ease, background 0.25s ease;
   }
   .backup-btn:hover:not(:disabled) {
     color: var(--fg);
-    border-color: var(--fg);
+    border-color: rgba(201, 163, 80, 0.5);
+    box-shadow:
+      inset 0 0 12px rgba(201, 163, 80, 0.10),
+      0 0 0 1px rgba(201, 163, 80, 0.22),
+      0 0 10px rgba(201, 163, 80, 0.20),
+      0 0 26px rgba(196, 110, 58, 0.12);
   }
   .backup-btn:disabled {
     opacity: 0.4;

@@ -181,8 +181,10 @@
     background: linear-gradient(180deg, rgba(36,52,44,0.7), rgba(22,34,27,0.4));
     border: 1px solid var(--line);
     border-radius: 18px;
-    padding: 28px 30px;
+    padding: 22px 24px 24px;
     backdrop-filter: blur(6px);
+    overflow: hidden;
+    position: relative;
   }
   .hero-side-label {
     font-family: 'JetBrains Mono', monospace;
@@ -190,69 +192,188 @@
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--ink-muted);
-    margin-bottom: 18px;
+    margin-bottom: 14px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
-  .hero-side-label::after {
-    content: '— 26';
-    color: var(--accent);
-  }
-  .hero-side ul {
-    list-style: none;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px 18px;
-  }
-  .hero-side li {
-    font-size: 14px;
-    color: var(--fg);
-    padding: 7px 0;
-    border-bottom: 1px solid rgba(74,92,82,0.35);
-    display: flex;
-    align-items: center;
     gap: 10px;
-    font-weight: 400;
   }
-  .hero-side li .glyph {
-    font-size: 13px;
-    width: 18px;
-    text-align: center;
-    color: var(--ink-muted);
+  .hero-side-label .live {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--fg);
   }
-  .hero-meta {
+  .live-dot {
+    width: 7px; height: 7px;
+    background: #e8553a;
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(232,85,58,0.6);
+    animation: liveBlink 1.6s ease-out infinite;
+  }
+  @keyframes liveBlink {
+    0% { box-shadow: 0 0 0 0 rgba(232,85,58,0.7); }
+    70% { box-shadow: 0 0 0 8px rgba(232,85,58,0); }
+    100% { box-shadow: 0 0 0 0 rgba(232,85,58,0); }
+  }
+  .hero-side-label .clock {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    font-size: 10.5px;
+  }
+
+  .feed-window {
+    height: 268px;
+    overflow: hidden;
+    position: relative;
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, black 10%, black 90%, transparent 100%);
+            mask-image: linear-gradient(180deg, transparent 0, black 10%, black 90%, transparent 100%);
+  }
+  .feed-track {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: feedScroll 28s linear infinite;
+  }
+  @keyframes feedScroll {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-50%); }
+  }
+  .feed-item {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1px;
-    margin-top: 56px;
-    background: var(--line);
+    grid-template-columns: 36px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 12px;
+    background: rgba(22,34,27,0.55);
+    border: 1px solid rgba(74,92,82,0.35);
+    border-radius: 10px;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .feed-item .feed-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--ink-muted);
+    text-align: right;
+  }
+  .feed-item .feed-text {
+    color: var(--ink-soft);
+    line-height: 1.3;
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .feed-item .feed-text strong {
+    color: var(--fg);
+    font-weight: 600;
+  }
+  .feed-item .feed-text em {
+    font-style: normal;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .feed-item .feed-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 7px;
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    color: var(--ink-soft);
+  }
+  .feed-item.event-shipped { border-left: 2px solid var(--green); }
+  .feed-item.event-hired { border-left: 2px solid var(--gold); }
+  .feed-item.event-launched { border-left: 2px solid var(--accent); }
+  .feed-item.event-interview { border-left: 2px solid var(--blue); }
+
+  /* ===== TICKER ===== */
+  .ticker-strip {
+    margin-top: 48px;
     border-top: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
+    overflow: hidden;
+    position: relative;
+    padding: 18px 0;
   }
-  .hero-meta > div {
+  .ticker-strip::before, .ticker-strip::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 90px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .ticker-strip::before { left: 0; background: linear-gradient(90deg, var(--bg), transparent); }
+  .ticker-strip::after { right: 0; background: linear-gradient(270deg, var(--bg), transparent); }
+  .ticker-strip-label {
+    position: absolute;
+    left: 0; top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
     background: var(--bg);
-    padding: 22px 4px 22px 0;
-    font-size: 12px;
-    color: var(--ink-muted);
+    padding: 6px 14px 6px 0;
     font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
   }
-  .hero-meta div strong {
-    display: block;
-    color: var(--fg);
-    font-size: 36px;
+  .ticker-strip-label::after {
+    content: '';
+    width: 28px;
+    height: 1px;
+    background: var(--accent);
+  }
+  .ticker-track {
+    display: flex;
+    gap: 44px;
+    width: max-content;
+    animation: tickerScroll 50s linear infinite;
+    padding-left: 180px;
+  }
+  @keyframes tickerScroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .ticker-item {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+    white-space: nowrap;
+  }
+  .ticker-item .skill {
     font-family: 'Bricolage Grotesque', sans-serif;
-    font-variation-settings: 'opsz' 72;
+    font-variation-settings: 'opsz' 24;
+    font-weight: 600;
+    font-size: 17px;
+    letter-spacing: -0.025em;
+    color: var(--fg);
+  }
+  .ticker-item .change {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
     font-weight: 500;
-    letter-spacing: -0.04em;
-    margin-bottom: 8px;
-    line-height: 1;
+  }
+  .ticker-item .change.up { color: var(--green); }
+  .ticker-item .change.hot { color: var(--accent); }
+  .ticker-item .change::before { content: '▲ '; font-size: 9px; }
+  .ticker-item .change.hot::before { content: '◆ '; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .feed-track, .ticker-track { animation: none; }
+    .live-dot { animation: none; }
   }
   @media (max-width: 1100px) {
-    .hero-grid { grid-template-columns: 1fr; gap: 40px; align-items: start; }
-    .hero-meta { grid-template-columns: repeat(2, 1fr); }
+    .hero-grid { grid-template-columns: 1fr; gap: 32px; align-items: start; }
+    .feed-window { height: 220px; }
+    .ticker-track { padding-left: 0; }
+    .ticker-strip-label { display: none; }
   }
 
   /* ===== HOW TO USE ===== */
@@ -1304,10 +1425,11 @@
   @media (max-width: 640px) {
     .container { padding: 0 20px; }
     .project-grid { grid-template-columns: 1fr; }
-    .hero { padding: 40px 0 28px; }
+    .hero { padding: 36px 0 24px; }
     .hero h1 { font-size: clamp(40px, 11vw, 64px); }
-    .hero-meta { grid-template-columns: 1fr 1fr; }
-    .hero-meta div strong { font-size: 28px; }
+    .feed-window { height: 200px; }
+    .ticker-strip { margin-top: 36px; }
+    .ticker-item .skill { font-size: 15px; }
     .modal { padding: 32px 24px; }
     .modal h2 { font-size: 28px; }
     .controls { top: 62px; }
@@ -1350,25 +1472,19 @@
           Industry-relevant builds across seven career tracks — curated for students chasing internships, first roles, and career pivots. Each project ships with real-world context, showcase tips, and AI prompts.
         </p>
       </div>
-      <aside class="hero-side">
-        <div class="hero-side-label"><span>Career Tracks</span></div>
-        <ul>
-          <li><span class="glyph">◆</span>AI Engineer</li>
-          <li><span class="glyph">◇</span>Cloud</li>
-          <li><span class="glyph">◇</span>Computer Sci.</li>
-          <li><span class="glyph">◆</span>Cybersecurity</li>
-          <li><span class="glyph">◇</span>Data Analyst</li>
-          <li><span class="glyph">◆</span>Help Desk</li>
-          <li><span class="glyph">◆</span>Software Eng.</li>
-          <li><span class="glyph">◇</span>IT Support</li>
-        </ul>
+      <aside class="hero-side" aria-label="Live student activity feed">
+        <div class="hero-side-label">
+          <span class="live"><span class="live-dot"></span>Live · Build Feed</span>
+          <span class="clock" id="hero-clock">--:--</span>
+        </div>
+        <div class="feed-window">
+          <div class="feed-track" id="feed-track"></div>
+        </div>
       </aside>
     </div>
-    <div class="hero-meta">
-      <div><strong id="meta-projects">—</strong>Curated Projects</div>
-      <div><strong>8</strong>Career Tracks</div>
-      <div><strong>2026</strong>Edition</div>
-      <div><strong>AI</strong>Augmented Builds</div>
+    <div class="ticker-strip" aria-label="Trending tech in 2026 hiring">
+      <span class="ticker-strip-label">Hiring · 2026</span>
+      <div class="ticker-track" id="ticker-track"></div>
     </div>
   </div>
 </section>
@@ -2826,6 +2942,67 @@ ${tags} #BuildingInPublic #OpenToWork`;
     };
   }
 
+  // ===== HERO MOTION =====
+  const FEED_EVENTS = [
+    { t: '2m',  who: 'Maya R.',   verb: 'shipped',     proj: 'RAG Doc Assistant',   tag: 'AI',    type: 'shipped'   },
+    { t: '6m',  who: 'Devon K.',  verb: 'deployed',    proj: 'Cloud Lab v2',        tag: 'CLOUD', type: 'launched'  },
+    { t: '11m', who: 'Priya S.',  verb: 'landed @',    proj: 'Stripe',              tag: 'SE',    type: 'hired'     },
+    { t: '18m', who: 'Andre L.',  verb: 'shipped',     proj: 'SOC Threat Monitor',  tag: 'SEC',   type: 'shipped'   },
+    { t: '24m', who: 'Lina T.',   verb: 'launched',    proj: 'Sales Dashboard',     tag: 'DATA',  type: 'launched'  },
+    { t: '31m', who: 'Jamal P.',  verb: 'shipped',     proj: 'IT Helpdesk Bot',     tag: 'IT',    type: 'shipped'   },
+    { t: '42m', who: 'Rosa V.',   verb: 'interview @', proj: 'Anthropic',           tag: 'AI',    type: 'interview' },
+    { t: '1h',  who: 'Theo W.',   verb: 'shipped',     proj: 'Vector Search API',   tag: 'AI',    type: 'shipped'   },
+    { t: '1h',  who: 'Kai N.',    verb: 'intern @',    proj: 'AWS',                 tag: 'CLOUD', type: 'hired'     },
+    { t: '2h',  who: 'Zoe B.',    verb: 'launched',    proj: 'Kube CI Pipeline',    tag: 'DEVOPS',type: 'launched'  },
+    { t: '3h',  who: 'Imani O.',  verb: 'shipped',     proj: 'Live Captioner',      tag: 'CS',    type: 'shipped'   },
+    { t: '4h',  who: 'Owen H.',   verb: 'offer @',     proj: 'Datadog',             tag: 'SRE',   type: 'hired'     },
+  ];
+  const TICKER_ITEMS = [
+    { name: 'Python',     change: '+18%', kind: 'up'  },
+    { name: 'TypeScript', change: '+24%', kind: 'up'  },
+    { name: 'LangChain',  change: '+44%', kind: 'hot' },
+    { name: 'React',      change: '+12%', kind: 'up'  },
+    { name: 'AWS',        change: '+15%', kind: 'up'  },
+    { name: 'Rust',       change: '+32%', kind: 'hot' },
+    { name: 'Kubernetes', change: '+21%', kind: 'up'  },
+    { name: 'Next.js',    change: '+28%', kind: 'up'  },
+    { name: 'PostgreSQL', change: '+9%',  kind: 'up'  },
+    { name: 'Tailwind',   change: '+22%', kind: 'up'  },
+    { name: 'Go',         change: '+14%', kind: 'up'  },
+    { name: 'Terraform',  change: '+19%', kind: 'up'  },
+    { name: 'FastAPI',    change: '+27%', kind: 'up'  },
+    { name: 'Docker',     change: '+11%', kind: 'up'  },
+    { name: 'pgvector',   change: '+58%', kind: 'hot' },
+    { name: 'GraphQL',    change: '+6%',  kind: 'up'  },
+  ];
+
+  function mountHero() {
+    const feed = document.getElementById('feed-track');
+    if (feed) {
+      const row = e => `
+        <div class="feed-item event-${e.type}">
+          <div class="feed-time">${e.t}</div>
+          <div class="feed-text"><strong>${e.who}</strong> ${e.verb} <em>${e.proj}</em></div>
+          <div class="feed-tag">${e.tag}</div>
+        </div>`;
+      feed.innerHTML = FEED_EVENTS.map(row).join('') + FEED_EVENTS.map(row).join('');
+    }
+    const ticker = document.getElementById('ticker-track');
+    if (ticker) {
+      const item = i => `<span class="ticker-item"><span class="skill">${i.name}</span><span class="change ${i.kind}">${i.change}</span></span>`;
+      ticker.innerHTML = TICKER_ITEMS.map(item).join('') + TICKER_ITEMS.map(item).join('');
+    }
+    const clockEl = document.getElementById('hero-clock');
+    if (clockEl) {
+      const tick = () => {
+        const d = new Date();
+        clockEl.textContent = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')} ET`;
+      };
+      tick();
+      setInterval(tick, 1000);
+    }
+  }
+
   // ===== INIT =====
   function renderAll() {
     renderTabs();
@@ -2838,6 +3015,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
   readSharedList();
   wireBackupControls();
   renderAll();
+  mountHero();
 </script>
 </body>
 </html>

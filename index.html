@@ -472,68 +472,80 @@
   }
   .path-tabs {
     display: flex;
-    gap: 4px;
-    margin-bottom: 12px;
+    gap: 6px;
+    margin-bottom: 14px;
     flex-wrap: wrap;
-    padding: 6px;
+    padding: 8px;
     border: 1px solid rgba(255,255,255,0.18);
-    border-radius: 12px;
+    border-radius: 14px;
     background: var(--glass);
     width: fit-content;
     max-width: 100%;
   }
   .path-tab {
-    padding: 9px 14px;
-    border: 1px solid transparent;
-    background: transparent;
+    padding: 11px 16px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.02);
     font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
+    font-size: 13px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
     font-weight: 500;
     color: var(--ink-soft);
     cursor: pointer;
     border-radius: 999px;
-    transition: color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, transform 0.18s ease;
+    transition: color 0.18s ease, border-color 0.18s ease, box-shadow 0.25s ease, background 0.18s ease, transform 0.18s ease;
     white-space: nowrap;
     display: inline-flex;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
     line-height: 1;
+    position: relative;
   }
   .path-tab:hover {
     color: var(--ink);
-    background: rgba(0,255,133,0.06);
-    border-color: var(--line-3);
+    background: rgba(0,255,133,0.10);
+    border-color: rgba(0,255,133,0.55);
     transform: translateY(-1px);
+    box-shadow:
+      0 0 0 1px rgba(0,255,133,0.55),
+      0 0 18px -2px rgba(0,255,133,0.55),
+      0 0 36px -8px rgba(0,255,133,0.45),
+      0 10px 28px -14px rgba(0,255,133,0.55);
   }
   .path-tab.active {
-    background: rgba(0,255,133,0.10);
+    background: rgba(0,255,133,0.14);
     color: var(--green);
-    border-color: var(--line-3);
-    box-shadow: 0 0 0 1px var(--line-3), 0 0 18px -6px var(--green-glow);
-    text-shadow: 0 0 8px var(--green-glow);
+    border-color: rgba(0,255,133,0.65);
+    box-shadow:
+      0 0 0 1px rgba(0,255,133,0.65),
+      0 0 22px -2px rgba(0,255,133,0.65),
+      0 0 40px -8px rgba(0,255,133,0.55),
+      inset 0 1px 0 rgba(255,255,255,0.10);
+    text-shadow: 0 0 10px var(--green-glow);
   }
   .path-tab .icon {
-    font-size: 14px;
+    font-size: 15px;
     display: inline-flex;
     align-items: center;
     filter: grayscale(0.2);
   }
   .path-tab .count {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    font-size: 11.5px;
     font-weight: 600;
-    padding: 2px 7px;
-    background: rgba(0,0,0,0.45);
+    padding: 3px 8px;
+    background: rgba(0,0,0,0.55);
     color: var(--ink-soft);
+    border: 1px solid rgba(255,255,255,0.10);
     border-radius: 999px;
     margin-left: 2px;
     letter-spacing: 0.06em;
   }
   .path-tab.active .count {
-    background: rgba(0,255,133,0.18);
+    background: rgba(0,255,133,0.22);
     color: var(--green);
+    border-color: rgba(0,255,133,0.45);
   }
 
   .filter-row {
@@ -557,30 +569,36 @@
     margin-right: 4px;
   }
   .filter-chip {
-    padding: 7px 14px;
+    padding: 8px 15px;
     border: 1px solid rgba(255,255,255,0.18);
     background: var(--glass);
     font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
+    font-size: 12.5px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
     font-weight: 500;
     color: var(--ink-soft);
     cursor: pointer;
     border-radius: 999px;
-    transition: all 0.18s ease;
+    transition: all 0.2s ease;
   }
   .filter-chip:hover {
     color: var(--ink);
-    border-color: var(--line-3);
-    box-shadow: 0 0 0 1px var(--line-3), 0 12px 30px -16px rgba(0,255,133,0.25);
+    border-color: rgba(0,255,133,0.55);
+    box-shadow:
+      0 0 0 1px rgba(0,255,133,0.55),
+      0 0 18px -2px rgba(0,255,133,0.50),
+      0 10px 28px -14px rgba(0,255,133,0.50);
     transform: translateY(-1px);
   }
   .filter-chip.active {
-    background: rgba(0,255,133,0.10);
+    background: rgba(0,255,133,0.14);
     color: var(--green);
-    border-color: var(--line-3);
-    text-shadow: 0 0 8px var(--green-glow);
+    border-color: rgba(0,255,133,0.65);
+    box-shadow:
+      0 0 0 1px rgba(0,255,133,0.65),
+      0 0 22px -2px rgba(0,255,133,0.55);
+    text-shadow: 0 0 10px var(--green-glow);
   }
   .filter-spacer { flex: 1; }
   .reset-btn {
@@ -695,19 +713,22 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: radial-gradient(ellipse at 50% 0%, rgba(0,255,133,0.10), transparent 65%);
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(0,255,133,0.18), transparent 65%),
+      radial-gradient(ellipse at 100% 100%, rgba(0,194,168,0.10), transparent 65%);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
   }
   .project-card > * { position: relative; z-index: 1; }
   .project-card:hover {
-    border-color: var(--line-3);
+    border-color: rgba(0,255,133,0.60);
     transform: translateY(-2px);
     box-shadow:
-      0 0 0 1px var(--line-3),
-      0 12px 30px -16px rgba(0,255,133,0.35),
-      0 24px 60px -28px rgba(0,0,0,0.55);
+      0 0 0 1px rgba(0,255,133,0.60),
+      0 0 24px -2px rgba(0,255,133,0.45),
+      0 0 60px -12px rgba(0,255,133,0.40),
+      0 24px 60px -22px rgba(0,0,0,0.65);
   }
   .project-card:hover::before { opacity: 1; }
   @media (prefers-reduced-motion: reduce) {

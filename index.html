@@ -134,7 +134,8 @@
       inset 0 1px 0 rgba(255,255,255,0.35),
       0 0 12px var(--green-glow);
   }
-  .brand-mark .yr { color: var(--green); font-weight: 600; text-shadow: 0 0 10px var(--green-glow); }
+  .brand-mark .yr { color: var(--green); font-weight: 600; text-shadow: 0 0 10px var(--green-glow); margin-left: 6px; }
+  .brand-mark .brand-jsm { color: var(--ink-soft); font-weight: 500; margin-right: 4px; }
   .brand-divider {
     width: 1px;
     height: 16px;
@@ -471,68 +472,80 @@
   }
   .path-tabs {
     display: flex;
-    gap: 4px;
-    margin-bottom: 12px;
+    gap: 6px;
+    margin-bottom: 14px;
     flex-wrap: wrap;
-    padding: 6px;
+    padding: 8px;
     border: 1px solid rgba(255,255,255,0.18);
-    border-radius: 12px;
+    border-radius: 14px;
     background: var(--glass);
     width: fit-content;
     max-width: 100%;
   }
   .path-tab {
-    padding: 9px 14px;
-    border: 1px solid transparent;
-    background: transparent;
+    padding: 11px 16px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.02);
     font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
+    font-size: 13px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
     font-weight: 500;
     color: var(--ink-soft);
     cursor: pointer;
     border-radius: 999px;
-    transition: color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, transform 0.18s ease;
+    transition: color 0.18s ease, border-color 0.18s ease, box-shadow 0.25s ease, background 0.18s ease, transform 0.18s ease;
     white-space: nowrap;
     display: inline-flex;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
     line-height: 1;
+    position: relative;
   }
   .path-tab:hover {
     color: var(--ink);
-    background: rgba(0,255,133,0.06);
-    border-color: var(--line-3);
+    background: rgba(0,255,133,0.10);
+    border-color: rgba(0,255,133,0.55);
     transform: translateY(-1px);
+    box-shadow:
+      0 0 0 1px rgba(0,255,133,0.55),
+      0 0 18px -2px rgba(0,255,133,0.55),
+      0 0 36px -8px rgba(0,255,133,0.45),
+      0 10px 28px -14px rgba(0,255,133,0.55);
   }
   .path-tab.active {
-    background: rgba(0,255,133,0.10);
+    background: rgba(0,255,133,0.14);
     color: var(--green);
-    border-color: var(--line-3);
-    box-shadow: 0 0 0 1px var(--line-3), 0 0 18px -6px var(--green-glow);
-    text-shadow: 0 0 8px var(--green-glow);
+    border-color: rgba(0,255,133,0.65);
+    box-shadow:
+      0 0 0 1px rgba(0,255,133,0.65),
+      0 0 22px -2px rgba(0,255,133,0.65),
+      0 0 40px -8px rgba(0,255,133,0.55),
+      inset 0 1px 0 rgba(255,255,255,0.10);
+    text-shadow: 0 0 10px var(--green-glow);
   }
   .path-tab .icon {
-    font-size: 14px;
+    font-size: 15px;
     display: inline-flex;
     align-items: center;
     filter: grayscale(0.2);
   }
   .path-tab .count {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    font-size: 11.5px;
     font-weight: 600;
-    padding: 2px 7px;
-    background: rgba(0,0,0,0.45);
+    padding: 3px 8px;
+    background: rgba(0,0,0,0.55);
     color: var(--ink-soft);
+    border: 1px solid rgba(255,255,255,0.10);
     border-radius: 999px;
     margin-left: 2px;
     letter-spacing: 0.06em;
   }
   .path-tab.active .count {
-    background: rgba(0,255,133,0.18);
+    background: rgba(0,255,133,0.22);
     color: var(--green);
+    border-color: rgba(0,255,133,0.45);
   }
 
   .filter-row {
@@ -556,30 +569,36 @@
     margin-right: 4px;
   }
   .filter-chip {
-    padding: 7px 14px;
+    padding: 8px 15px;
     border: 1px solid rgba(255,255,255,0.18);
     background: var(--glass);
     font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
+    font-size: 12.5px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
     font-weight: 500;
     color: var(--ink-soft);
     cursor: pointer;
     border-radius: 999px;
-    transition: all 0.18s ease;
+    transition: all 0.2s ease;
   }
   .filter-chip:hover {
     color: var(--ink);
-    border-color: var(--line-3);
-    box-shadow: 0 0 0 1px var(--line-3), 0 12px 30px -16px rgba(0,255,133,0.25);
+    border-color: rgba(0,255,133,0.55);
+    box-shadow:
+      0 0 0 1px rgba(0,255,133,0.55),
+      0 0 18px -2px rgba(0,255,133,0.50),
+      0 10px 28px -14px rgba(0,255,133,0.50);
     transform: translateY(-1px);
   }
   .filter-chip.active {
-    background: rgba(0,255,133,0.10);
+    background: rgba(0,255,133,0.14);
     color: var(--green);
-    border-color: var(--line-3);
-    text-shadow: 0 0 8px var(--green-glow);
+    border-color: rgba(0,255,133,0.65);
+    box-shadow:
+      0 0 0 1px rgba(0,255,133,0.65),
+      0 0 22px -2px rgba(0,255,133,0.55);
+    text-shadow: 0 0 10px var(--green-glow);
   }
   .filter-spacer { flex: 1; }
   .reset-btn {
@@ -694,19 +713,22 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: radial-gradient(ellipse at 50% 0%, rgba(0,255,133,0.10), transparent 65%);
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(0,255,133,0.18), transparent 65%),
+      radial-gradient(ellipse at 100% 100%, rgba(0,194,168,0.10), transparent 65%);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
   }
   .project-card > * { position: relative; z-index: 1; }
   .project-card:hover {
-    border-color: var(--line-3);
+    border-color: rgba(0,255,133,0.60);
     transform: translateY(-2px);
     box-shadow:
-      0 0 0 1px var(--line-3),
-      0 12px 30px -16px rgba(0,255,133,0.35),
-      0 24px 60px -28px rgba(0,0,0,0.55);
+      0 0 0 1px rgba(0,255,133,0.60),
+      0 0 24px -2px rgba(0,255,133,0.45),
+      0 0 60px -12px rgba(0,255,133,0.40),
+      0 24px 60px -22px rgba(0,0,0,0.65);
   }
   .project-card:hover::before { opacity: 1; }
   @media (prefers-reduced-motion: reduce) {
@@ -1349,6 +1371,76 @@
     color: var(--ink);
   }
 
+  /* ===== SUGGEST A PROJECT ===== */
+  .suggest-section {
+    padding: 24px 0 56px;
+    position: relative;
+    z-index: 2;
+  }
+  .suggest-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.012)),
+                radial-gradient(ellipse at 0% 0%, rgba(0,255,133,0.10), transparent 55%),
+                radial-gradient(ellipse at 100% 100%, rgba(0,194,168,0.08), transparent 55%);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 16px;
+    padding: 36px 36px;
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 24px;
+    align-items: center;
+  }
+  .suggest-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 12%; right: 12%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--green-glow), transparent);
+  }
+  .suggest-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    font-weight: 500;
+    margin-bottom: 14px;
+    padding: 6px 12px;
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 999px;
+    background: var(--glass);
+  }
+  .suggest-eyebrow .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 10px var(--green-glow);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .suggest-card h2 {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(26px, 3.6vw, 36px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+  .suggest-accent { color: var(--green); text-shadow: 0 0 18px var(--green-glow); }
+  .suggest-card > .container, .suggest-card p {
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    max-width: 640px;
+  }
+  .suggest-btn { white-space: nowrap; }
+  @media (max-width: 720px) {
+    .suggest-card { grid-template-columns: 1fr; padding: 28px 22px; }
+  }
+
   /* ===== FOOTER ===== */
   footer {
     background:
@@ -1394,17 +1486,35 @@
   }
   .footer-col ul { list-style: none; }
   .footer-col li { font-size: 13px; margin-bottom: 8px; color: var(--ink-soft); }
+  .footer-col a {
+    color: var(--ink-soft);
+    text-decoration: none;
+    transition: color 0.15s ease, text-shadow 0.15s ease;
+    border-bottom: 1px solid transparent;
+  }
+  .footer-col a:hover {
+    color: var(--green);
+    text-shadow: 0 0 8px var(--green-glow);
+    border-bottom-color: var(--line-3);
+  }
   .footer-bottom {
     padding-top: 22px;
-    border-top: 1px solid var(--line);
+    border-top: 1px solid rgba(255,255,255,0.16);
     display: flex;
     justify-content: space-between;
+    gap: 18px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--ink-muted);
   }
+  .footer-bottom a {
+    color: var(--ink-muted);
+    text-decoration: none;
+    transition: color 0.15s ease, text-shadow 0.15s ease;
+  }
+  .footer-bottom a:hover { color: var(--green); text-shadow: 0 0 8px var(--green-glow); }
 
   /* ===== VIDEO EMBED ===== */
   .video-wrap {
@@ -1585,7 +1695,7 @@
     .modal h2 { font-size: 26px; }
     .controls { top: 54px; }
     .header-actions .stat-pill { display: none; }
-    .brand-divider, .brand-sub { display: none; }
+    .brand-mark .brand-jsm { display: none; }
   }
 </style>
 <!-- Vercel Web Analytics -->
@@ -1596,9 +1706,7 @@
 <header>
   <div class="container header-inner">
     <div class="brand">
-      <div class="brand-mark">Tech Portfolio<span class="yr">/26</span></div>
-      <div class="brand-divider"></div>
-      <div class="brand-sub">JOB STATS MIAMI</div>
+      <div class="brand-mark">Tech Portfolio <span class="brand-jsm">· Job Stats Miami</span><span class="yr">/26</span></div>
     </div>
     <div class="header-actions">
       <div class="stat-pill">
@@ -1678,6 +1786,21 @@
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
+<!-- SUGGEST A PROJECT -->
+<section class="suggest-section">
+  <div class="container">
+    <div class="suggest-card">
+      <div class="suggest-eyebrow"><span class="dot"></span>SUGGEST_A_PROJECT</div>
+      <h2>Got a project idea worth <span class="suggest-accent">building?</span></h2>
+      <p>Send your idea, the role it targets, and what makes it stand out. The best suggestions get added to the guide.</p>
+      <a href="mailto:christianjort@gmail.com?subject=Project%20Suggestion%20%E2%80%94%20Tech%20Portfolio%20%C2%B7%20Job%20Stats%20Miami&amp;body=Project%20idea%3A%0A%0ATarget%20role%2Fpath%3A%0A%0AWhy%20it%20matters%20in%202026%3A%0A%0ATech%20stack%3A%0A%0ALinks%20%2F%20references%3A%0A" class="btn-primary suggest-btn">
+        Suggest a project
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer>
   <div class="container">
@@ -1688,31 +1811,29 @@
       </div>
       <div class="footer-col">
         <h5>Paths</h5>
-        <ul>
-          <li>AI Engineer</li>
-          <li>Cloud Computing</li>
-          <li>Computer Science</li>
-          <li>Cybersecurity</li>
-          <li>Data Analyst</li>
-          <li>Help Desk</li>
-          <li>Software Engineer</li>
-          <li>Tech / IT Support</li>
+        <ul class="footer-paths">
+          <li><a href="#path-tabs" data-footer-path="ai">AI Engineer</a></li>
+          <li><a href="#path-tabs" data-footer-path="cloud">Cloud Computing</a></li>
+          <li><a href="#path-tabs" data-footer-path="cs">Computer Science</a></li>
+          <li><a href="#path-tabs" data-footer-path="cyber">Cybersecurity</a></li>
+          <li><a href="#path-tabs" data-footer-path="data">Data Analyst</a></li>
+          <li><a href="#path-tabs" data-footer-path="helpdesk">Help Desk</a></li>
+          <li><a href="#path-tabs" data-footer-path="swe">Software Engineer</a></li>
+          <li><a href="#path-tabs" data-footer-path="tech-it">Tech / IT Support</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h5>Tips</h5>
-        <ul>
-          <li>Use Claude Code or Cursor</li>
-          <li>Document with Mermaid</li>
-          <li>Ship a live demo</li>
-          <li>Add a "Built with AI" note</li>
-          <li>Write a clear README</li>
+        <h5>Connect</h5>
+        <ul class="footer-connect">
+          <li><a href="mailto:christianjort@gmail.com">christianjort@gmail.com</a></li>
+          <li><a href="mailto:christianjort@gmail.com?subject=Project%20Suggestion%20%E2%80%94%20Tech%20Portfolio%20%C2%B7%20Job%20Stats%20Miami">Suggest a project</a></li>
+          <li><a href="mailto:christianjort@gmail.com?subject=Tech%20Portfolio%20%E2%80%94%20Feedback">Send feedback</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <div>© 2026 · Tech Portfolio Guide</div>
-      <div>Your progress saves automatically in your browser</div>
+      <div>© 2026 · Tech Portfolio · Job Stats Miami</div>
+      <div><a href="mailto:christianjort@gmail.com">christianjort@gmail.com</a></div>
     </div>
   </div>
 </footer>
@@ -3163,11 +3284,24 @@ ${tags} #BuildingInPublic #OpenToWork`;
     renderStats();
     refreshBackupButtons();
   }
+  function wireFooterPaths() {
+    document.querySelectorAll('[data-footer-path]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const id = a.dataset.footerPath;
+        const tab = document.querySelector(`.path-tab[data-path="${id}"]`);
+        if (tab) tab.click();
+        const controls = document.querySelector('.controls');
+        if (controls) controls.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  }
   loadState();
   readSharedList();
   wireBackupControls();
   renderAll();
   mountHero();
+  wireFooterPaths();
 </script>
 </body>
 </html>

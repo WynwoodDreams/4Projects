@@ -2264,7 +2264,7 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
     },
     // HELP DESK
     {
-      id: 'hd-1', path: 'helpdesk', level: 'intermediate',
+      id: 'hd-1', path: 'ai', level: 'intermediate',
       title: 'AI-Powered Self-Service IT Support Bot',
       summary: 'An intelligent chatbot using RAG to answer IT questions from a knowledge base — with fallback ticket creation.',
       tech: ['Botpress/Voiceflow', 'OpenAI API', 'Google Sheets', 'Zapier'],
@@ -2316,7 +2316,7 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       ]
     },
     {
-      id: 'hd-3', path: 'helpdesk', level: 'intermediate',
+      id: 'hd-3', path: 'data', level: 'intermediate',
       title: 'IT Asset Management Dashboard',
       summary: 'An interactive dashboard tracking IT assets via the Snipe-IT API — visualizing allocation, lifecycle, and refresh cycles.',
       tech: ['Snipe-IT API', 'Python', 'Power BI/Tableau'],
@@ -2581,32 +2581,6 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
     },
     // ===== BEGINNER PROJECTS =====
     {
-      id: 'it-6', path: 'tech-it', level: 'beginner',
-      title: 'Automated Microsoft 365 User Management with PowerShell and AI Assistance',
-      summary: 'PowerShell scripts that automate the most common M365 admin tasks — onboarding, offboarding, license assignment — drafted and debugged with help from Google Gemini.',
-      tech: ['PowerShell', 'Microsoft 365', 'Entra ID', 'Google Gemini'],
-      skills: 'PowerShell Scripting, M365 Administration, AI-Assisted Development',
-      why: 'Showcases practical skills in cloud platform administration (Microsoft 365), scripting for automation (PowerShell), and leveraging AI for efficiency — all highly sought-after skills in modern IT support roles.',
-      useCase: 'Companies streamlining IT operations, reducing manual errors in user provisioning, and ensuring consistent security policies for employee access to cloud resources.',
-      bonus: 'Integrate the PowerShell script with Microsoft Power Automate so onboarding/offboarding flows trigger automatically from your HR system.',
-      aiAssist: 'Use Google Gemini or ChatGPT to generate initial PowerShell drafts, debug code, and explain complex M365 modules. Refine for efficiency and error handling.',
-      prompt: 'Generate a PowerShell script to automate onboarding a new user in Microsoft 365. The script should: 1) prompt for first name, last name, department; 2) create the user; 3) assign an E3 license; 4) set a temporary password and force password change; 5) add the user to a department-specific security group; 6) output a confirmation with UPN and temp password. Include error handling for existing users or licensing issues.',
-      showcase: {
-        github: 'Detailed README with setup instructions, the .ps1 script, and a screen recording of an onboarding run.',
-        linkedin: 'Post a video showing the script provisioning a new user end-to-end. Highlight the time saved.',
-        resume: 'Focus on "PowerShell scripting", "M365 administration", and "AI-augmented automation".'
-      },
-      youtube: 'rR91iLGa_aQ', ytTitle: 'Use AI to Create a Powershell Script - with Google Gemini',
-      steps: [
-        { title: 'Get a Microsoft 365 dev tenant', desc: 'Sign up for the free Microsoft 365 Developer Sandbox. It comes with sample users, Entra ID, and Power Automate already provisioned.' },
-        { title: 'Install the PowerShell modules', desc: 'Install Microsoft.Graph and Microsoft.Graph.Users in PowerShell 7. Connect-MgGraph with the right scopes (User.ReadWrite.All, Group.ReadWrite.All).' },
-        { title: 'Draft the onboarding script with AI', desc: 'Paste the AI prompt below into Gemini or ChatGPT. Iterate until the script handles existing users, license shortages, and missing groups gracefully.' },
-        { title: 'Build the offboarding counterpart', desc: 'Write the offboarding script: disable account, revoke sessions, remove licenses, forward email to manager, archive OneDrive.' },
-        { title: 'Add logging and idempotency', desc: 'Log every action to a CSV. Make the scripts safe to re-run (skip steps already completed). This is what production-grade automation looks like.' },
-        { title: 'Record the demo', desc: 'Screen-record an end-to-end onboarding + offboarding run against your dev tenant. Embed the GIF in your README.' }
-      ]
-    },
-    {
       id: 'cy-4', path: 'cyber', level: 'beginner',
       title: 'AI-Powered SOC Analyst Agent Home Lab',
       summary: 'A beginner-friendly home lab that pairs Kali + Ubuntu VMs with an AI penetration-testing agent — your first hands-on security project that produces real artifacts.',
@@ -2734,6 +2708,59 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         { title: 'Handle tool calls', desc: 'When the LLM responds with a tool call, execute the function, capture the result, and feed it back as the next message. This is the heart of an agent.' },
         { title: 'Add a second tool + memory', desc: 'Add a calculator tool. Store the conversation history in a list so the agent can reference earlier turns. Cap history length so context doesn\'t blow up.' },
         { title: 'Demo and document', desc: 'Record a session where the agent uses both tools to answer a question that requires reasoning ("What\'s the temperature in Miami in Celsius?"). Push the code with a clean README.' }
+      ]
+    },
+    // ===== HELP DESK — replacements for moved hd-1, hd-3 (entry-level no-code) =====
+    {
+      id: 'hd-4', path: 'helpdesk', level: 'beginner',
+      title: 'Microsoft Forms + Power Automate Ticket Routing System',
+      summary: 'A complete no-code ticket intake system — Microsoft Forms collects the request, Power Automate routes it to the right tier, and SharePoint stores the audit trail.',
+      tech: ['Microsoft Forms', 'Power Automate', 'SharePoint', 'Outlook'],
+      skills: 'Low-Code Automation, Service Desk Workflows, Microsoft 365',
+      why: 'Most help-desk teams in 2026 run on Microsoft 365. Showing you can deliver a working ticketing flow with NO code proves you can be useful on day one — without waiting for a developer to spin up Jira or ServiceNow.',
+      useCase: 'A 50-person company that wants its employees to submit IT tickets through a simple form and have them auto-route to the right Tier-1 technician based on category and urgency.',
+      bonus: 'Add an AI Builder action that auto-categorizes free-text descriptions into Hardware / Software / Access / Other before routing.',
+      aiAssist: 'Use ChatGPT to draft the Power Automate "Switch" expressions for conditional routing, and to suggest realistic test ticket data for QA.',
+      prompt: 'I am building a Power Automate flow triggered by a Microsoft Form submission. Help me write a Switch expression that routes tickets based on the "Category" field — Hardware to Tier-2, Software to Tier-1, Access/Permissions to a security mailbox.',
+      showcase: {
+        github: 'Export the flow as a Power Automate solution package + a README explaining the architecture and SLA logic.',
+        linkedin: 'Post a 60-second screen recording of an end-to-end ticket: form submission → routed email → SharePoint entry.',
+        resume: 'Focus on "Low-code automation", "Microsoft 365 service desk", and "SLA-driven routing".'
+      },
+      youtube: 'hS6KzlcRfU0', ytTitle: 'Create a Ticketing System in SharePoint with Power Automate',
+      steps: [
+        { title: 'Get a Microsoft 365 dev tenant', desc: 'Sign up for the free Microsoft 365 Developer Sandbox. It includes Forms, Power Automate, SharePoint, and Outlook with sample users.' },
+        { title: 'Build the intake form', desc: 'Create a Microsoft Form with: Requester Name, Email, Category (Hardware/Software/Access/Other), Urgency (Low/Medium/High), Description.' },
+        { title: 'Create the SharePoint list', desc: 'Build a "IT Tickets" list with matching columns + Status (Open/In Progress/Resolved) + Assigned To. This is your ticket database.' },
+        { title: 'Build the routing flow', desc: 'In Power Automate, trigger on form submit. Use a Switch action on Category to set Assigned To. Write the row to SharePoint.' },
+        { title: 'Add SLA notifications', desc: 'Add an Outlook step: email the assignee with a deep link to the ticket. Add a "Delay until" branch that escalates to a manager if Status is still "Open" past the SLA window.' },
+        { title: 'Test and document', desc: 'Submit 10 test tickets across categories. Verify routing, escalation, and SharePoint entries. Record the demo + write a clear README.' }
+      ]
+    },
+    {
+      id: 'hd-5', path: 'helpdesk', level: 'beginner',
+      title: 'Windows Autopilot Device Enrollment with Intune',
+      summary: 'A zero-touch deployment flow — ship a sealed laptop to a remote employee and have it self-configure into your tenant on first sign-in, with compliance enforced.',
+      tech: ['Microsoft Intune', 'Windows Autopilot', 'Entra ID', 'Microsoft 365'],
+      skills: 'MDM, Zero-Touch Provisioning, Endpoint Compliance',
+      why: 'Tier-1.5 / Tier-2 help-desk roles in 2026 increasingly require Intune skills as on-prem AD shrinks and cloud-managed endpoints take over. A working Autopilot demo signals you can run a modern endpoint operation, not just unbox laptops.',
+      useCase: 'A growing startup that ships laptops directly to remote new hires and needs them to be ready-to-use the moment the box is opened — no IT-shipped images, no manual setup.',
+      bonus: 'Add a compliance policy that auto-quarantines devices missing BitLocker or running an outdated OS, plus an app-protection policy that auto-installs corporate apps on first sign-in.',
+      aiAssist: 'Use ChatGPT to translate plain-English compliance requirements into the right Intune policy settings, and to debug Autopilot enrollment errors during testing.',
+      prompt: 'I am setting up Windows Autopilot in Intune. Help me write a compliance policy that requires BitLocker, screen lock under 5 minutes, and a Windows 11 22H2+ build. Explain each setting in plain English first, then give me the exact path in the Intune admin console.',
+      showcase: {
+        github: 'README documenting the deployment profile, compliance policy, and ESP config — plus screenshots of an end-to-end provisioning run.',
+        linkedin: 'Post a screen recording of a fresh laptop self-enrolling into your tenant on first sign-in — "ZTP in action".',
+        resume: 'Focus on "Microsoft Intune", "Windows Autopilot / Zero-Touch Provisioning", and "Endpoint compliance".'
+      },
+      youtube: '512lFCyGkVs', ytTitle: 'you need to learn Windows Autopilot right now! | Full Tutorial',
+      steps: [
+        { title: 'Get an Intune trial + dev tenant', desc: 'Sign up for the M365 Developer Sandbox; it ships with Intune licenses. Verify you can reach the Intune admin center.' },
+        { title: 'Register a test device', desc: 'Use a spare laptop or Hyper-V VM. Capture the hardware hash (Get-WindowsAutopilotInfo) and upload it to Intune as an Autopilot device.' },
+        { title: 'Build the deployment profile', desc: 'Create a User-Driven Autopilot profile: hide EULA, hide privacy settings, auto-join Entra ID, assign a primary user.' },
+        { title: 'Write the compliance policy', desc: 'Use the AI prompt below. Require BitLocker, screen lock, OS version. Assign to All Devices.' },
+        { title: 'Add an Enrollment Status Page', desc: 'Configure ESP to block sign-in until apps + policies are applied. Pin Microsoft 365 apps + a default browser to deploy on first run.' },
+        { title: 'Reset and demo', desc: 'Wipe the test device. Power on, connect to Wi-Fi, sign in. Watch it self-configure end to end. Record this — that\'s your portfolio asset.' }
       ]
     }
   ];

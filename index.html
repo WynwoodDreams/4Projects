@@ -800,73 +800,108 @@
   .path-header {
     display: grid;
     grid-template-columns: 1fr auto;
-    grid-template-rows: auto auto;
-    gap: 6px 36px;
-    align-items: center;
-    margin: 36px 0 22px;
-    padding: 22px 4px 20px;
+    grid-template-rows: auto auto auto;
+    column-gap: 36px;
+    row-gap: 8px;
+    align-items: start;
+    margin: 44px 0 26px;
+    padding: 18px 0 22px;
     background: none;
     border: none;
     border-radius: 0;
     position: relative;
     overflow: visible;
+    border-top: 1px solid rgba(255,255,255,0.10);
+    border-bottom: 1px solid rgba(255,255,255,0.10);
   }
   .path-header::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
+    top: -1px; left: 0; right: 0;
     height: 1px;
     background: linear-gradient(90deg,
       var(--green) 0%,
-      rgba(0,255,133,0.55) 6%,
-      rgba(0,255,133,0.20) 18%,
-      transparent 45%);
+      rgba(0,255,133,0.65) 8%,
+      rgba(0,255,133,0.20) 22%,
+      transparent 50%);
     box-shadow: 0 0 14px var(--green-glow);
   }
   .path-header::after {
     content: '';
     position: absolute;
-    left: 0;
-    top: 0;
-    width: 6px;
-    height: 100%;
-    background: linear-gradient(180deg, var(--green) 0%, transparent 80%);
-    opacity: 0.5;
-    filter: blur(4px);
-    pointer-events: none;
+    bottom: -1px; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent 50%,
+      rgba(0,255,133,0.20) 78%,
+      rgba(0,255,133,0.65) 92%,
+      var(--green) 100%);
+  }
+  .path-header-eyebrow {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 4px;
+  }
+  .path-index { color: var(--green); text-shadow: 0 0 8px var(--green-glow); font-weight: 600; }
+  .path-count {
+    padding: 4px 10px;
+    border: 1px solid rgba(0,255,133,0.35);
+    border-radius: 999px;
+    font-size: 9.5px;
+    color: var(--green);
+    background: rgba(0,255,133,0.06);
+    text-shadow: 0 0 6px var(--green-glow);
   }
   .path-title {
     grid-column: 1;
-    grid-row: 1;
-    font-family: 'Inter', sans-serif;
-    font-size: 30px;
+    grid-row: 2;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 26px;
     font-weight: 700;
-    letter-spacing: -0.035em;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     color: var(--ink);
-    line-height: 1.05;
+    line-height: 1.1;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .path-title .path-name {
+    background: linear-gradient(180deg, var(--ink) 0%, var(--ink-soft) 100%);
+    -webkit-background-clip: text;
+            background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
   .path-title .icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
-    margin-right: 12px;
+    width: 30px;
+    height: 30px;
     color: var(--green);
     filter: drop-shadow(0 0 8px var(--green-glow));
-    vertical-align: -6px;
+    flex-shrink: 0;
   }
   .path-title .icon svg { width: 100%; height: 100%; stroke-width: 2; }
   .path-desc {
     grid-column: 1;
-    grid-row: 2;
+    grid-row: 3;
     font-family: 'Inter', sans-serif;
     font-size: 13.5px;
     color: var(--ink-muted);
     font-style: italic;
     letter-spacing: -0.005em;
     font-weight: 300;
-    margin-left: 40px;
+    margin-left: 44px;
     max-width: 540px;
   }
 
@@ -959,34 +994,38 @@
 
   .path-meta {
     grid-column: 2;
-    grid-row: 1 / 3;
+    grid-row: 2 / 4;
     display: flex;
-    flex-wrap: wrap;
-    gap: 26px;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 8px;
     align-self: center;
+    text-align: right;
     margin: 0;
     padding: 0;
     border-top: none;
   }
   .path-meta-item {
     display: flex;
-    flex-direction: column;
-    gap: 3px;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 10px;
   }
   .path-meta-label {
     font-family: 'JetBrains Mono', monospace;
     font-size: 9.5px;
     text-transform: uppercase;
-    letter-spacing: 0.20em;
+    letter-spacing: 0.22em;
     color: var(--ink-muted);
     font-weight: 500;
   }
   .path-meta-value {
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
     color: var(--ink);
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-weight: 500;
+    letter-spacing: 0.02em;
   }
 
   .bookmark-btn {
@@ -2125,29 +2164,40 @@
     /* Path header banner — stack vertically on mobile */
     .path-header {
       grid-template-columns: 1fr;
-      grid-template-rows: auto auto auto;
-      gap: 6px 0;
-      margin: 24px 0 16px;
-      padding: 18px 4px 14px;
+      grid-template-rows: auto auto auto auto;
+      row-gap: 8px;
+      margin: 32px 0 18px;
+      padding: 14px 0 18px;
     }
-    .path-title { grid-column: 1; grid-row: 1; font-size: 24px; }
-    .path-title .icon { width: 22px; height: 22px; margin-right: 8px; vertical-align: -4px; }
+    .path-header-eyebrow { grid-column: 1; grid-row: 1; font-size: 9.5px; letter-spacing: 0.20em; }
+    .path-title { grid-column: 1; grid-row: 2; font-size: 20px; gap: 10px; }
+    .path-title .icon { width: 22px; height: 22px; }
     .path-desc {
       grid-column: 1;
-      grid-row: 2;
+      grid-row: 3;
       font-size: 12.5px;
-      margin-left: 30px;
+      margin-left: 32px;
+      max-width: 100%;
     }
     .path-meta {
       grid-column: 1;
-      grid-row: 3;
+      grid-row: 4;
       width: 100%;
-      gap: 18px;
-      margin-top: 10px;
-      padding-top: 12px;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+      padding-top: 10px;
+      text-align: left;
       border-top: 1px dashed var(--line);
     }
-    .path-meta-item { flex: 1 1 100%; }
+    .path-meta-item {
+      flex: 1 1 100%;
+      flex-direction: row;
+      justify-content: flex-start;
+      gap: 12px;
+    }
+    .path-meta-label { min-width: 56px; }
+    .path-meta-value { font-size: 11.5px; flex: 1; }
   }
 
   /* Very small phones */
@@ -3579,15 +3629,24 @@ ${tags} #BuildingInPublic #OpenToWork`;
           items: [...filtered].sort(sortByTitle)
         }];
 
-    container.innerHTML = groups.map(g => `
+    const totalGroups = groups.length;
+    container.innerHTML = groups.map((g, gi) => {
+      const idx = String(gi + 1).padStart(2, '0');
+      const total = String(totalGroups).padStart(2, '0');
+      const count = g.items.length;
+      return `
       <div class="path-group">
         <div class="path-header">
-          <div class="path-title"><span class="icon">${iconFor(g.path.id)}</span>${g.path.name}</div>
+          <div class="path-header-eyebrow">
+            <span class="path-index">PATH ${idx} / ${total}</span>
+            <span class="path-count">${count} ${count === 1 ? 'PROJECT' : 'PROJECTS'}</span>
+          </div>
+          <div class="path-title"><span class="icon">${iconFor(g.path.id)}</span><span class="path-name">${g.path.name}</span></div>
           <div class="path-desc">${g.path.desc}</div>
           ${g.path.salary ? `
           <div class="path-meta">
-            <div class="path-meta-item"><span class="path-meta-label">Miami / FL Salary</span><span class="path-meta-value">${g.path.salary}</span></div>
-            <div class="path-meta-item"><span class="path-meta-label">Typical Roles</span><span class="path-meta-value">${g.path.roles.join(' · ')}</span></div>
+            <div class="path-meta-item"><span class="path-meta-label">Salary</span><span class="path-meta-value">${g.path.salary}</span></div>
+            <div class="path-meta-item"><span class="path-meta-label">Roles</span><span class="path-meta-value">${g.path.roles.join(' · ')}</span></div>
           </div>
           ` : ''}
         </div>
@@ -3595,7 +3654,8 @@ ${tags} #BuildingInPublic #OpenToWork`;
           ${g.items.map(p => cardHTML(p)).join('')}
         </div>
       </div>
-    `).join('');
+    `;
+    }).join('');
 
     // Attach card events
     container.querySelectorAll('.project-card').forEach(card => {

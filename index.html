@@ -1645,29 +1645,37 @@
     box-shadow: 0 0 18px var(--green-glow), 0 0 4px var(--green);
     background: rgba(0,255,133,0.08);
   }
-  /* Modal back-to-top — sits above modal scroll, fixed in viewport */
+  /* Modal back-to-top — fixed at body level so it stays put while modal scrolls */
   #modal-top {
     position: fixed;
     bottom: calc(28px + env(safe-area-inset-bottom));
     right: 20px;
-    width: 44px;
-    height: 44px;
-    background: rgba(8, 17, 26, 0.95);
+    width: 48px;
+    height: 48px;
+    background: rgba(8, 17, 26, 0.96);
     border: 1px solid var(--green);
     border-radius: 50%;
     color: var(--green);
-    font-size: 20px;
+    font-size: 22px;
     display: none;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 0 14px var(--green-glow), 0 0 4px var(--green);
-    z-index: 1100;
-    transition: opacity 0.25s, transform 0.2s;
+    box-shadow: 0 0 16px var(--green-glow), 0 0 6px var(--green), 0 6px 18px rgba(0,0,0,0.55);
+    z-index: 1200;
+    transition: opacity 0.25s ease, transform 0.2s ease, box-shadow 0.2s ease;
     opacity: 0;
+    -webkit-tap-highlight-color: transparent;
   }
-  #modal-top.visible { display: flex; opacity: 1; }
-  #modal-top:hover { background: rgba(0,255,133,0.10); transform: translateY(-2px); }
+  body.modal-open #modal-top { display: flex; }
+  body.modal-open #modal-top.visible { opacity: 1; }
+  #modal-top:hover {
+    background: rgba(0,255,133,0.12);
+    transform: translateY(-2px);
+    box-shadow: 0 0 22px var(--green-glow), 0 0 8px var(--green);
+  }
+  /* Hide the page-level back-to-top while modal is open */
+  body.modal-open #back-to-top { display: none !important; }
 
   /* ===== VIDEO EMBED ===== */
   .video-wrap {
@@ -2022,8 +2030,8 @@
 <!-- MODAL -->
 <div class="modal-backdrop" id="modal-backdrop">
   <div class="modal" id="modal"></div>
-  <button id="modal-top" title="Back to top" aria-label="Back to top">↑</button>
 </div>
+<button id="modal-top" title="Back to top" aria-label="Back to top">↑</button>
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
@@ -2035,7 +2043,7 @@
       <div class="suggest-eyebrow"><span class="dot"></span>SUGGEST_A_PROJECT</div>
       <h2>Got a project idea worth <span class="suggest-accent">building?</span></h2>
       <p>Send your idea, the role it targets, and what makes it stand out. The best suggestions get added to the guide.</p>
-      <a href="mailto:christianjort@gmail.com?subject=Project%20Suggestion%20%E2%80%94%20Tech%20Portfolio%20%C2%B7%20Job%20Stats%20Miami&amp;body=Project%20idea%3A%0A%0ATarget%20role%2Fpath%3A%0A%0AWhy%20it%20matters%20in%202026%3A%0A%0ATech%20stack%3A%0A%0ALinks%20%2F%20references%3A%0A" class="btn-primary suggest-btn">
+      <a href="#" data-mail="suggest" class="btn-primary suggest-btn">
         Suggest a project
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
       </a>
@@ -2048,31 +2056,31 @@
   <div class="container">
     <h3>Deploy Cheatsheet <span>Free-tier hosting — sorted by what you're building</span></h3>
     <div class="deploy-grid">
-      <a class="deploy-card" href="https://vercel.com" target="_blank" rel="noopener">
+      <a class="deploy-card" href="https://vercel.com" target="_blank" rel="noopener noreferrer">
         <div class="deploy-card-type">Frontend</div>
         <div class="deploy-card-name">Vercel</div>
         <div class="deploy-card-why">Deploy from GitHub in under 60 seconds. Best for React, Next.js, or any static site.</div>
         <span class="deploy-card-tag">vercel.com →</span>
       </a>
-      <a class="deploy-card" href="https://railway.app" target="_blank" rel="noopener">
+      <a class="deploy-card" href="https://railway.app" target="_blank" rel="noopener noreferrer">
         <div class="deploy-card-type">Backend / API</div>
         <div class="deploy-card-name">Railway</div>
         <div class="deploy-card-why">Spin up a Python or Node server + a Postgres database in one place. No credit card needed to start.</div>
         <span class="deploy-card-tag">railway.app →</span>
       </a>
-      <a class="deploy-card" href="https://render.com" target="_blank" rel="noopener">
+      <a class="deploy-card" href="https://render.com" target="_blank" rel="noopener noreferrer">
         <div class="deploy-card-type">Full-Stack</div>
         <div class="deploy-card-name">Render</div>
         <div class="deploy-card-why">Runs Docker containers, managed databases, and web services. Great for full-stack projects with a backend.</div>
         <span class="deploy-card-tag">render.com →</span>
       </a>
-      <a class="deploy-card" href="https://workers.cloudflare.com" target="_blank" rel="noopener">
+      <a class="deploy-card" href="https://workers.cloudflare.com" target="_blank" rel="noopener noreferrer">
         <div class="deploy-card-type">Serverless</div>
         <div class="deploy-card-name">Cloudflare Workers</div>
         <div class="deploy-card-why">Run lightweight APIs at the edge for free. Zero cold starts, global coverage, ideal for automation scripts.</div>
         <span class="deploy-card-tag">workers.cloudflare.com →</span>
       </a>
-      <a class="deploy-card" href="https://huggingface.co/spaces" target="_blank" rel="noopener">
+      <a class="deploy-card" href="https://huggingface.co/spaces" target="_blank" rel="noopener noreferrer">
         <div class="deploy-card-type">AI / ML Models</div>
         <div class="deploy-card-name">Hugging Face Spaces</div>
         <div class="deploy-card-why">Free GPU-backed hosting for AI demos. Build a Gradio or Streamlit UI and share a live link instantly.</div>
@@ -2106,15 +2114,15 @@
       <div class="footer-col">
         <h5>Connect</h5>
         <ul class="footer-connect">
-          <li><a href="mailto:christianjort@gmail.com">christianjort@gmail.com</a></li>
-          <li><a href="mailto:christianjort@gmail.com?subject=Project%20Suggestion%20%E2%80%94%20Tech%20Portfolio%20%C2%B7%20Job%20Stats%20Miami">Suggest a project</a></li>
-          <li><a href="mailto:christianjort@gmail.com?subject=Tech%20Portfolio%20%E2%80%94%20Feedback">Send feedback</a></li>
+          <li><a href="#" data-mail="contact" data-mail-show="1">Contact</a></li>
+          <li><a href="#" data-mail="suggest">Suggest a project</a></li>
+          <li><a href="#" data-mail="feedback">Send feedback</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <div>© 2026 · buildersbench.dev · brought to you by <a href="https://jobstatsmiami.com" target="_blank" rel="noopener">Job Stats Miami</a></div>
-      <div><a href="mailto:christianjort@gmail.com">christianjort@gmail.com</a></div>
+      <div>© 2026 · buildersbench.dev · brought to you by <a href="https://jobstatsmiami.com" target="_blank" rel="noopener noreferrer">Job Stats Miami</a></div>
+      <div><a href="#" data-mail="contact" data-mail-show="1"></a></div>
     </div>
   </div>
 </footer>
@@ -3865,6 +3873,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     backdrop.classList.add('open');
     backdrop.scrollTop = 0;
     document.getElementById('modal-top').classList.remove('visible');
+    document.body.classList.add('modal-open');
     document.body.style.overflow = 'hidden';
 
     // Events
@@ -3961,6 +3970,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
   function closeModal() {
     document.getElementById('modal-backdrop').classList.remove('open');
     document.getElementById('modal-top').classList.remove('visible');
+    document.body.classList.remove('modal-open');
     document.body.style.overflow = '';
   }
   const modalBackdrop = document.getElementById('modal-backdrop');
@@ -3968,11 +3978,13 @@ ${tags} #BuildingInPublic #OpenToWork`;
   modalBackdrop.addEventListener('click', (e) => {
     if (e.target.id === 'modal-backdrop') closeModal();
   });
-  modalBackdrop.addEventListener('scroll', () => {
-    modalTopBtn.classList.toggle('visible', modalBackdrop.scrollTop > 400);
-  }, { passive: true });
-  modalTopBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
+  // Track scroll inside the modal — show button after a small scroll offset
+  // so it's available the moment the user starts scrolling, not buried halfway.
+  const updateModalTopVisibility = () => {
+    modalTopBtn.classList.toggle('visible', modalBackdrop.scrollTop > 200);
+  };
+  modalBackdrop.addEventListener('scroll', updateModalTopVisibility, { passive: true });
+  modalTopBtn.addEventListener('click', () => {
     modalBackdrop.scrollTo({ top: 0, behavior: 'smooth' });
   });
   document.addEventListener('keydown', (e) => {
@@ -4171,6 +4183,28 @@ ${tags} #BuildingInPublic #OpenToWork`;
   renderAll();
   mountHero();
   wireFooterPaths();
+
+  // Email assembly (anti-scrape) — pieces never appear together in HTML source
+  const MAIL_USER = ['hel', 'lo'].join('');
+  const MAIL_DOMAIN = ['buildersbench', 'dev'].join('.');
+  const MAIL_ADDR = MAIL_USER + String.fromCharCode(64) + MAIL_DOMAIN;
+  const MAIL_SUBJECTS = {
+    suggest:  'Project Suggestion — buildersbench.dev',
+    feedback: 'buildersbench.dev — Feedback',
+    contact:  'buildersbench.dev — Hello'
+  };
+  const MAIL_BODIES = {
+    suggest: 'Project idea:\n\nTarget role/path:\n\nWhy it matters in 2026:\n\nTech stack:\n\nLinks / references:\n'
+  };
+  document.querySelectorAll('a[data-mail]').forEach(a => {
+    const kind = a.dataset.mail;
+    const params = new URLSearchParams();
+    if (MAIL_SUBJECTS[kind]) params.set('subject', MAIL_SUBJECTS[kind]);
+    if (MAIL_BODIES[kind])   params.set('body',    MAIL_BODIES[kind]);
+    const qs = params.toString();
+    a.href = 'mailto:' + MAIL_ADDR + (qs ? '?' + qs : '');
+    if (a.dataset.mailShow && !a.textContent.trim()) a.textContent = MAIL_ADDR;
+  });
 
   const btt = document.getElementById('back-to-top');
   window.addEventListener('scroll', () => {

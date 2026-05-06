@@ -394,6 +394,142 @@
   .feed-item.event-launched { border-left: 2px solid var(--teal); }
   .feed-item.event-interview { border-left: 2px solid var(--green-2); }
 
+  /* ===== PATH QUIZ ===== */
+  .hero-quiz { min-height: 320px; }
+  .quiz-stage { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-step-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+  .quiz-question {
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+    margin-bottom: 2px;
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: 7px; }
+  .quiz-option {
+    text-align: left;
+    padding: 11px 14px;
+    background: rgba(11,20,26,0.55);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px;
+    cursor: pointer;
+    transition: border-color 0.18s, background 0.18s, transform 0.18s, box-shadow 0.18s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    line-height: 1.35;
+  }
+  .quiz-option:hover {
+    border-color: var(--green);
+    background: rgba(0,255,133,0.06);
+    transform: translateX(2px);
+    box-shadow: 0 0 16px -6px var(--green-glow);
+  }
+  .quiz-option .qopt-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+    text-shadow: 0 0 6px var(--green-glow);
+    width: 16px;
+    flex-shrink: 0;
+  }
+  .quiz-back {
+    margin-top: 6px;
+    background: none;
+    border: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    cursor: pointer;
+    padding: 4px 0;
+    align-self: flex-start;
+    transition: color 0.15s;
+  }
+  .quiz-back:hover { color: var(--green); }
+
+  .quiz-result-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.20em;
+    color: var(--green);
+    text-shadow: 0 0 8px var(--green-glow);
+  }
+  .quiz-result-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+  .quiz-result-why {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .quiz-result-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--ink-muted);
+    letter-spacing: 0.06em;
+    padding: 10px 0;
+    border-top: 1px dashed var(--line-strong);
+    border-bottom: 1px dashed var(--line-strong);
+  }
+  .quiz-result-meta strong { color: var(--green); font-weight: 600; margin-right: 4px; }
+  .quiz-cta-row { display: flex; gap: 8px; margin-top: 6px; }
+  .quiz-cta-primary {
+    flex: 1;
+    padding: 12px 14px;
+    background: linear-gradient(180deg, rgba(0,255,133,0.20), rgba(0,255,133,0.08));
+    border: 1px solid var(--green);
+    border-radius: 10px;
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+    cursor: pointer;
+    text-shadow: 0 0 8px var(--green-glow);
+    transition: background 0.18s, box-shadow 0.18s, transform 0.18s;
+  }
+  .quiz-cta-primary:hover {
+    background: linear-gradient(180deg, rgba(0,255,133,0.32), rgba(0,255,133,0.16));
+    box-shadow: 0 0 22px -4px var(--green-glow);
+    transform: translateY(-1px);
+  }
+  .quiz-retake {
+    padding: 12px 14px;
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--ink-soft);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .quiz-retake:hover { border-color: var(--ink); color: var(--ink); }
+
   /* ===== TICKER (hidden — no scroll) ===== */
   .ticker-strip { display: none !important; }
 
@@ -1993,14 +2129,12 @@
           Industry-relevant builds across seven career tracks — curated for students chasing internships, first roles, and career pivots. Each project ships with real-world context, showcase tips, and AI prompts.
         </p>
       </div>
-      <aside class="hero-side" aria-label="Live student activity feed">
+      <aside class="hero-side hero-quiz" aria-label="Find your starting path quiz">
         <div class="hero-side-label">
-          <span class="live"><span class="live-dot"></span>Live · Build Feed</span>
+          <span class="live"><span class="live-dot"></span>Find Your Path · 30s Quiz</span>
           <span class="clock" id="hero-clock">--:--</span>
         </div>
-        <div class="feed-window">
-          <div class="feed-track" id="feed-track"></div>
-        </div>
+        <div class="quiz-stage" id="quiz-stage"></div>
       </aside>
     </div>
     <div class="ticker-strip" aria-label="Trending tech in 2026 hiring">
@@ -3839,55 +3973,133 @@ ${tags} #BuildingInPublic #OpenToWork`;
   }
 
   // ===== HERO MOTION =====
-  const FEED_EVENTS = [
-    { t: '2m',  who: 'Maya R.',   verb: 'shipped',     proj: 'RAG Doc Assistant',   tag: 'AI',    type: 'shipped'   },
-    { t: '6m',  who: 'Devon K.',  verb: 'deployed',    proj: 'Cloud Lab v2',        tag: 'CLOUD', type: 'launched'  },
-    { t: '11m', who: 'Priya S.',  verb: 'landed @',    proj: 'Stripe',              tag: 'SE',    type: 'hired'     },
-    { t: '18m', who: 'Andre L.',  verb: 'shipped',     proj: 'SOC Threat Monitor',  tag: 'SEC',   type: 'shipped'   },
-    { t: '24m', who: 'Lina T.',   verb: 'launched',    proj: 'Sales Dashboard',     tag: 'DATA',  type: 'launched'  },
-    { t: '31m', who: 'Jamal P.',  verb: 'shipped',     proj: 'IT Helpdesk Bot',     tag: 'IT',    type: 'shipped'   },
-    { t: '42m', who: 'Rosa V.',   verb: 'interview @', proj: 'Anthropic',           tag: 'AI',    type: 'interview' },
-    { t: '1h',  who: 'Theo W.',   verb: 'shipped',     proj: 'Vector Search API',   tag: 'AI',    type: 'shipped'   },
-    { t: '1h',  who: 'Kai N.',    verb: 'intern @',    proj: 'AWS',                 tag: 'CLOUD', type: 'hired'     },
-    { t: '2h',  who: 'Zoe B.',    verb: 'launched',    proj: 'Kube CI Pipeline',    tag: 'DEVOPS',type: 'launched'  },
-    { t: '3h',  who: 'Imani O.',  verb: 'shipped',     proj: 'Live Captioner',      tag: 'CS',    type: 'shipped'   },
-    { t: '4h',  who: 'Owen H.',   verb: 'offer @',     proj: 'Datadog',             tag: 'SRE',   type: 'hired'     },
-  ];
-  const TICKER_ITEMS = [
-    { name: 'Python',     change: '+18%', kind: 'up'  },
-    { name: 'TypeScript', change: '+24%', kind: 'up'  },
-    { name: 'LangChain',  change: '+44%', kind: 'hot' },
-    { name: 'React',      change: '+12%', kind: 'up'  },
-    { name: 'AWS',        change: '+15%', kind: 'up'  },
-    { name: 'Rust',       change: '+32%', kind: 'hot' },
-    { name: 'Kubernetes', change: '+21%', kind: 'up'  },
-    { name: 'Next.js',    change: '+28%', kind: 'up'  },
-    { name: 'PostgreSQL', change: '+9%',  kind: 'up'  },
-    { name: 'Tailwind',   change: '+22%', kind: 'up'  },
-    { name: 'Go',         change: '+14%', kind: 'up'  },
-    { name: 'Terraform',  change: '+19%', kind: 'up'  },
-    { name: 'FastAPI',    change: '+27%', kind: 'up'  },
-    { name: 'Docker',     change: '+11%', kind: 'up'  },
-    { name: 'pgvector',   change: '+58%', kind: 'hot' },
-    { name: 'GraphQL',    change: '+6%',  kind: 'up'  },
+  // ===== PATH QUIZ =====
+  const QUIZ_QUESTIONS = [
+    {
+      key: 'goal',
+      q: "What's your main goal right now?",
+      options: [
+        { val: 'internship', label: 'Land an internship' },
+        { val: 'first-job',  label: 'Get my first full-time role' },
+        { val: 'pivot',      label: 'Pivot careers into tech' }
+      ]
+    },
+    {
+      key: 'time',
+      q: 'How much time can you put in each week?',
+      options: [
+        { val: 'weekend',  label: 'A weekend here and there' },
+        { val: 'weeks',    label: 'A few hours every week' },
+        { val: 'longhaul', label: 'Going deep — weeks of focus' }
+      ]
+    },
+    {
+      key: 'code',
+      q: 'How comfortable are you with code?',
+      options: [
+        { val: 'none',  label: "New to it — prefer no-code/low-code" },
+        { val: 'some',  label: "Some — I've done a tutorial or two" },
+        { val: 'a-lot', label: 'Comfortable — I can ship features' }
+      ]
+    }
   ];
 
+  const QUIZ_WEIGHTS = {
+    code: {
+      none:    { helpdesk: 5, 'tech-it': 3, data: 1 },
+      some:    { data: 4, 'tech-it': 2, cloud: 2, helpdesk: 2, cyber: 1 },
+      'a-lot': { ai: 3, swe: 3, cs: 3, cloud: 2, cyber: 2 }
+    },
+    goal: {
+      internship:  { swe: 2, ai: 2, cs: 2, data: 1 },
+      'first-job': { helpdesk: 2, 'tech-it': 2, data: 1, swe: 1 },
+      pivot:       { cloud: 2, cyber: 2, data: 1, ai: 1 }
+    }
+  };
+
+  const TIME_TO_LEVEL = { weekend: 'beginner', weeks: 'intermediate', longhaul: 'advanced' };
+
+  const PATH_REASON = {
+    ai:        "Highest-paying track in 2026 — and you're ready to build agentic systems that aren't just chatbots.",
+    cloud:     "Cloud skills are the spine of every modern company. Recession-proof and remote-friendly.",
+    cs:        "Research-grade projects that prove you can think rigorously — perfect for technical interviews.",
+    cyber:     "Defense roles are exploding in 2026, and the skills transfer to any company that ships software.",
+    data:      "The widest doorway into tech. Visual, valuable, and in demand at every company size.",
+    helpdesk:  "A real entry point into tech without needing to code. Get hired, then level up from inside.",
+    swe:       "Production-grade systems that scale. The most-needed, always-paid skill in tech.",
+    'tech-it': "Hardware meets automation — the operations backbone every team needs."
+  };
+
+  let quizState = { step: 0, answers: {} };
+
+  function renderQuiz() {
+    const stage = document.getElementById('quiz-stage');
+    if (!stage) return;
+
+    if (quizState.step < QUIZ_QUESTIONS.length) {
+      const q = QUIZ_QUESTIONS[quizState.step];
+      stage.innerHTML = `
+        <div class="quiz-step-meta">Step ${quizState.step + 1} of ${QUIZ_QUESTIONS.length}</div>
+        <div class="quiz-question">${q.q}</div>
+        <div class="quiz-options">
+          ${q.options.map((opt, i) => `
+            <button class="quiz-option" data-key="${q.key}" data-val="${opt.val}">
+              <span class="qopt-num">${i + 1}.</span><span>${opt.label}</span>
+            </button>
+          `).join('')}
+        </div>
+        ${quizState.step > 0 ? '<button class="quiz-back" id="quiz-back">← Back</button>' : ''}
+      `;
+      stage.querySelectorAll('.quiz-option').forEach(btn => {
+        btn.onclick = () => {
+          quizState.answers[btn.dataset.key] = btn.dataset.val;
+          quizState.step++;
+          renderQuiz();
+        };
+      });
+      const back = document.getElementById('quiz-back');
+      if (back) back.onclick = () => { quizState.step--; renderQuiz(); };
+      return;
+    }
+
+    // Compute winner
+    const scores = {};
+    PATHS.forEach(p => { if (p.id !== 'all') scores[p.id] = 0; });
+    Object.entries(quizState.answers).forEach(([k, v]) => {
+      const w = (QUIZ_WEIGHTS[k] && QUIZ_WEIGHTS[k][v]) || {};
+      Object.entries(w).forEach(([id, pts]) => { scores[id] = (scores[id] || 0) + pts; });
+    });
+    const winner = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+    const path = PATHS.find(p => p.id === winner);
+    const level = TIME_TO_LEVEL[quizState.answers.time] || 'beginner';
+    const why = PATH_REASON[winner] || path.desc;
+
+    stage.innerHTML = `
+      <div class="quiz-result-eyebrow">RECOMMENDED PATH</div>
+      <div class="quiz-result-name">${path.name}</div>
+      <p class="quiz-result-why">${why}</p>
+      <div class="quiz-result-meta">
+        <span><strong>Salary</strong>${path.salary || 'Varies'}</span>
+        <span><strong>Start at</strong>${level}</span>
+      </div>
+      <div class="quiz-cta-row">
+        <button class="quiz-cta-primary" id="quiz-go">Show me these projects →</button>
+        <button class="quiz-retake" id="quiz-retake">Retake</button>
+      </div>
+    `;
+    document.getElementById('quiz-go').onclick = () => {
+      state.currentPath = winner;
+      renderAll();
+      document.getElementById('path-tabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+    document.getElementById('quiz-retake').onclick = () => {
+      quizState = { step: 0, answers: {} };
+      renderQuiz();
+    };
+  }
+
   function mountHero() {
-    const feed = document.getElementById('feed-track');
-    if (feed) {
-      const row = e => `
-        <div class="feed-item event-${e.type}">
-          <div class="feed-time">${e.t}</div>
-          <div class="feed-text"><strong>${e.who}</strong> ${e.verb} <em>${e.proj}</em></div>
-          <div class="feed-tag">${e.tag}</div>
-        </div>`;
-      feed.innerHTML = FEED_EVENTS.map(row).join('') + FEED_EVENTS.map(row).join('');
-    }
-    const ticker = document.getElementById('ticker-track');
-    if (ticker) {
-      const item = i => `<span class="ticker-item"><span class="skill">${i.name}</span><span class="change ${i.kind}">${i.change}</span></span>`;
-      ticker.innerHTML = TICKER_ITEMS.map(item).join('') + TICKER_ITEMS.map(item).join('');
-    }
+    renderQuiz();
     const clockEl = document.getElementById('hero-clock');
     if (clockEl) {
       const tick = () => {

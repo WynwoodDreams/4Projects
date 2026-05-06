@@ -527,6 +527,19 @@
     color: var(--ink-soft);
     transition: color 0.2s;
   }
+  .path-tab.path-tab-jump {
+    border-style: dashed;
+    border-color: rgba(0,255,133,0.35);
+    color: var(--green);
+    margin-left: 4px;
+  }
+  .path-tab.path-tab-jump .icon { color: var(--green); }
+  .path-tab.path-tab-jump:hover {
+    border-style: solid;
+    border-color: var(--green);
+    background: rgba(0,255,133,0.08);
+    box-shadow: 0 0 0 1px var(--green), 0 0 18px -4px var(--green-glow);
+  }
   .path-tab .icon svg { width: 100%; height: 100%; stroke-width: 2; }
   .path-tab:hover .icon { color: var(--green); }
   .path-tab.active .icon { color: var(--green); filter: drop-shadow(0 0 6px var(--green-glow)); }
@@ -1378,6 +1391,84 @@
     color: var(--ink);
   }
 
+  /* ===== DEPLOY CHEATSHEET ===== */
+  .deploy-section {
+    padding: 0 0 48px;
+    position: relative;
+    z-index: 2;
+  }
+  .deploy-section h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 16px;
+  }
+  .deploy-section h3 span {
+    color: var(--ink-muted);
+    font-weight: 400;
+    margin-left: 10px;
+    letter-spacing: 0.06em;
+    text-transform: none;
+    font-size: 12px;
+  }
+  .deploy-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+  }
+  .deploy-card {
+    display: block;
+    text-decoration: none;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 10px;
+    padding: 14px 16px;
+    transition: border-color 0.2s, background 0.2s, transform 0.2s, box-shadow 0.2s;
+  }
+  .deploy-card:hover {
+    border-color: rgba(0,255,133,0.45);
+    background: rgba(0,255,133,0.05);
+    transform: translateY(-2px);
+    box-shadow: 0 0 14px rgba(0,255,133,0.18);
+  }
+  .deploy-card-type {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 6px;
+  }
+  .deploy-card-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .deploy-card-why {
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .deploy-card-tag {
+    display: inline-block;
+    margin-top: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: rgba(0,255,133,0.1);
+    color: var(--green);
+    border: 1px solid rgba(0,255,133,0.25);
+  }
+  @media (max-width: 900px) { .deploy-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 580px) { .deploy-grid { grid-template-columns: 1fr 1fr; } }
+
   /* ===== SUGGEST A PROJECT ===== */
   .suggest-section {
     padding: 24px 0 56px;
@@ -1872,6 +1963,45 @@
       <a href="mailto:christianjort@gmail.com?subject=Project%20Suggestion%20%E2%80%94%20Tech%20Portfolio%20%C2%B7%20Job%20Stats%20Miami&amp;body=Project%20idea%3A%0A%0ATarget%20role%2Fpath%3A%0A%0AWhy%20it%20matters%20in%202026%3A%0A%0ATech%20stack%3A%0A%0ALinks%20%2F%20references%3A%0A" class="btn-primary suggest-btn">
         Suggest a project
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- DEPLOY CHEATSHEET -->
+<section class="deploy-section" id="deploy-cheatsheet">
+  <div class="container">
+    <h3>Deploy Cheatsheet <span>Free-tier hosting — sorted by what you're building</span></h3>
+    <div class="deploy-grid">
+      <a class="deploy-card" href="https://vercel.com" target="_blank" rel="noopener">
+        <div class="deploy-card-type">Frontend</div>
+        <div class="deploy-card-name">Vercel</div>
+        <div class="deploy-card-why">Deploy from GitHub in under 60 seconds. Best for React, Next.js, or any static site.</div>
+        <span class="deploy-card-tag">vercel.com →</span>
+      </a>
+      <a class="deploy-card" href="https://railway.app" target="_blank" rel="noopener">
+        <div class="deploy-card-type">Backend / API</div>
+        <div class="deploy-card-name">Railway</div>
+        <div class="deploy-card-why">Spin up a Python or Node server + a Postgres database in one place. No credit card needed to start.</div>
+        <span class="deploy-card-tag">railway.app →</span>
+      </a>
+      <a class="deploy-card" href="https://render.com" target="_blank" rel="noopener">
+        <div class="deploy-card-type">Full-Stack</div>
+        <div class="deploy-card-name">Render</div>
+        <div class="deploy-card-why">Runs Docker containers, managed databases, and web services. Great for full-stack projects with a backend.</div>
+        <span class="deploy-card-tag">render.com →</span>
+      </a>
+      <a class="deploy-card" href="https://workers.cloudflare.com" target="_blank" rel="noopener">
+        <div class="deploy-card-type">Serverless</div>
+        <div class="deploy-card-name">Cloudflare Workers</div>
+        <div class="deploy-card-why">Run lightweight APIs at the edge for free. Zero cold starts, global coverage, ideal for automation scripts.</div>
+        <span class="deploy-card-tag">workers.cloudflare.com →</span>
+      </a>
+      <a class="deploy-card" href="https://huggingface.co/spaces" target="_blank" rel="noopener">
+        <div class="deploy-card-type">AI / ML Models</div>
+        <div class="deploy-card-name">Hugging Face Spaces</div>
+        <div class="deploy-card-why">Free GPU-backed hosting for AI demos. Build a Gradio or Streamlit UI and share a live link instantly.</div>
+        <span class="deploy-card-tag">huggingface.co/spaces →</span>
       </a>
     </div>
   </div>
@@ -3314,16 +3444,27 @@ ${tags} #BuildingInPublic #OpenToWork`;
   // ===== RENDER TABS =====
   function renderTabs() {
     const tabs = document.getElementById('path-tabs');
-    tabs.innerHTML = PATHS.map(p => {
+    const cheatIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+    const pathHTML = PATHS.map(p => {
       const count = p.id === 'all' ? PROJECTS.length : PROJECTS.filter(x => x.path === p.id).length;
       return `<button class="path-tab ${state.currentPath === p.id ? 'active' : ''}" data-path="${p.id}">
         <span class="icon">${iconFor(p.id)}</span><span>${p.short}</span><span class="count">${count}</span>
       </button>`;
     }).join('');
-    tabs.querySelectorAll('.path-tab').forEach(btn => {
+    const cheatHTML = `<button class="path-tab path-tab-jump" data-jump="deploy-cheatsheet" title="Jump to hosting cheatsheet">
+      <span class="icon">${cheatIcon}</span><span>Cheatsheet</span>
+    </button>`;
+    tabs.innerHTML = pathHTML + cheatHTML;
+    tabs.querySelectorAll('.path-tab[data-path]').forEach(btn => {
       btn.addEventListener('click', () => {
         state.currentPath = btn.dataset.path;
         renderAll();
+      });
+    });
+    tabs.querySelectorAll('.path-tab[data-jump]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = document.getElementById(btn.dataset.jump);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     });
   }

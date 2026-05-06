@@ -1936,7 +1936,7 @@
         linkedin: 'Write a post about "Continuous Compliance" and how your tool automates it.',
         resume: 'Emphasize "Automated Security Auditing" and "Compliance Reporting".'
       },
-      youtube: 'F4ijcloPl0Q', ytTitle: 'Introduction to Nmap Scanner & Module with Python code',
+      youtube: 'FpdqG3Cy6ow', ytTitle: 'Cybersecurity Project: Automating Audits in AWS With Prowler',
       steps: [
         { title: 'Set up a test environment', desc: "Use a local VM or Docker container as your scan target — never scan networks you don't own. Install nmap, python-nmap, and reportlab." },
         { title: 'Build the network scanner', desc: 'Write a Python script that uses python-nmap to discover hosts and identify open ports. Save results to JSON.' },
@@ -1963,7 +1963,7 @@
         linkedin: 'Post a video demonstrating a "before and after" scenario where your system neutralizes a complex jailbreak attempt.',
         resume: 'Focus on AI Security, LLM firewall, and adversarial ML experience.'
       },
-      youtube: 'aQD-T1HP3wk', ytTitle: 'Prompt Injection Attack Tutorial: AI Security for Developers',
+      youtube: 'qmFPYhkrZDI', ytTitle: 'Prompt Injection Tutorial: AI Agent Under Attack',
       steps: [
         { title: 'Study the attack landscape', desc: "Read OWASP's LLM Top 10. Collect real jailbreak examples from DAN, prompt injection databases, and academic papers." },
         { title: 'Generate a training dataset', desc: 'Use the AI prompt below to generate 500+ adversarial prompts across categories: direct injection, indirect, obfuscated, roleplay.' },
@@ -2384,7 +2384,7 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         linkedin: 'Video showing the agents collaborating live.',
         resume: '"Architected a multi-agent system using LangGraph that reduced research time by 80%."'
       },
-      youtube: 'rwqGQEzXF-o', ytTitle: 'Build your AI TEAM - LangGraph Multi-Agent Supervisor Tutorial',
+      youtube: 'mRkLvqFMkyI', ytTitle: 'LangGraph Tutorial: Building a Multi-Agent AI Research Assistant',
       steps: [
         { title: 'Design the agent graph', desc: 'Draw it in Mermaid first: Supervisor → (Researcher | Writer | Fact-Checker) → Supervisor. Decide on routing logic.' },
         { title: 'Define the shared state', desc: 'Create a TypedDict with fields: task, research_notes, draft, fact_check_results, final_output.' },
@@ -2463,7 +2463,7 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         linkedin: 'Screenshot of the Grafana dashboard showing "Total Savings Found".',
         resume: 'Focus on FinOps + measurable cost savings.'
       },
-      youtube: 'sksLFUUBK_s', ytTitle: 'Managing Multi-Cloud Infrastructure with Terraform',
+      youtube: 'YxkmvQxjWFk', ytTitle: 'Advanced multicloud cost reporting with FOCUS (COP419)',
       steps: [
         { title: 'Set up billing access', desc: 'In AWS: enable Cost Explorer API. In Azure: create a service principal with billing reader. Store creds in secrets manager.' },
         { title: 'Build the data fetcher', desc: 'Python script that pulls daily cost data from both clouds, normalizes the schema, and loads to PostgreSQL.' },
@@ -2489,7 +2489,7 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         linkedin: 'Video of a "self-healing" demo where a deleted pod is instantly recreated by ArgoCD.',
         resume: 'Focus on "Zero Trust" architecture and "Developer Experience".'
       },
-      youtube: 'MeU5_k9ssrs', ytTitle: 'ArgoCD Tutorial for Beginners - GitOps CD for Kubernetes',
+      youtube: 'Lmcw4s299_0', ytTitle: 'Harness & ArgoCD GitOps Tutorial 2025 - Self-Healing Kubernetes',
       steps: [
         { title: 'Provision the EKS cluster', desc: 'Use Terraform to create an EKS cluster with 2–3 worker nodes. Set up kubectl access. Note: EKS is NOT free-tier — control plane costs ~$0.10/hr (~$73/mo) plus worker EC2 costs. Tear down when not in use.' },
         { title: 'Install ArgoCD', desc: 'Deploy with Helm. Connect it to a Git repo that will hold all your Kubernetes manifests.' },
@@ -2497,6 +2497,86 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         { title: 'Install Istio with mTLS', desc: 'Enable sidecar injection. Configure strict mTLS between services. Verify with istioctl.' },
         { title: 'Set up canary deployments', desc: 'Use Istio VirtualService with weighted routing: 90% v1, 10% v2. Use Argo Rollouts to automate the shift based on metrics.' },
         { title: 'Demo the self-healing', desc: 'Delete a pod live on camera. Watch ArgoCD recreate it in seconds. Kill a node. Watch the workload reschedule. Record it all.' }
+      ]
+    },
+    // TECH/IT — added projects
+    {
+      id: 'it-4', path: 'tech-it', level: 'intermediate',
+      title: 'AI-Driven Network Traffic Anomaly Detector',
+      summary: 'A monitoring tool that ingests live network telemetry and uses an unsupervised ML model to flag anomalous traffic before it escalates into an outage or breach.',
+      tech: ['Python', 'Scikit-learn', 'MQTT', 'Docker', 'InfluxDB'],
+      skills: 'Anomaly Detection, Network Telemetry, Real-time Inference',
+      why: 'Tier-2 IT roles increasingly require basic ML literacy to triage network noise. This project shows you can move beyond simple ping-checks to behavior-based monitoring — a critical 2026 skill as AI-driven attacks accelerate.',
+      useCase: 'A small business that wants to detect suspicious traffic spikes (data exfiltration, port scans) without paying for a full SIEM platform.',
+      bonus: 'Add an AI summarizer that turns raw alert logs into a plain-English daily report for non-technical managers.',
+      aiAssist: 'Use Claude or Cursor to generate the feature engineering pipeline (packet size, ports, protocol distribution) and tune the Isolation Forest hyperparameters.',
+      prompt: 'Act as a Senior Network Engineer. Help me extract behavioral features from a netflow CSV — bytes per second, port entropy, top-talker ratios — that an Isolation Forest can use to detect lateral-movement attacks.',
+      showcase: {
+        github: 'docker-compose stack with sample traffic generators + a labeled anomaly dataset.',
+        linkedin: 'Screen recording of the dashboard catching a simulated port scan in real time.',
+        resume: 'Focus on "Behavior-based monitoring" and "ML-augmented IT operations".'
+      },
+      youtube: 'rid5M4ifGPA', ytTitle: 'Build an AI-Powered Network Monitor with MQTT & Docker',
+      steps: [
+        { title: 'Generate or capture sample traffic', desc: 'Use scapy to generate normal traffic + a few attack patterns (port scans, beaconing). Or pull a public netflow dataset.' },
+        { title: 'Extract behavioral features', desc: 'Compute per-host metrics: bytes/sec, unique ports touched, top destinations, protocol mix. Save as a Pandas DataFrame.' },
+        { title: 'Train an Isolation Forest', desc: 'Fit on the "normal" baseline only. Save the model with joblib so the live service can load it on startup.' },
+        { title: 'Build the streaming pipeline', desc: 'Containers: traffic capture → MQTT broker → Python consumer that scores each window with the model and writes to InfluxDB.' },
+        { title: 'Build the Grafana dashboard', desc: 'Live anomaly score, top suspicious hosts, traffic-by-protocol panel. Add alert thresholds.' },
+        { title: 'Stress-test and document', desc: 'Replay an attack capture (PCAP) and prove the system fires alerts. Capture the demo for your portfolio video.' }
+      ]
+    },
+    {
+      id: 'it-5', path: 'tech-it', level: 'beginner',
+      title: 'Automated Cloud Cost Guardrails',
+      summary: 'A safety net for AWS spend — Budgets, Cost Anomaly Detection, and SNS alerts that notify you (and optionally auto-stop resources) before a runaway bill arrives.',
+      tech: ['AWS Budgets', 'AWS Cost Anomaly Detection', 'SNS', 'Lambda', 'IAM'],
+      skills: 'AWS Cost Management, Event-driven Automation, IAM',
+      why: 'Cost surprises are the #1 reason new IT hires lose trust in week one. Demonstrating that you can prevent them — not just react — instantly differentiates you from peers who only know how to spin things up.',
+      useCase: 'A small startup running its first AWS account, terrified of waking up to a $5k bill from a forgotten EC2 instance.',
+      bonus: 'Add a Lambda that automatically stops or terminates the offending resource when its cost exceeds a per-tag budget.',
+      aiAssist: 'Use ChatGPT to write the SNS-to-Lambda glue and the minimum-privilege IAM policy required to safely stop EC2 instances.',
+      prompt: 'Help me write an AWS Lambda (Python) that subscribes to a Cost Anomaly SNS topic, parses the affected service, and posts a Slack message with the cost delta and a link to the AWS Console.',
+      showcase: {
+        github: 'CloudFormation/Terraform template that recreates the whole guardrail stack in any AWS account.',
+        linkedin: 'Before/after screenshot showing a simulated anomaly being caught + the alert hitting Slack.',
+        resume: 'Focus on "Proactive FinOps" and "Cost-incident prevention".'
+      },
+      youtube: '8HaKO0Lw6Us', ytTitle: 'AWS Budget & Cost Anomaly Detection Tutorial',
+      steps: [
+        { title: 'Create a Free-Tier AWS account', desc: 'Sign up. Enable IAM Identity Center. Set up MFA on the root account before doing anything else.' },
+        { title: 'Configure your first Budget', desc: 'Cost Management → Budgets → Create. Set a $10 monthly threshold with email alerts at 80% / 100% / forecast.' },
+        { title: 'Enable Cost Anomaly Detection', desc: 'Create a monitor for your whole account. Add an SNS topic so alerts can fan out to other systems.' },
+        { title: 'Wire SNS into Slack', desc: 'Create a Slack incoming webhook. Write a small Lambda that subscribes to the SNS topic and forwards a formatted message.' },
+        { title: 'Add an auto-stop Lambda (optional)', desc: 'Tag your EC2s with cost-center. On budget breach, run a Lambda that stops untagged or over-budget instances.' },
+        { title: 'Document the runbook', desc: 'Write a clear README: what each alert means, how to silence false positives, and how to lift the auto-stop in an emergency.' }
+      ]
+    },
+    // CS — added project
+    {
+      id: 'cs-4', path: 'cs', level: 'advanced',
+      title: 'Autonomous AI Agent for Software Testing',
+      summary: 'An agent that reads a Python codebase, generates pytest tests, runs them, analyzes failures, and proposes patches — all from a CI pipeline.',
+      tech: ['Python', 'Gemini/Claude API', 'pytest', 'GitHub Actions', 'AST'],
+      skills: 'Agentic Workflows, Code Analysis, Test Generation, CI/CD',
+      why: '2026 hiring is shifting from "can you write code" to "can you orchestrate AI to ship code safely." This project proves you can build the autonomous QA layer modern teams are racing to deploy.',
+      useCase: 'A startup engineering team that wants >80% test coverage on a fast-moving codebase without dedicating a full QA hire.',
+      bonus: 'Add a self-healing mode where the agent auto-commits passing patches to a feature branch and opens a PR with a written explanation.',
+      aiAssist: 'Use Cursor or Claude Code to scaffold the AST walker and the prompt templates. Use Gemini CLI for the agent loop itself.',
+      prompt: 'Act as a Senior Test Engineer. Given a Python module, write an AST walker that extracts function signatures and existing tests, then drafts a prompt the LLM can use to generate missing edge-case tests with realistic inputs.',
+      showcase: {
+        github: 'Include a "before/after coverage" report and a sample PR opened by the agent.',
+        linkedin: 'Video of the agent generating tests for an open-source repo and catching a real bug.',
+        resume: 'Focus on "Agentic QA" and "Autonomous code analysis".'
+      },
+      youtube: 'qCBreTfjFHQ', ytTitle: 'Vibe coding to production: AI agents, testing & CI/CD with Gemini CLI',
+      steps: [
+        { title: 'Pick the target codebase', desc: 'Use a small open-source Python repo (or one of your own) with under 70% test coverage as your testbed.' },
+        { title: 'Build the AST walker', desc: 'Use Python ast to extract function signatures, docstrings, and existing test references. Output a structured JSON map of the codebase.' },
+        { title: 'Write the test-generation prompt', desc: 'Send each function + its context to the LLM with a strict format: arrange-act-assert pytest tests, including edge cases (None, empty, large input).' },
+        { title: 'Run and triage', desc: 'Execute pytest in a sandbox. Parse the failures. Send each failure back to the LLM with the source + traceback to propose a fix.' },
+        { title: 'Wrap it in GitHub Actions', desc: 'Trigger on PR. The agent writes tests, runs them, posts results as a PR comment, and (optionally) commits passing tests.' },
+        { title: 'Measure and demo', desc: 'Track coverage delta and bugs found per run. Open a real PR on a real repo with the agent — that PR is your portfolio piece.' }
       ]
     }
   ];

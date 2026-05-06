@@ -2534,7 +2534,7 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
     },
     // HELP DESK
     {
-      id: 'hd-1', path: 'helpdesk', level: 'intermediate',
+      id: 'hd-1', path: 'ai', level: 'intermediate',
       title: 'AI-Powered Self-Service IT Support Bot',
       summary: 'An intelligent chatbot using RAG to answer IT questions from a knowledge base — with fallback ticket creation.',
       tech: ['Botpress/Voiceflow', 'OpenAI API', 'Google Sheets', 'Zapier'],
@@ -2586,7 +2586,7 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       ]
     },
     {
-      id: 'hd-3', path: 'helpdesk', level: 'intermediate',
+      id: 'hd-3', path: 'data', level: 'intermediate',
       title: 'IT Asset Management Dashboard',
       summary: 'An interactive dashboard tracking IT assets via the Snipe-IT API — visualizing allocation, lifecycle, and refresh cycles.',
       tech: ['Snipe-IT API', 'Python', 'Power BI/Tableau'],
@@ -2847,6 +2847,190 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         { title: 'Run and triage', desc: 'Execute pytest in a sandbox. Parse the failures. Send each failure back to the LLM with the source + traceback to propose a fix.' },
         { title: 'Wrap it in GitHub Actions', desc: 'Trigger on PR. The agent writes tests, runs them, posts results as a PR comment, and (optionally) commits passing tests.' },
         { title: 'Measure and demo', desc: 'Track coverage delta and bugs found per run. Open a real PR on a real repo with the agent — that PR is your portfolio piece.' }
+      ]
+    },
+    // ===== BEGINNER PROJECTS =====
+    {
+      id: 'cy-4', path: 'cyber', level: 'beginner',
+      title: 'AI-Powered SOC Analyst Agent Home Lab',
+      summary: 'A beginner-friendly home lab that pairs Kali + Ubuntu VMs with an AI penetration-testing agent — your first hands-on security project that produces real artifacts.',
+      tech: ['VirtualBox', 'Kali Linux', 'Ubuntu', 'Python', 'Open-source AI tools'],
+      skills: 'Virtualization, Linux Command Line, AI-Augmented SecOps',
+      why: 'Demonstrates practical skills in modern cybersecurity — virtualization, AI augmentation, and cloud-native security concepts — and signals a proactive approach to learning the technologies that 2026 SOC teams are actually adopting.',
+      useCase: 'A small or mid-sized business uses an automated SOC agent to monitor their network for suspicious activity, triage alerts, and initiate automated responses without hiring a 24/7 analyst team.',
+      bonus: 'Add a small NLP layer that summarizes raw security alerts into plain-English incident reports a non-technical manager can read.',
+      aiAssist: 'Use an AI coding assistant to write Python integrations, debug Linux configuration issues, and generate automation snippets for log triage.',
+      prompt: 'Generate a Python script that uses scikit-learn to classify network traffic as malicious or benign based on features like port, protocol, and packet size. Provide example features, labels, and a synthetic dataset I can train on.',
+      showcase: {
+        github: 'Detailed README with VM setup steps, the AI agent code, sample logs, and a demo video of an alert being triaged.',
+        linkedin: 'Screenshots of the agent classifying simulated attacks, with a 60-second walkthrough video.',
+        resume: 'Focus on "Virtualization", "Linux command line", and "AI-augmented threat detection".'
+      },
+      youtube: '4Lvg5hKF_G4', ytTitle: 'Beginner Friendly FREE Cybersecurity Home Lab using an AI Penetration tester',
+      steps: [
+        { title: 'Install VirtualBox + base VMs', desc: 'Install VirtualBox on your laptop. Spin up one Ubuntu Server VM (the "victim") and one Kali Linux VM (the "analyst").' },
+        { title: 'Network the lab safely', desc: 'Put both VMs on a host-only network so traffic stays isolated. Verify they can ping each other but cannot reach the internet.' },
+        { title: 'Install the AI agent toolkit', desc: 'On the Kali box, set up Python 3, scikit-learn, and the open-source AI pen-test agent of your choice. Get an OpenAI or Anthropic API key for the natural-language layer.' },
+        { title: 'Generate sample malicious traffic', desc: 'From Kali, run a basic nmap scan + a Hydra brute-force against the Ubuntu VM. Capture the traffic with tcpdump or Wireshark.' },
+        { title: 'Train the classifier', desc: 'Use the AI prompt below to build a basic scikit-learn classifier. Feed it your captured traffic + labeled malicious vs benign samples.' },
+        { title: 'Document and demo', desc: 'Write up the lab as a README with diagrams, attack screenshots, and the classifier output. Record a short demo of the agent flagging an attack live.' }
+      ]
+    },
+    {
+      id: 'ai-4', path: 'ai', level: 'beginner',
+      title: 'Automated Customer Support AI Agent',
+      summary: 'A no/low-code AI agent that ingests support tickets, drafts responses, and routes complex issues — your first end-to-end agentic workflow.',
+      tech: ['OpenAI Agent Builder', 'Zapier', 'n8n', 'OpenAI GPT models'],
+      skills: 'AI Agents, Workflow Automation, API Integration',
+      why: 'Shows practical skills in AI, automation, and cloud integration — exactly what hiring managers are looking for in 2026. Building an end-to-end solution that solves a real business problem puts you ahead of applicants who only have notebooks to show.',
+      useCase: 'Companies automating initial responses to customer inquiries, summarizing complex tickets, and routing issues to the right department — improving customer service efficiency without growing headcount.',
+      bonus: 'Layer in sentiment analysis or image recognition so the agent can prioritize angry customers or categorize photo attachments.',
+      aiAssist: 'Use an AI coding assistant to generate API integration snippets, debug automation flows, and refine the natural-language prompts your agent sends to GPT.',
+      prompt: 'Create a Python script that uses the OpenAI API to summarize customer support tickets and suggest appropriate responses, considering the customer\'s history pulled from a CRM system.',
+      showcase: {
+        github: 'Detailed README with setup steps, the agent prompt, and a recorded run-through of three sample tickets.',
+        linkedin: 'Post a 60-second video of the agent triaging a real-looking ticket, including the routing decision.',
+        resume: 'Focus on "AI Agents", "Workflow automation", and "End-to-end LLM integration".'
+      },
+      youtube: 'cXnPxN06boY', ytTitle: 'AI Agents Made Simple: Beginner AI Automation Tutorial (Step-by-Step)',
+      steps: [
+        { title: 'Pick your platform', desc: 'OpenAI Agent Builder is the simplest. n8n if you want self-hosted; Zapier if you want zero-config. Pick one and create a free account.' },
+        { title: 'Wire up the ticket source', desc: 'Connect a Google Form (or a sample CSV) as the ticket inlet. Each new submission triggers your agent.' },
+        { title: 'Define the agent\'s tools', desc: 'Give the agent two tools: "summarize_ticket" (LLM call) and "draft_response" (LLM call with company tone guidelines).' },
+        { title: 'Add the routing logic', desc: 'If the agent\'s confidence is high, auto-respond. If low, send the ticket + draft to a human via Slack or email.' },
+        { title: 'Test with realistic tickets', desc: 'Generate 20 fake tickets across categories (refund, bug, billing, feature request). Measure the agent\'s correct-routing rate.' },
+        { title: 'Document the metrics', desc: 'Capture the deflection rate ("X% of tickets handled without a human") in your README. That number goes on your resume.' }
+      ]
+    },
+    {
+      id: 'da-4', path: 'data', level: 'beginner',
+      title: 'AI-Powered Business Intelligence Dashboard',
+      summary: 'A polished BI dashboard built end-to-end with AI — Claude generates the dataset, GPT writes the DAX, and Dribbble inspires the layout, all in under an hour.',
+      tech: ['Claude', 'ChatGPT', 'Power BI', 'Dribbble (inspiration)'],
+      skills: 'Data Visualization, Business Intelligence, AI-Augmented Workflows',
+      why: 'Shows you can leverage modern AI tools to ship a polished, data-driven artifact fast — the exact "speed-to-insight" skill 2026 analytics teams are hiring for.',
+      useCase: 'A marketing team rapidly building a dashboard to track a new campaign\'s performance, without waiting weeks for a BI specialist.',
+      bonus: 'Use AI to generate automated insights and a written executive summary of the dashboard\'s key findings on every refresh.',
+      aiAssist: 'Use an AI assistant throughout the project to brainstorm KPIs, generate code for data transformations, and walk you through any technical roadblocks.',
+      prompt: 'I am a data analyst building a Power BI dashboard for a fictional e-commerce company. The dashboard should track sales performance. Generate a CSV dataset with: OrderID, Date, CustomerID, ProductID, ProductName, Category, Price, Quantity, TotalSales. Create 1000 rows of realistic data for 2026 with seasonal patterns.',
+      showcase: {
+        github: 'README with the AI prompts you used, the generated dataset, and the .pbix file. Include before/after screenshots.',
+        linkedin: 'Post a carousel showing the dashboard pages and a one-line "Built in 10 minutes with AI" caption.',
+        resume: 'Focus on "Data Visualization", "Business Intelligence", and "AI-augmented analytics".'
+      },
+      youtube: '8_8DfD5f61w', ytTitle: 'I Built a Full AI Dashboard in 10 Minutes Using Claude, GPT & Dribbble | 2026 Tutorial',
+      steps: [
+        { title: 'Pick the business scenario', desc: 'Choose a fictional company and what success looks like for them: e-commerce sales, SaaS retention, marketing funnel. Write a one-sentence brief.' },
+        { title: 'Generate the dataset with Claude', desc: 'Use the AI prompt below to generate 1000 rows of realistic data with seasonal patterns, realistic price ranges, and a few outliers.' },
+        { title: 'Find layout inspiration on Dribbble', desc: 'Search Dribbble for "BI dashboard" or "analytics dashboard". Save 3 layouts you like. Decide on a color palette and visual hierarchy.' },
+        { title: 'Build the Power BI report', desc: 'Import the CSV. Build 4–6 visuals: KPI cards, time series, breakdown by category, and a top-N table. Match your Dribbble inspiration.' },
+        { title: 'Add AI-generated insights', desc: 'Use ChatGPT to write 3–5 plain-English insights (e.g., "category X grew 32% in Q3 driven by product Y"). Add as a textbox.' },
+        { title: 'Publish and share', desc: 'Publish to Power BI Service or export as PDF. Take a 30-second screen recording walking through it. That\'s your portfolio asset.' }
+      ]
+    },
+    {
+      id: 'sw-4', path: 'swe', level: 'beginner',
+      title: 'Conversational AI Agent with Tool Use',
+      summary: 'An AI agent that doesn\'t just chat — it actually does things. Calls APIs, queries databases, triggers workflows. Built on Amazon Bedrock AgentCore.',
+      tech: ['Amazon Bedrock AgentCore', 'AWS Lambda', 'DynamoDB', 'API Gateway'],
+      skills: 'Function Calling, Tool Definitions, Cloud Integration',
+      why: 'Chatbots are table stakes. Agents that can actually DO things — call APIs, query databases, trigger workflows — are what companies are racing to build right now. Showing you understand agentic patterns puts you ahead of 90% of applicants.',
+      useCase: 'A personal assistant that checks your calendar, adds events, searches the web, and summarizes emails. Or a customer service agent that looks up orders and processes returns.',
+      bonus: 'Add memory so the agent remembers prior turns. Layer in multi-agent collaboration where specialized agents hand off tasks to each other.',
+      aiAssist: 'Use an AI coding assistant to generate Lambda boilerplate, define tool schemas, and debug agent invocation logic when the model picks the wrong tool.',
+      prompt: 'Create a Python AWS Lambda function that acts as a tool for an Amazon Bedrock AgentCore agent. The tool should accept a user query about calendar events, parse the date and time, and add a new event to Google Calendar. Include error handling for invalid date formats and API failures.',
+      showcase: {
+        github: 'Detailed README with the AgentCore config, Lambda code, and a demo video of the agent calling tools end-to-end.',
+        linkedin: 'Post a video of the agent answering a multi-step question that requires 2+ tool calls. Caption: "Not a chatbot. An agent."',
+        resume: 'Focus on "Function calling", "Tool definitions", and "Production AI agents on AWS".'
+      },
+      youtube: 'cTBGIKAckKE', ytTitle: 'Amazon Bedrock AgentCore Tutorial | Build, Deploy, Operate AI Agents on AWS',
+      steps: [
+        { title: 'Set up AWS + Bedrock access', desc: 'Create an AWS account. Request access to Claude or Nova in Bedrock — approval can take a few hours. Install the AWS CLI.' },
+        { title: 'Define the agent\'s tools', desc: 'Pick 2–3 tools (e.g., get_calendar, add_event, search_web). Write JSON schemas describing each tool\'s inputs and outputs.' },
+        { title: 'Build a Lambda for each tool', desc: 'Each tool is a Python Lambda that does one thing well. Test each independently before wiring to the agent.' },
+        { title: 'Configure AgentCore', desc: 'Create the agent in AgentCore. Attach the Lambdas as tools. Write the system prompt that tells the agent when to call each one.' },
+        { title: 'Test multi-step flows', desc: 'Try queries that require 2+ tool calls in sequence ("What\'s on my calendar tomorrow, and add a 30-minute prep block before each meeting"). Iterate the prompt until it works.' },
+        { title: 'Wrap with API Gateway', desc: 'Expose the agent via a public REST endpoint. Build a tiny web UI so recruiters can talk to your agent live. That demo is your portfolio.' }
+      ]
+    },
+    {
+      id: 'cs-5', path: 'cs', level: 'beginner',
+      title: 'Build an AI Agent From Scratch in Python',
+      summary: 'A from-scratch agent that pairs an LLM with custom tools — no LangChain, no CrewAI, just pure Python so you understand exactly how agents work under the hood.',
+      tech: ['Python', 'OpenAI API', 'LangChain (optional)', 'JSON tool schemas'],
+      skills: 'Python Programming, Agent Loops, LLM Tool Use',
+      why: 'Demonstrates you can build intelligent systems and proves you understand the fundamentals — not just the wrappers — which is what makes a candidate stand out in the 2026 AI job market.',
+      useCase: 'Automating customer service responses, data analysis, or content generation for businesses without paying for closed-source agent platforms.',
+      bonus: 'Add memory (short-term + long-term), tool use (web search, calculators), and multi-agent collaboration where specialized agents hand off subtasks.',
+      aiAssist: 'Use GitHub Copilot or Claude Code to generate the agent loop boilerplate, debug edge cases, and explain unfamiliar parts of the LLM API.',
+      prompt: 'Generate Python code for an AI agent that processes natural-language queries, decides whether to call a tool, executes the tool, and feeds results back into the LLM until the user\'s question is answered. Include a simple weather-lookup tool as an example.',
+      showcase: {
+        github: 'README that walks the reader through the agent loop step by step. Include a Mermaid diagram of the control flow.',
+        linkedin: 'A 90-second video where you ask the agent a question that requires 2 tool calls and narrate what\'s happening internally.',
+        resume: 'Focus on "Python programming", "Agent architectures", and "From-scratch LLM integration".'
+      },
+      youtube: 'bTMPwUgLZf0', ytTitle: 'Build an AI Agent From Scratch in Python - Tutorial for Beginners',
+      steps: [
+        { title: 'Set up the environment', desc: 'Create a virtualenv. Install openai (or anthropic). Get an API key. Test a basic chat completion call to confirm everything works.' },
+        { title: 'Write the agent loop', desc: 'A while loop: send the conversation to the LLM, parse the response, decide if it asked for a tool, run the tool, append the result, repeat until the LLM gives a final answer.' },
+        { title: 'Define your first tool', desc: 'Write a Python function (e.g., get_weather(city)). Wrap it with a JSON schema describing its name, args, and what it does. Pass that schema to the LLM.' },
+        { title: 'Handle tool calls', desc: 'When the LLM responds with a tool call, execute the function, capture the result, and feed it back as the next message. This is the heart of an agent.' },
+        { title: 'Add a second tool + memory', desc: 'Add a calculator tool. Store the conversation history in a list so the agent can reference earlier turns. Cap history length so context doesn\'t blow up.' },
+        { title: 'Demo and document', desc: 'Record a session where the agent uses both tools to answer a question that requires reasoning ("What\'s the temperature in Miami in Celsius?"). Push the code with a clean README.' }
+      ]
+    },
+    // ===== HELP DESK — replacements for moved hd-1, hd-3 (entry-level no-code) =====
+    {
+      id: 'hd-4', path: 'helpdesk', level: 'beginner',
+      title: 'Microsoft Forms + Power Automate Ticket Routing System',
+      summary: 'A complete no-code ticket intake system — Microsoft Forms collects the request, Power Automate routes it to the right tier, and SharePoint stores the audit trail.',
+      tech: ['Microsoft Forms', 'Power Automate', 'SharePoint', 'Outlook'],
+      skills: 'Low-Code Automation, Service Desk Workflows, Microsoft 365',
+      why: 'Most help-desk teams in 2026 run on Microsoft 365. Showing you can deliver a working ticketing flow with NO code proves you can be useful on day one — without waiting for a developer to spin up Jira or ServiceNow.',
+      useCase: 'A 50-person company that wants its employees to submit IT tickets through a simple form and have them auto-route to the right Tier-1 technician based on category and urgency.',
+      bonus: 'Add an AI Builder action that auto-categorizes free-text descriptions into Hardware / Software / Access / Other before routing.',
+      aiAssist: 'Use ChatGPT to draft the Power Automate "Switch" expressions for conditional routing, and to suggest realistic test ticket data for QA.',
+      prompt: 'I am building a Power Automate flow triggered by a Microsoft Form submission. Help me write a Switch expression that routes tickets based on the "Category" field — Hardware to Tier-2, Software to Tier-1, Access/Permissions to a security mailbox.',
+      showcase: {
+        github: 'Export the flow as a Power Automate solution package + a README explaining the architecture and SLA logic.',
+        linkedin: 'Post a 60-second screen recording of an end-to-end ticket: form submission → routed email → SharePoint entry.',
+        resume: 'Focus on "Low-code automation", "Microsoft 365 service desk", and "SLA-driven routing".'
+      },
+      youtube: 'hS6KzlcRfU0', ytTitle: 'Create a Ticketing System in SharePoint with Power Automate',
+      steps: [
+        { title: 'Get a Microsoft 365 dev tenant', desc: 'Sign up for the free Microsoft 365 Developer Sandbox. It includes Forms, Power Automate, SharePoint, and Outlook with sample users.' },
+        { title: 'Build the intake form', desc: 'Create a Microsoft Form with: Requester Name, Email, Category (Hardware/Software/Access/Other), Urgency (Low/Medium/High), Description.' },
+        { title: 'Create the SharePoint list', desc: 'Build a "IT Tickets" list with matching columns + Status (Open/In Progress/Resolved) + Assigned To. This is your ticket database.' },
+        { title: 'Build the routing flow', desc: 'In Power Automate, trigger on form submit. Use a Switch action on Category to set Assigned To. Write the row to SharePoint.' },
+        { title: 'Add SLA notifications', desc: 'Add an Outlook step: email the assignee with a deep link to the ticket. Add a "Delay until" branch that escalates to a manager if Status is still "Open" past the SLA window.' },
+        { title: 'Test and document', desc: 'Submit 10 test tickets across categories. Verify routing, escalation, and SharePoint entries. Record the demo + write a clear README.' }
+      ]
+    },
+    {
+      id: 'hd-5', path: 'helpdesk', level: 'beginner',
+      title: 'Windows Autopilot Device Enrollment with Intune',
+      summary: 'A zero-touch deployment flow — ship a sealed laptop to a remote employee and have it self-configure into your tenant on first sign-in, with compliance enforced.',
+      tech: ['Microsoft Intune', 'Windows Autopilot', 'Entra ID', 'Microsoft 365'],
+      skills: 'MDM, Zero-Touch Provisioning, Endpoint Compliance',
+      why: 'Tier-1.5 / Tier-2 help-desk roles in 2026 increasingly require Intune skills as on-prem AD shrinks and cloud-managed endpoints take over. A working Autopilot demo signals you can run a modern endpoint operation, not just unbox laptops.',
+      useCase: 'A growing startup that ships laptops directly to remote new hires and needs them to be ready-to-use the moment the box is opened — no IT-shipped images, no manual setup.',
+      bonus: 'Add a compliance policy that auto-quarantines devices missing BitLocker or running an outdated OS, plus an app-protection policy that auto-installs corporate apps on first sign-in.',
+      aiAssist: 'Use ChatGPT to translate plain-English compliance requirements into the right Intune policy settings, and to debug Autopilot enrollment errors during testing.',
+      prompt: 'I am setting up Windows Autopilot in Intune. Help me write a compliance policy that requires BitLocker, screen lock under 5 minutes, and a Windows 11 22H2+ build. Explain each setting in plain English first, then give me the exact path in the Intune admin console.',
+      showcase: {
+        github: 'README documenting the deployment profile, compliance policy, and ESP config — plus screenshots of an end-to-end provisioning run.',
+        linkedin: 'Post a screen recording of a fresh laptop self-enrolling into your tenant on first sign-in — "ZTP in action".',
+        resume: 'Focus on "Microsoft Intune", "Windows Autopilot / Zero-Touch Provisioning", and "Endpoint compliance".'
+      },
+      youtube: '512lFCyGkVs', ytTitle: 'you need to learn Windows Autopilot right now! | Full Tutorial',
+      steps: [
+        { title: 'Get an Intune trial + dev tenant', desc: 'Sign up for the M365 Developer Sandbox; it ships with Intune licenses. Verify you can reach the Intune admin center.' },
+        { title: 'Register a test device', desc: 'Use a spare laptop or Hyper-V VM. Capture the hardware hash (Get-WindowsAutopilotInfo) and upload it to Intune as an Autopilot device.' },
+        { title: 'Build the deployment profile', desc: 'Create a User-Driven Autopilot profile: hide EULA, hide privacy settings, auto-join Entra ID, assign a primary user.' },
+        { title: 'Write the compliance policy', desc: 'Use the AI prompt below. Require BitLocker, screen lock, OS version. Assign to All Devices.' },
+        { title: 'Add an Enrollment Status Page', desc: 'Configure ESP to block sign-in until apps + policies are applied. Pin Microsoft 365 apps + a default browser to deploy on first run.' },
+        { title: 'Reset and demo', desc: 'Wipe the test device. Power on, connect to Wi-Fi, sign in. Watch it self-configure end to end. Record this — that\'s your portfolio asset.' }
       ]
     }
   ];

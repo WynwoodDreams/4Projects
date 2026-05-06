@@ -1856,6 +1856,18 @@
     .header-actions .stat-pill { display: none; }
     .brand-mark { font-size: 11px; letter-spacing: 0.12em; }
 
+    /* Mobile: only the brand header sticks; controls scroll away */
+    .controls {
+      position: static;
+      top: auto;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      background: transparent;
+      border-bottom: none;
+      padding: 14px 0 12px;
+      margin-bottom: 18px;
+    }
+
     /* Modal — tighter backdrop so modal fills screen */
     .modal-backdrop { padding: 10px 0 0; align-items: flex-start; }
     .modal {

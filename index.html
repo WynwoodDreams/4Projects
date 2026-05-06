@@ -527,6 +527,19 @@
     color: var(--ink-soft);
     transition: color 0.2s;
   }
+  .path-tab.path-tab-jump {
+    border-style: dashed;
+    border-color: rgba(0,255,133,0.35);
+    color: var(--green);
+    margin-left: 4px;
+  }
+  .path-tab.path-tab-jump .icon { color: var(--green); }
+  .path-tab.path-tab-jump:hover {
+    border-style: solid;
+    border-color: var(--green);
+    background: rgba(0,255,133,0.08);
+    box-shadow: 0 0 0 1px var(--green), 0 0 18px -4px var(--green-glow);
+  }
   .path-tab .icon svg { width: 100%; height: 100%; stroke-width: 2; }
   .path-tab:hover .icon { color: var(--green); }
   .path-tab.active .icon { color: var(--green); filter: drop-shadow(0 0 6px var(--green-glow)); }
@@ -1407,15 +1420,19 @@
     gap: 10px;
   }
   .deploy-card {
+    display: block;
+    text-decoration: none;
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,255,255,0.10);
     border-radius: 10px;
     padding: 14px 16px;
-    transition: border-color 0.2s, background 0.2s;
+    transition: border-color 0.2s, background 0.2s, transform 0.2s, box-shadow 0.2s;
   }
   .deploy-card:hover {
-    border-color: rgba(0,255,133,0.3);
-    background: rgba(0,255,133,0.04);
+    border-color: rgba(0,255,133,0.45);
+    background: rgba(0,255,133,0.05);
+    transform: translateY(-2px);
+    box-shadow: 0 0 14px rgba(0,255,133,0.18);
   }
   .deploy-card-type {
     font-family: 'JetBrains Mono', monospace;
@@ -1952,40 +1969,40 @@
 </section>
 
 <!-- DEPLOY CHEATSHEET -->
-<section class="deploy-section">
+<section class="deploy-section" id="deploy-cheatsheet">
   <div class="container">
     <h3>Deploy Cheatsheet <span>Free-tier hosting — sorted by what you're building</span></h3>
     <div class="deploy-grid">
-      <div class="deploy-card">
+      <a class="deploy-card" href="https://vercel.com" target="_blank" rel="noopener">
         <div class="deploy-card-type">Frontend</div>
         <div class="deploy-card-name">Vercel</div>
         <div class="deploy-card-why">Deploy from GitHub in under 60 seconds. Best for React, Next.js, or any static site.</div>
-        <span class="deploy-card-tag">vercel.com</span>
-      </div>
-      <div class="deploy-card">
+        <span class="deploy-card-tag">vercel.com →</span>
+      </a>
+      <a class="deploy-card" href="https://railway.app" target="_blank" rel="noopener">
         <div class="deploy-card-type">Backend / API</div>
         <div class="deploy-card-name">Railway</div>
         <div class="deploy-card-why">Spin up a Python or Node server + a Postgres database in one place. No credit card needed to start.</div>
-        <span class="deploy-card-tag">railway.app</span>
-      </div>
-      <div class="deploy-card">
+        <span class="deploy-card-tag">railway.app →</span>
+      </a>
+      <a class="deploy-card" href="https://render.com" target="_blank" rel="noopener">
         <div class="deploy-card-type">Full-Stack</div>
         <div class="deploy-card-name">Render</div>
         <div class="deploy-card-why">Runs Docker containers, managed databases, and web services. Great for full-stack projects with a backend.</div>
-        <span class="deploy-card-tag">render.com</span>
-      </div>
-      <div class="deploy-card">
+        <span class="deploy-card-tag">render.com →</span>
+      </a>
+      <a class="deploy-card" href="https://workers.cloudflare.com" target="_blank" rel="noopener">
         <div class="deploy-card-type">Serverless</div>
         <div class="deploy-card-name">Cloudflare Workers</div>
         <div class="deploy-card-why">Run lightweight APIs at the edge for free. Zero cold starts, global coverage, ideal for automation scripts.</div>
-        <span class="deploy-card-tag">workers.cloudflare.com</span>
-      </div>
-      <div class="deploy-card">
+        <span class="deploy-card-tag">workers.cloudflare.com →</span>
+      </a>
+      <a class="deploy-card" href="https://huggingface.co/spaces" target="_blank" rel="noopener">
         <div class="deploy-card-type">AI / ML Models</div>
         <div class="deploy-card-name">Hugging Face Spaces</div>
         <div class="deploy-card-why">Free GPU-backed hosting for AI demos. Build a Gradio or Streamlit UI and share a live link instantly.</div>
-        <span class="deploy-card-tag">huggingface.co/spaces</span>
-      </div>
+        <span class="deploy-card-tag">huggingface.co/spaces →</span>
+      </a>
     </div>
   </div>
 </section>
@@ -3157,16 +3174,27 @@ ${tags} #BuildingInPublic #OpenToWork`;
   // ===== RENDER TABS =====
   function renderTabs() {
     const tabs = document.getElementById('path-tabs');
-    tabs.innerHTML = PATHS.map(p => {
+    const cheatIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+    const pathHTML = PATHS.map(p => {
       const count = p.id === 'all' ? PROJECTS.length : PROJECTS.filter(x => x.path === p.id).length;
       return `<button class="path-tab ${state.currentPath === p.id ? 'active' : ''}" data-path="${p.id}">
         <span class="icon">${iconFor(p.id)}</span><span>${p.short}</span><span class="count">${count}</span>
       </button>`;
     }).join('');
-    tabs.querySelectorAll('.path-tab').forEach(btn => {
+    const cheatHTML = `<button class="path-tab path-tab-jump" data-jump="deploy-cheatsheet" title="Jump to hosting cheatsheet">
+      <span class="icon">${cheatIcon}</span><span>Cheatsheet</span>
+    </button>`;
+    tabs.innerHTML = pathHTML + cheatHTML;
+    tabs.querySelectorAll('.path-tab[data-path]').forEach(btn => {
       btn.addEventListener('click', () => {
         state.currentPath = btn.dataset.path;
         renderAll();
+      });
+    });
+    tabs.querySelectorAll('.path-tab[data-jump]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = document.getElementById(btn.dataset.jump);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     });
   }

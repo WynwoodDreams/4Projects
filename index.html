@@ -2137,16 +2137,6 @@
       position: relative;
       padding-top: 20px;
     }
-    .backup-controls::before {
-      content: 'YOUR LIST';
-      position: absolute;
-      top: 0; left: 0;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9.5px;
-      letter-spacing: 0.22em;
-      color: var(--ink-muted);
-      font-weight: 500;
-    }
     .backup-btn {
       padding: 9px 11px;
       font-size: 9.5px;
@@ -2302,7 +2292,7 @@
     <div class="path-tabs" id="path-tabs"></div>
     <div class="filter-row">
       <div class="filter-group">
-        <span class="filter-label">Show</span>
+        <span class="filter-label">Filter by status</span>
         <button class="filter-chip active" data-status="all">All</button>
         <button class="filter-chip" data-status="bookmarked">Bookmarked</button>
         <button class="filter-chip" data-status="started">Started</button>
@@ -2310,6 +2300,7 @@
       </div>
       <div class="filter-spacer"></div>
       <div class="backup-controls">
+        <span class="filter-label">Your list</span>
         <button class="backup-btn" id="share-btn" title="Copy a shareable link to your list">🔗 Share list</button>
         <button class="backup-btn" id="export-btn" title="Download your list as a JSON file">⬇ Export</button>
         <button class="backup-btn" id="import-btn" title="Load a previously exported list">⬆ Import</button>

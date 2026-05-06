@@ -4141,7 +4141,5 @@ ${tags} #BuildingInPublic #OpenToWork`;
   }, { passive: true });
   btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 </script>
-<!-- Vercel Web Analytics -->
-<script type="module" src="/analytics.js"></script>
 </body>
 </html>

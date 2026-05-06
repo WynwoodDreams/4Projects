@@ -1516,6 +1516,37 @@
   }
   .footer-bottom a:hover { color: var(--green); text-shadow: 0 0 8px var(--green-glow); }
 
+  /* ===== BACK TO TOP ===== */
+  #back-to-top {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    width: 44px;
+    height: 44px;
+    background: var(--surface-2);
+    border: 1px solid var(--green);
+    border-radius: 50%;
+    color: var(--green);
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, box-shadow 0.3s;
+    box-shadow: 0 0 10px var(--green-glow);
+    z-index: 999;
+  }
+  #back-to-top.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  #back-to-top:hover {
+    box-shadow: 0 0 18px var(--green-glow), 0 0 4px var(--green);
+    background: rgba(0,255,133,0.08);
+  }
+
   /* ===== VIDEO EMBED ===== */
   .video-wrap {
     position: relative;
@@ -1837,6 +1868,8 @@
     </div>
   </div>
 </footer>
+
+<button id="back-to-top" title="Back to top">↑</button>
 
 <script>
   // ===== DATA =====
@@ -3836,6 +3869,12 @@ ${tags} #BuildingInPublic #OpenToWork`;
   renderAll();
   mountHero();
   wireFooterPaths();
+
+  const btt = document.getElementById('back-to-top');
+  window.addEventListener('scroll', () => {
+    btt.classList.toggle('visible', window.scrollY > 400);
+  }, { passive: true });
+  btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 </script>
 </body>
 </html>

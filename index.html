@@ -2041,11 +2041,78 @@
     .toolkit-tab { padding: 12px 12px; }
     .toolkit-tabs { flex-wrap: wrap; gap: 0; }
 
-    /* Controls row tidier */
-    .filter-row { gap: 8px; row-gap: 8px; }
-    .backup-controls { gap: 4px; }
-    .reset-btn { font-size: 10px; padding: 6px; }
-    .filter-label { display: none; }
+    /* Mobile: clearer hierarchy in controls bar with section labels */
+    .filter-row {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 14px;
+    }
+    .filter-group {
+      width: 100%;
+      flex-wrap: wrap;
+      gap: 6px;
+      position: relative;
+      padding-top: 20px;
+    }
+    .filter-label {
+      display: block !important;
+      position: absolute;
+      top: 0; left: 0;
+      font-size: 9.5px;
+      letter-spacing: 0.22em;
+      margin: 0;
+    }
+    .filter-spacer { display: none; }
+    .backup-controls {
+      width: 100%;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-right: 0;
+      position: relative;
+      padding-top: 20px;
+    }
+    .backup-controls::before {
+      content: 'YOUR LIST';
+      position: absolute;
+      top: 0; left: 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      letter-spacing: 0.22em;
+      color: var(--ink-muted);
+      font-weight: 500;
+    }
+    .backup-btn {
+      padding: 9px 11px;
+      font-size: 9.5px;
+      letter-spacing: 0.10em;
+      flex: 1;
+      min-width: 0;
+    }
+    .reset-btn {
+      align-self: flex-end;
+      font-size: 9.5px;
+      padding: 6px 4px;
+      margin-top: -8px;
+    }
+
+    /* Path header — stack vertically so title/desc/meta don't collide */
+    .path-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 16px 16px 14px;
+      margin-bottom: 18px;
+    }
+    .path-title { font-size: 22px; }
+    .path-title .icon { width: 22px; height: 22px; margin-right: 8px; vertical-align: -4px; }
+    .path-desc { font-size: 12.5px; }
+    .path-meta {
+      width: 100%;
+      gap: 18px;
+      margin-top: 6px;
+      padding-top: 12px;
+    }
+    .path-meta-item { flex: 1 1 100%; }
   }
 
   /* Very small phones */

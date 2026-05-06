@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>BuildersBench — Portfolio Project Guide 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -926,7 +926,7 @@
     display: none;
     align-items: flex-start;
     justify-content: center;
-    padding: 40px 20px;
+    padding: 40px 20px 0;
     overflow-y: auto;
   }
   .modal-backdrop.open {
@@ -1618,8 +1618,8 @@
   /* ===== BACK TO TOP ===== */
   #back-to-top {
     position: fixed;
-    bottom: 28px;
-    right: 28px;
+    bottom: calc(28px + env(safe-area-inset-bottom));
+    right: 20px;
     width: 44px;
     height: 44px;
     background: var(--surface-2);
@@ -1816,16 +1816,66 @@
     .modal-grid-2 { grid-template-columns: 1fr; }
   }
   @media (max-width: 640px) {
-    .container { padding: 0 18px; }
+    .container { padding: 0 16px; }
     .project-grid { grid-template-columns: 1fr; }
-    .hero { padding: 36px 0 24px; }
-    .hero h1 { font-size: clamp(36px, 11vw, 48px); }
-    .feed-window { height: 200px; }
-    .modal { padding: 30px 22px; }
-    .modal h2 { font-size: 26px; }
+    .hero { padding: 32px 0 20px; }
+    .hero h1 { font-size: clamp(34px, 10vw, 46px); }
+    .feed-window { height: 190px; }
     .controls { top: 54px; }
     .header-actions .stat-pill { display: none; }
-    .brand-mark { font-size: 11px; letter-spacing: 0.14em; }
+    .brand-mark { font-size: 11px; letter-spacing: 0.12em; }
+
+    /* Modal — tighter backdrop so modal fills screen */
+    .modal-backdrop { padding: 10px 0 0; align-items: flex-start; }
+    .modal {
+      padding: 28px 16px 36px;
+      border-radius: 20px 20px 0 0;
+      min-height: 80vh;
+    }
+    .modal h2 { font-size: 22px; }
+    .modal-close { top: 14px; right: 14px; }
+
+    /* Path tabs: horizontal scroll, single row */
+    .path-tabs {
+      width: 100%;
+      max-width: 100%;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      border-radius: 10px;
+      padding: 6px;
+    }
+    .path-tabs::-webkit-scrollbar { display: none; }
+    .path-tab {
+      flex-shrink: 0;
+      padding: 10px 13px;
+      font-size: 11px;
+      letter-spacing: 0.10em;
+    }
+    .path-tab .count { padding: 2px 6px; font-size: 10px; }
+
+    /* Touch targets — minimum 44px height */
+    .filter-chip { padding: 12px 14px; font-size: 12px; }
+    .backup-btn { padding: 11px 11px; font-size: 10px; letter-spacing: 0.10em; }
+    .bookmark-btn { padding: 10px; top: 10px; right: 10px; }
+    .toolkit-tab { padding: 12px 12px; }
+    .toolkit-tabs { flex-wrap: wrap; gap: 0; }
+
+    /* Controls row tidier */
+    .filter-row { gap: 8px; row-gap: 8px; }
+    .backup-controls { gap: 4px; }
+    .reset-btn { font-size: 10px; padding: 6px; }
+    .filter-label { display: none; }
+  }
+
+  /* Very small phones */
+  @media (max-width: 400px) {
+    .container { padding: 0 12px; }
+    .deploy-grid { grid-template-columns: 1fr; }
+    .modal { padding: 24px 14px 36px; }
+    .backup-btn { font-size: 9px; padding: 10px 8px; }
+    .path-tab { padding: 9px 10px; }
   }
 </style>
 <!-- Vercel Web Analytics -->

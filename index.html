@@ -2199,8 +2199,6 @@
     .path-tab { padding: 9px 10px; }
   }
 </style>
-<!-- Vercel Web Analytics -->
-<script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
 </head>
 <body>
 
@@ -3816,6 +3814,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
   // ===== RENDER TABS =====
   function renderTabs() {
     const tabs = document.getElementById('path-tabs');
+    if (!tabs) return;
     const cheatIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
     const pathHTML = PATHS.map(p => {
       const count = p.id === 'all' ? PROJECTS.length : PROJECTS.filter(x => x.path === p.id).length;
@@ -3888,7 +3887,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
       : [{
           path: PATHS.find(p => p.id === state.currentPath),
           items: [...filtered].sort(sortByTitle)
-        }];
+        }].filter(g => g.path);
 
     const totalGroups = groups.length;
     container.innerHTML = groups.map((g, gi) => {
@@ -4021,9 +4020,10 @@ ${tags} #BuildingInPublic #OpenToWork`;
     if (!p) return;
     const isBookmarked = state.bookmarks.includes(p.id);
     const progress = state.progress[p.id] || 'none';
-    const pathName = PATHS.find(x => x.id === p.path).name;
+    const pathName = PATHS.find(x => x.id === p.path)?.name ?? '';
 
     const modal = document.getElementById('modal');
+    if (!modal) return;
     modal.innerHTML = `
       <button class="modal-close" id="modal-close-btn">×</button>
       <div class="modal-eyebrow">
@@ -4267,25 +4267,29 @@ ${tags} #BuildingInPublic #OpenToWork`;
     };
   }
   function closeModal() {
-    document.getElementById('modal-backdrop').classList.remove('open');
-    document.getElementById('modal-top').classList.remove('visible');
+    document.getElementById('modal-backdrop')?.classList.remove('open');
+    document.getElementById('modal-top')?.classList.remove('visible');
     document.body.classList.remove('modal-open');
     document.body.style.overflow = '';
   }
   const modalBackdrop = document.getElementById('modal-backdrop');
   const modalTopBtn = document.getElementById('modal-top');
-  modalBackdrop.addEventListener('click', (e) => {
-    if (e.target.id === 'modal-backdrop') closeModal();
-  });
-  // Track scroll inside the modal — show button after a small scroll offset
-  // so it's available the moment the user starts scrolling, not buried halfway.
-  const updateModalTopVisibility = () => {
-    modalTopBtn.classList.toggle('visible', modalBackdrop.scrollTop > 200);
-  };
-  modalBackdrop.addEventListener('scroll', updateModalTopVisibility, { passive: true });
-  modalTopBtn.addEventListener('click', () => {
-    modalBackdrop.scrollTo({ top: 0, behavior: 'smooth' });
-  });
+  if (modalBackdrop) {
+    modalBackdrop.addEventListener('click', (e) => {
+      if (e.target.id === 'modal-backdrop') closeModal();
+    });
+    if (modalTopBtn) {
+      // Track scroll inside the modal — show button after a small scroll offset
+      // so it's available the moment the user starts scrolling, not buried halfway.
+      const updateModalTopVisibility = () => {
+        modalTopBtn.classList.toggle('visible', modalBackdrop.scrollTop > 200);
+      };
+      modalBackdrop.addEventListener('scroll', updateModalTopVisibility, { passive: true });
+      modalTopBtn.addEventListener('click', () => {
+        modalBackdrop.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+  }
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeModal();
   });
@@ -4494,6 +4498,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     });
     const winner = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
     const path = PATHS.find(p => p.id === winner);
+    if (!path) return;
     const level = TIME_TO_LEVEL[quizState.answers.time] || 'beginner';
     const why = PATH_REASON[winner] || path.desc;
 

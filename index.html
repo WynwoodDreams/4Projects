@@ -4028,6 +4028,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
   function openModal(id) {
     const p = PROJECTS.find(x => x.id === id);
     if (!p) return;
+    window.bbTrack && window.bbTrack('project_open', { id: p.id, path: p.path });
     const isBookmarked = state.bookmarks.includes(p.id);
     const progress = state.progress[p.id] || 'none';
     const pathName = PATHS.find(x => x.id === p.path)?.name ?? '';
@@ -4201,6 +4202,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     }
 
     document.getElementById('copy-prompt').onclick = (e) => {
+      window.bbTrack && window.bbTrack('copy_prompt', { id: p.id, path: p.path });
       navigator.clipboard.writeText(p.prompt).then(() => {
         e.target.classList.add('copied');
         e.target.textContent = 'Copied ✓';
@@ -4312,6 +4314,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
   }
 
   function exportList() {
+    window.bbTrack && window.bbTrack('export_list', { count: state.bookmarks.length });
     const payload = {
       version: 1,
       exportedAt: new Date().toISOString(),
@@ -4363,6 +4366,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
 
   function shareList() {
     if (state.bookmarks.length === 0) return;
+    window.bbTrack && window.bbTrack('share_list', { count: state.bookmarks.length });
     const encoded = btoa(unescape(encodeURIComponent(state.bookmarks.join(',')))).replace(/=+$/, '');
     const url = `${location.origin}${location.pathname}#list=${encoded}`;
     navigator.clipboard.writeText(url).then(() => {
@@ -4513,6 +4517,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     const winner = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
     const path = PATHS.find(p => p.id === winner);
     if (!path) return;
+    window.bbTrack && window.bbTrack('quiz_complete', { winner, ...quizState.answers });
     const level = TIME_TO_LEVEL[quizState.answers.time] || 'beginner';
     const why = PATH_REASON[winner] || path.desc;
 
@@ -4610,6 +4615,13 @@ ${tags} #BuildingInPublic #OpenToWork`;
     btt.classList.toggle('visible', window.scrollY > 400);
   }, { passive: true });
   btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  document.querySelectorAll('.deploy-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const name = card.querySelector('.deploy-card-name')?.textContent?.trim();
+      if (name) window.bbTrack && window.bbTrack('deploy_click', { provider: name });
+    });
+  });
 </script>
 <!-- Vercel Web Analytics -->
 <script type="module" src="/analytics.js"></script>

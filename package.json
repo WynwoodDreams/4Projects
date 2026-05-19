@@ -1,7 +1,7 @@
 {
   "name": "4-projects-b",
   "version": "1.0.0",
-  "description": "BuildersBench — Portfolio Project Guide 2026",
+  "description": "BuildersBench — Portfolio Project Guide",
   "type": "module",
   "scripts": {
     "dev": "vite",

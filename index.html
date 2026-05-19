@@ -133,7 +133,19 @@
     color: var(--green);
     filter: drop-shadow(0 0 6px var(--green-glow));
   }
-  .brand-icon svg { width: 100%; height: 100%; overflow: visible; }
+  .brand-icon svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    animation: brand-icon-spin 12s linear infinite;
+    transform-origin: 50% 50%;
+  }
+  @keyframes brand-icon-spin {
+    to { transform: rotate(360deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .brand-icon svg { animation: none; }
+  }
   .brand-mark .brand-dot {
     color: var(--green);
     text-shadow: 0 0 10px var(--green-glow);

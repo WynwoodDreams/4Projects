@@ -4,9 +4,17 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>BuildersBench — Portfolio Project Guide 2026</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style id="self-hosted-fonts">
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 300; font-display: swap; src: url('/fonts/inter-300.woff2') format('woff2'); }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/inter-400.woff2') format('woff2'); }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 500; font-display: swap; src: url('/fonts/inter-500.woff2') format('woff2'); }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 600; font-display: swap; src: url('/fonts/inter-600.woff2') format('woff2'); }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 700; font-display: swap; src: url('/fonts/inter-700.woff2') format('woff2'); }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 800; font-display: swap; src: url('/fonts/inter-800.woff2') format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/jetbrains-mono-400.woff2') format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 500; font-display: swap; src: url('/fonts/jetbrains-mono-500.woff2') format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 600; font-display: swap; src: url('/fonts/jetbrains-mono-600.woff2') format('woff2'); }
+</style>
 <style id="glass-terminal-style">
   :root {
     /* Glass terminal palette */
@@ -3653,7 +3661,9 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         bookmarks: state.bookmarks,
         progress: state.progress
       }));
-    } catch (e) { /* ignore */ }
+    } catch (e) {
+      if (typeof toast === 'function') toast('Storage full — your changes may not persist');
+    }
   }
 
   // ===== TEMPLATE GENERATORS =====
@@ -4184,8 +4194,8 @@ ${tags} #BuildingInPublic #OpenToWork`;
       videoThumb.onclick = () => {
         const wrap = document.getElementById('video-wrap');
         const embedUrl = p.ytPlaylist
-          ? `https://www.youtube.com/embed/videoseries?list=${p.youtube}&autoplay=1`
-          : `https://www.youtube.com/embed/${p.youtube}?autoplay=1&rel=0`;
+          ? `https://www.youtube-nocookie.com/embed/videoseries?list=${p.youtube}&autoplay=1&rel=0`
+          : `https://www.youtube-nocookie.com/embed/${p.youtube}?autoplay=1&rel=0`;
         wrap.innerHTML = `<iframe src="${embedUrl}" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
       };
     }
@@ -4321,6 +4331,10 @@ ${tags} #BuildingInPublic #OpenToWork`;
   }
 
   function importList(file) {
+    if (file.size > 1_000_000) {
+      toast('File too large — exports should be under 1 MB');
+      return;
+    }
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
@@ -4349,7 +4363,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
 
   function shareList() {
     if (state.bookmarks.length === 0) return;
-    const encoded = btoa(state.bookmarks.join(',')).replace(/=+$/, '');
+    const encoded = btoa(unescape(encodeURIComponent(state.bookmarks.join(',')))).replace(/=+$/, '');
     const url = `${location.origin}${location.pathname}#list=${encoded}`;
     navigator.clipboard.writeText(url).then(() => {
       toast('Shareable link copied — anyone can open your list');
@@ -4362,7 +4376,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     if (!location.hash.startsWith('#list=')) return;
     try {
       const encoded = location.hash.slice(6);
-      const decoded = atob(encoded);
+      const decoded = decodeURIComponent(escape(atob(encoded)));
       const incoming = decoded.split(',').filter(Boolean);
       const validIds = new Set(PROJECTS.map(p => p.id));
       const filtered = incoming.filter(id => validIds.has(id));

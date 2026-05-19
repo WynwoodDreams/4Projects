@@ -2487,9 +2487,9 @@
         "aiAssist": "AI coding assistants like Google Gemini or ChatGPT can be used to generate initial PowerShell script drafts, debug code, and explain complex commands or Microsoft 365 modules. They can also help refine the script for better efficiency and error handling.",
         "prompt": "Generate a PowerShell script to automate the onboarding of a new user in Microsoft 365. The script should: 1. Prompt for user's first name, last name, and department. 2. Create a new Microsoft 365 user account. 3. Assign a Microsoft 365 E3 license. 4. Set a temporary password and force password change at first login. 5. Add the user to a specified security group based on their department (e.g., 'Sales Team' for 'Sales' department). 6. Output a confirmation message with the new user's UPN and temporary password. Include error handling for existing users or licensing issues.",
         "showcase": {
-            "github": "Detailed README with setup instructions, code, and a demo video.",
-            "linkedin": "Post a video or screenshots of the project in action, highlighting the skills learned.",
-            "resume": "List under 'Projects' with focus on 'PowerShell scripting'."
+            "github": "README with the onboarding/offboarding scripts, a sample dev-tenant setup guide, and a short demo run against a test user.",
+            "linkedin": "Post a 60-second screen recording of the script onboarding a new hire — account created, license assigned, group added — in under 30 seconds.",
+            "resume": "Focus on 'PowerShell automation', 'Microsoft 365 administration', and 'AI-augmented scripting'."
         },
         "youtube": "jEWI9P8xKeg",
         "ytTitle": "Use AI to Create a Powershell Script - with Google Gemini",
@@ -2520,224 +2520,6 @@
             }
         ]
     },
-    {
-        "id": "cyber-0",
-        "path": "cyber",
-        "level": "beginner",
-        "title": "AI-Powered SOC Analyst Agent Home Lab",
-        "summary": "This project guides beginners through setting up a home lab to build an AI-powered Security Operations Center (SOC) analyst agent. It involves configuring virtual machines, integrating AI tools, and automating basic threat detection and response tasks.",
-        "tech": [
-            "Ubuntu",
-            "Kali Linux",
-            "Python",
-            "Airia AI (or similar open-source AI library)",
-            "VirtualBox/VMware"
-        ],
-        "skills": "Virtualization, Linux command line, Python scripting, AI integration, Security automation, Threat detection, Incident response fundamentals",
-        "why": "This project demonstrates practical skills in modern cybersecurity, showcasing proficiency in AI, automation, and cloud-native security concepts. It highlights a proactive approach to learning and applying cutting-edge technologies relevant to current job market demands.",
-        "useCase": "A small to medium-sized business could use a similar automated SOC agent to monitor their network for suspicious activities, triage alerts, and initiate automated responses, thereby enhancing their security posture with limited resources.",
-        "bonus": "Integrate a natural language processing (NLP) model to summarize security alerts or generate incident reports automatically.",
-        "aiAssist": "An AI coding assistant can help with Python scripting for integrating AI libraries, debugging configuration issues in Linux, and generating code snippets for automation tasks.",
-        "prompt": "\"Generate a Python script that uses a basic machine learning model (e.g., scikit-learn) to classify network traffic as malicious or benign based on given features (e.g., port, protocol, packet size). Provide example features and labels.\"",
-        "showcase": {
-            "github": "Detailed README with setup instructions, code, and a demo video.",
-            "linkedin": "Post a video or screenshots of the project in action, highlighting the skills learned.",
-            "resume": "List under 'Projects' with focus on 'Virtualization'."
-        },
-        "youtube": "K0k9WouiBwE",
-        "ytTitle": "FREE Beginner Cyber security project with AI (Step-by-step Home Lab)",
-        "steps": []
-    },
-    {
-        "id": "ai-0",
-        "path": "ai",
-        "level": "beginner",
-        "title": "Automated Customer Support AI Agent",
-        "summary": "This project involves building an automated Customer Support AI Agent that integrates with various platforms to streamline ticket resolution. It demonstrates how to leverage AI, cloud services, and automation tools to create a practical, real-world solution.",
-        "tech": [
-            "OpenAI Agent Builder",
-            "Zapier",
-            "n8n",
-            "OpenAI GPT models",
-            "Zendesk",
-            "HubSpot",
-            "Shopify",
-            "Slack",
-            "Google Sheets",
-            "Python",
-            "APIs"
-        ],
-        "skills": "AI Agents, Automation, API Integration, Cloud Platforms (AWS/GCP/Azure), Large Language Models (LLMs), Prompt Engineering, Workflow Automation, Data Integration, Customer Relationship Management (CRM), E-commerce Platforms",
-        "why": "This project showcases practical skills in AI, automation, and cloud integration, which are highly sought after in the current job market. It demonstrates the ability to build end-to-end solutions that solve real business problems.",
-        "useCase": "Companies can use this project to automate initial responses to customer inquiries, summarize complex support tickets, and route issues to the appropriate department, significantly improving customer service efficiency.",
-        "bonus": "Explore integrating additional AI services like sentiment analysis or image recognition to enhance the agent's capabilities.",
-        "aiAssist": "AI coding assistants can be used to generate code snippets for API integrations, debug automation workflows, and refine natural language prompts for the AI model.",
-        "prompt": "Create a Python script that uses the OpenAI API to summarize customer support tickets and suggest appropriate responses, considering the customer's history from a CRM system.",
-        "showcase": {
-            "github": "Detailed README with setup instructions, code, and a demo video.",
-            "linkedin": "Post a video or screenshots of the project in action, highlighting the skills learned.",
-            "resume": "List under 'Projects' with focus on 'AI Agents'."
-        },
-        "youtube": "cXnPxN06boY",
-        "ytTitle": "AI Agents Made Simple: Beginner AI Automation Tutorial (Step-by-Step)",
-        "steps": [
-            {
-                "title": "Define the Workflow Trigger",
-                "desc": "Set up a trigger for new customer support tickets in a platform like Zendesk or HubSpot."
-            },
-            {
-                "title": "Integrate CRM and E-commerce Data",
-                "desc": "Use APIs to retrieve customer data from a CRM (e.g., HubSpot) and order history from an e-commerce platform (e.g., Shopify)."
-            },
-            {
-                "title": "AI Processing with LLMs",
-                "desc": "Send ticket details and retrieved data to an AI model (e.g., OpenAI GPT) to generate a summary and draft a response."
-            },
-            {
-                "title": "Automate Ticket Updates",
-                "desc": "Post the AI-generated summary and response back to the original support ticket in the helpdesk system."
-            },
-            {
-                "title": "Log and Notify",
-                "desc": "Record interaction details in a spreadsheet (e.g., Google Sheets) and send notifications to the support team via a messaging app (e.g., Slack)."
-            },
-            {
-                "title": "Deploy and Monitor",
-                "desc": "Deploy the AI agent using an automation platform like Zapier or n8n and continuously monitor its performance and accuracy."
-            }
-        ]
-    },
-    {
-        "id": "data-0",
-        "path": "data",
-        "level": "beginner",
-        "title": "AI-Powered Business Intelligence Dashboard",
-        "summary": "Build a dynamic, professional-looking business intelligence dashboard for a fictional company. You will use AI tools to generate a dataset, design the dashboard, and create the visualizations, all in a fraction of the time it would traditionally take.",
-        "tech": [
-            "Claude",
-            "ChatGPT",
-            "Power BI",
-            "Dribbble"
-        ],
-        "skills": "Data Visualization, Business Intelligence, AI-Powered Analytics, Prompt Engineering, Data-driven Decision Making",
-        "why": "This project showcases your ability to leverage modern AI tools to deliver a data-driven solution quickly and efficiently, a highly sought-after skill in the current job market.",
-        "useCase": "A marketing team could use this process to quickly build a dashboard to track the performance of a new campaign.",
-        "bonus": "To further enhance the project, use an AI tool to generate automated insights and a summary of the dashboard's key findings.",
-        "aiAssist": "Use an AI assistant throughout the project to brainstorm ideas, generate code snippets for data transformation, and get help with any technical challenges you encounter.",
-        "prompt": "'''\"I am a data analyst building a Power BI dashboard for a fictional e-commerce company. The dashboard should track sales performance. Generate a CSV dataset with the following columns: OrderID, Date, CustomerID, ProductID, ProductName, Category, Price, Quantity, and TotalSales. The dataset should contain 1000 rows of realistic-looking data for the year 2025.\"'''",
-        "showcase": {
-            "github": "Detailed README with setup instructions, code, and a demo video.",
-            "linkedin": "Post a video or screenshots of the project in action, highlighting the skills learned.",
-            "resume": "List under 'Projects' with focus on 'Data Visualization'."
-        },
-        "youtube": "8_8DfD5f61w",
-        "ytTitle": "I Built a Full AI Dashboard in 10 Minutes Using Claude, GPT & Dribbble | 2026 Tutorial",
-        "steps": [
-            {
-                "title": "Project Scoping & Dataset Generation",
-                "desc": "Define the business problem and use an AI assistant like Claude to generate a relevant dataset."
-            },
-            {
-                "title": "Design Inspiration",
-                "desc": "Use Dribbble to find inspiration for the dashboard's design and layout."
-            },
-            {
-                "title": "Chart and KPI Selection",
-                "desc": "Use an AI assistant to recommend the best charts and Key Performance Indicators (KPIs) for the dataset."
-            },
-            {
-                "title": "Data Loading and Preparation",
-                "desc": "Load the generated dataset into a business intelligence tool like Power BI."
-            },
-            {
-                "title": "Dashboard Development",
-                "desc": "Build the dashboard in the BI tool, using the AI-generated recommendations and design inspiration."
-            },
-            {
-                "title": "Final Touches and Sharing",
-                "desc": "Add final touches to the dashboard, such as titles and annotations, and prepare it for sharing."
-            }
-        ]
-    },
-    {
-        "id": "swe-0",
-        "path": "swe",
-        "level": "beginner",
-        "title": "Conversational AI Agent with Tool Use",
-        "summary": "An AI agent that can answer questions AND take actions. For example: a personal assistant that can check your calendar, add events, search the web, and summarize emails. Or a customer service agent that can look up orders and process returns.",
-        "tech": [
-            "Amazon Bedrock AgentCore for the agent runtime",
-            "Lambda for tool implementations and MCP servers",
-            "DynamoDB for conversation memory",
-            "API Gateway and Cognito for secure access."
-        ],
-        "skills": "Function calling, tool definitions, RAG, conversation memory, graceful error handling when tools fail, MCP (Model Context Protocol)",
-        "why": "Chatbots are table stakes. Agents that can actually DO things (call APIs, query databases, trigger workflows) are what companies are trying to build right now. Showing you understand agentic patterns puts you ahead of 90% of applicants.",
-        "useCase": "a personal assistant that can check your calendar, add events, search the web, and summarize emails.",
-        "bonus": "Implement advanced features like sentiment analysis for conversational turns or integrate with more external APIs for richer tool use.",
-        "aiAssist": "Use AI coding assistants to generate boilerplate code for AWS Lambda functions, define tool schemas, and debug agent logic.",
-        "prompt": "\"Create a Python AWS Lambda function that acts as a tool for an Amazon Bedrock AgentCore agent. The tool should take a user query about calendar events, parse the date and time, and add a new event to a Google Calendar. Include error handling for invalid date formats and API failures.\"",
-        "showcase": {
-            "github": "Detailed README with setup instructions, code, and a demo video.",
-            "linkedin": "Post a video or screenshots of the project in action, highlighting the skills learned.",
-            "resume": "List under 'Projects' with focus on 'Function calling'."
-        },
-        "youtube": "cTBGIKAckKE",
-        "ytTitle": "Amazon Bedrock AgentCore Tutorial | Build, Deploy, Operate AI Agents on AWS",
-        "steps": [
-            {
-                "title": "Set up AWS Environment",
-                "desc": "Configure AWS CLI, IAM roles, and necessary permissions for Bedrock, Lambda, and DynamoDB."
-            },
-            {
-                "title": "Define Agent Tools",
-                "desc": "Create AWS Lambda functions to act as tools for the AI agent (e.g., calendar management, web search)."
-            },
-            {
-                "title": "Configure Amazon Bedrock AgentCore",
-                "desc": "Set up the agent in Bedrock AgentCore, linking it to the defined Lambda tools and specifying action groups."
-            },
-            {
-                "title": "Implement Conversation Memory",
-                "desc": "Integrate DynamoDB for persistent conversation memory to maintain context across turns."
-            },
-            {
-                "title": "Develop User Interface (Optional)",
-                "desc": "Build a simple web interface or integrate with a chat application to interact with the AI agent."
-            },
-            {
-                "title": "Test and Deploy",
-                "desc": "Thoroughly test the agent's functionality, tool use, and error handling, then deploy it for public access via API Gateway and Cognito."
-            }
-        ]
-    },
-    {
-        "id": "cs-0",
-        "path": "cs",
-        "level": "beginner",
-        "title": "Build an AI Agent From Scratch in Python",
-        "summary": "This project guides beginners through building a functional AI agent using Python, focusing on core concepts and practical implementation.",
-        "tech": [
-            "Python",
-            "AI Agent Framework (e.g., LangChain)",
-            "OpenAI API (or similar LLM API)"
-        ],
-        "skills": "Python programming, AI agent development, API integration, problem-solving, basic understanding of large language models",
-        "why": "Demonstrates practical AI development skills, ability to build intelligent systems, and proficiency in modern programming languages and tools, making the candidate stand out in today's job market.",
-        "useCase": "Automating customer service responses, data analysis, or content generation for businesses.",
-        "bonus": "Explore advanced agent capabilities like memory, tool use, and multi-agent collaboration.",
-        "aiAssist": "Utilize AI coding assistants like GitHub Copilot or other LLM-based tools to generate code snippets, debug, and understand complex concepts during development.",
-        "prompt": "Generate Python code for an AI agent that can process natural language queries and interact with external APIs to retrieve information.",
-        "showcase": {
-            "github": "Detailed README with setup instructions, code, and a demo video.",
-            "linkedin": "Post a video or screenshots of the project in action, highlighting the skills learned.",
-            "resume": "List under 'Projects' with focus on 'Python programming'."
-        },
-        "youtube": "bTMPwUgLZf0",
-        "ytTitle": "Build an AI Agent From Scratch in Python - Tutorial for Beginners",
-        "steps": []
-    }
-,
     // TECH / IT SUPPORT
     {
       id: 'it-1', path: 'tech-it', level: 'intermediate',
@@ -2936,7 +2718,7 @@
       prompt: 'I\'m building a RAG system. Help me compare RecursiveCharacterTextSplitter vs TokenTextSplitter for technical documentation. Which handles code blocks better? Also, write a Python function to upsert chunks into Pinecone with metadata.',
       showcase: {
         github: 'Include a "Hallucination Evaluation" report showing how different chunking strategies affected quality.',
-        linkedin: 'Host a live demo where recruiters can "chat" with your resume.',
+        linkedin: 'Post a side-by-side video: the system answering a question about a chart inside a PDF, with the cited page + region highlighted in real time.',
         resume: 'Highlight production RAG and citation accuracy.'
       },
       youtube: 'Ni1P8TITtE8', ytTitle: 'How to Build a production-ready RAG AI agent',
@@ -3255,7 +3037,7 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         linkedin: 'Video showing the agents collaborating live.',
         resume: '"Architected a multi-agent system using LangGraph that reduced research time by 80%."'
       },
-      youtube: 'mRkLvqFMkyI', ytTitle: 'LangGraph Tutorial: Building a Multi-Agent AI Research Assistant',
+      youtube: 'B_0TNuYi56w', ytTitle: 'Hierarchical multi-agent systems with LangGraph',
       steps: [
         { title: 'Design the agent graph', desc: 'Draw it in Mermaid first: Supervisor → (Researcher | Writer | Fact-Checker) → Supervisor. Decide on routing logic.' },
         { title: 'Define the shared state', desc: 'Create a TypedDict with fields: task, research_notes, draft, fact_check_results, final_output.' },
@@ -3387,7 +3169,7 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         linkedin: 'Screen recording of the dashboard catching a simulated port scan in real time.',
         resume: 'Focus on "Behavior-based monitoring" and "ML-augmented IT operations".'
       },
-      youtube: 'rid5M4ifGPA', ytTitle: 'Build an AI-Powered Network Monitor with MQTT & Docker',
+      youtube: 'Ui5xP-B2nZ4', ytTitle: 'Anomaly Detection for Network Traffic | Isolation Forest + Autoencoder (Python Flask Project)',
       steps: [
         { title: 'Generate or capture sample traffic', desc: 'Use scapy to generate normal traffic + a few attack patterns (port scans, beaconing). Or pull a public netflow dataset.' },
         { title: 'Extract behavioral features', desc: 'Compute per-host metrics: bytes/sec, unique ports touched, top destinations, protocol mix. Save as a Pandas DataFrame.' },

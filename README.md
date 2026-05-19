@@ -1,6 +1,6 @@
 # BuildersBench.dev
 
-A curated 2026 portfolio project guide for students chasing internships, first roles, and career pivots.
+A curated portfolio project guide for students chasing internships, first roles, and career pivots.
 
 **Live:** [4-projects.vercel.app](https://4-projects.vercel.app)
 

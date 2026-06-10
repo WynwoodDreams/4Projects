@@ -4,6 +4,17 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>BuildersBench — Portfolio Project Guide</title>
+<meta name="description" content="35 portfolio projects across 8 tech career paths — AI, cloud, cybersecurity, data, and more. Each ships with a build roadmap, starter AI prompt, resume bullets, and interview pitch." />
+<meta name="theme-color" content="#0a0f0a" />
+<link rel="canonical" href="https://4-projects.vercel.app/" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='none' stroke='%2300e676' stroke-width='2'/%3E%3Cpath d='M8 12l3 3 5-6' fill='none' stroke='%2300e676' stroke-width='2'/%3E%3C/svg%3E" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="BuildersBench — Portfolio Project Guide" />
+<meta property="og:description" content="35 portfolio projects across 8 tech career paths, each with a build roadmap, starter AI prompt, resume bullets, and interview pitch." />
+<meta property="og:url" content="https://4-projects.vercel.app/" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="BuildersBench — Portfolio Project Guide" />
+<meta name="twitter:description" content="35 portfolio projects across 8 tech career paths, each with a build roadmap, starter AI prompt, resume bullets, and interview pitch." />
 <style id="self-hosted-fonts">
 @font-face { font-family: 'Inter'; font-style: normal; font-weight: 300; font-display: swap; src: url('/fonts/inter-300.woff2') format('woff2'); }
 @font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/inter-400.woff2') format('woff2'); }
@@ -549,9 +560,6 @@
     transition: border-color 0.15s, color 0.15s;
   }
   .quiz-retake:hover { border-color: var(--ink); color: var(--ink); }
-
-  /* ===== TICKER (hidden — no scroll) ===== */
-  .ticker-strip { display: none !important; }
 
   /* ===== HOW TO USE ===== */
   .how-to {
@@ -2297,10 +2305,6 @@
         <div class="quiz-stage" id="quiz-stage"></div>
       </aside>
     </div>
-    <div class="ticker-strip" aria-label="Trending tech in hiring right now">
-      <span class="ticker-strip-label">Hiring · Now</span>
-      <div class="ticker-track" id="ticker-track"></div>
-    </div>
   </div>
 </section>
 
@@ -2336,7 +2340,7 @@
 
 <!-- MODAL -->
 <div class="modal-backdrop" id="modal-backdrop">
-  <div class="modal" id="modal"></div>
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Project details"></div>
 </div>
 <button id="modal-top" title="Back to top" aria-label="Back to top">↑</button>
 
@@ -2434,7 +2438,7 @@
   </div>
 </footer>
 
-<button id="back-to-top" title="Back to top">↑</button>
+<button id="back-to-top" title="Back to top" aria-label="Back to top">↑</button>
 
 <script>
   // ===== DATA =====
@@ -2838,7 +2842,7 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         linkedin: 'Carousel of insights and cost-saving metrics.',
         resume: 'Focus on "cost-saving" and "efficiency" metrics.'
       },
-      youtube: 'nIoHj7ei2to', ytTitle: 'Python Time Series Forecasting Tutorial with Meta Prophet', ytPlaylist: true,
+      youtube: 'nIoHj7ei2to', ytTitle: 'Python Time Series Forecasting Tutorial with Meta Prophet',
       steps: [
         { title: 'Get historical sales data', desc: 'Use a Kaggle retail dataset or generate synthetic data for 3 years with seasonality. Store in PostgreSQL.' },
         { title: 'Explore seasonality patterns', desc: 'Use pandas + Plotly to plot daily, weekly, and yearly patterns. Identify holidays and anomalies.' },
@@ -3444,8 +3448,15 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        state.bookmarks = parsed.bookmarks || [];
-        state.progress = parsed.progress || {};
+        state.bookmarks = Array.isArray(parsed.bookmarks)
+          ? parsed.bookmarks.filter(id => typeof id === 'string')
+          : [];
+        state.progress = {};
+        if (parsed.progress && typeof parsed.progress === 'object') {
+          Object.entries(parsed.progress).forEach(([id, val]) => {
+            if (val === 'started' || val === 'done') state.progress[id] = val;
+          });
+        }
       }
     } catch (e) { /* ignore */ }
   }
@@ -3728,6 +3739,13 @@ ${tags} #BuildingInPublic #OpenToWork`;
         if (e.target.closest('.bookmark-btn') || e.target.closest('.progress-select')) return;
         openModal(id);
       });
+      card.addEventListener('keydown', (e) => {
+        if (e.target !== card) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openModal(id);
+        }
+      });
       const bm = card.querySelector('.bookmark-btn');
       bm.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -3747,8 +3765,8 @@ ${tags} #BuildingInPublic #OpenToWork`;
     const statusClass = progress === 'started' ? 'started' : progress === 'done' ? 'done' : '';
     const meta = LEVEL_META[p.level] || LEVEL_META.intermediate;
     return `
-      <article class="project-card ${statusClass}" data-id="${p.id}">
-        <button class="bookmark-btn ${isBookmarked ? 'active' : ''}" aria-label="Bookmark">
+      <article class="project-card ${statusClass}" data-id="${p.id}" tabindex="0" role="button" aria-label="View details: ${p.title}">
+        <button class="bookmark-btn ${isBookmarked ? 'active' : ''}" aria-label="Bookmark ${p.title}" aria-pressed="${isBookmarked}">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="${isBookmarked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
         </button>
         <div class="card-top">
@@ -3761,7 +3779,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
           ${p.tech.slice(0, 4).map(t => `<span class="tag">${t}</span>`).join('')}
         </div>
         <div class="card-footer">
-          <select class="progress-select">
+          <select class="progress-select" aria-label="Progress for ${p.title}">
             <option value="none" ${progress === 'none' ? 'selected' : ''}>Not started</option>
             <option value="started" ${progress === 'started' ? 'selected' : ''}>In progress</option>
             <option value="done" ${progress === 'done' ? 'selected' : ''}>Completed ✓</option>
@@ -3800,8 +3818,6 @@ ${tags} #BuildingInPublic #OpenToWork`;
     document.getElementById('bookmark-count').textContent = state.bookmarks.length;
     const doneCount = Object.values(state.progress).filter(v => v === 'done').length;
     document.getElementById('done-count').textContent = doneCount;
-    const metaProjects = document.getElementById('meta-projects');
-    if (metaProjects) metaProjects.textContent = PROJECTS.length;
     refreshBackupButtons();
 
     document.getElementById('pill-saved').onclick = () => {
@@ -3830,7 +3846,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     const modal = document.getElementById('modal');
     if (!modal) return;
     modal.innerHTML = `
-      <button class="modal-close" id="modal-close-btn">×</button>
+      <button class="modal-close" id="modal-close-btn" aria-label="Close">×</button>
       <div class="modal-eyebrow">
         <span>${pathName}</span>
       </div>
@@ -3846,7 +3862,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
       <div class="modal-section">
         <h4>Watch & Learn</h4>
         <div class="video-wrap" id="video-wrap">
-          <div class="video-thumb" id="video-thumb" style="background-image: url('https://img.youtube.com/vi/${p.youtube}/maxresdefault.jpg');">
+          <div class="video-thumb" id="video-thumb" role="button" tabindex="0" aria-label="Play video: ${p.ytTitle}" style="background-image: url('https://img.youtube.com/vi/${p.youtube}/maxresdefault.jpg'), url('https://img.youtube.com/vi/${p.youtube}/hqdefault.jpg');">
             <div class="play-btn">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             </div>
@@ -3974,6 +3990,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     `;
 
     const backdrop = document.getElementById('modal-backdrop');
+    const wasOpen = backdrop.classList.contains('open');
     backdrop.classList.add('open');
     backdrop.scrollTop = 0;
     document.getElementById('modal-top').classList.remove('visible');
@@ -3982,16 +3999,27 @@ ${tags} #BuildingInPublic #OpenToWork`;
 
     // Events
     document.getElementById('modal-close-btn').onclick = closeModal;
+    if (!wasOpen) {
+      lastFocusedBeforeModal = document.activeElement;
+      document.getElementById('modal-close-btn').focus();
+    }
 
     // Video thumbnail click → embed iframe
     const videoThumb = document.getElementById('video-thumb');
     if (videoThumb && p.youtube) {
-      videoThumb.onclick = () => {
+      const playVideo = () => {
         const wrap = document.getElementById('video-wrap');
         const embedUrl = p.ytPlaylist
           ? `https://www.youtube-nocookie.com/embed/videoseries?list=${p.youtube}&autoplay=1&rel=0`
           : `https://www.youtube-nocookie.com/embed/${p.youtube}?autoplay=1&rel=0`;
-        wrap.innerHTML = `<iframe src="${embedUrl}" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+        wrap.innerHTML = `<iframe src="${embedUrl}" title="${p.ytTitle}" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+      };
+      videoThumb.onclick = playVideo;
+      videoThumb.onkeydown = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          playVideo();
+        }
       };
     }
 
@@ -4072,11 +4100,16 @@ ${tags} #BuildingInPublic #OpenToWork`;
       openModal(p.id); // re-render
     };
   }
+  let lastFocusedBeforeModal = null;
   function closeModal() {
     document.getElementById('modal-backdrop')?.classList.remove('open');
     document.getElementById('modal-top')?.classList.remove('visible');
     document.body.classList.remove('modal-open');
     document.body.style.overflow = '';
+    if (lastFocusedBeforeModal && document.contains(lastFocusedBeforeModal)) {
+      lastFocusedBeforeModal.focus();
+    }
+    lastFocusedBeforeModal = null;
   }
   const modalBackdrop = document.getElementById('modal-backdrop');
   const modalTopBtn = document.getElementById('modal-top');
@@ -4097,7 +4130,21 @@ ${tags} #BuildingInPublic #OpenToWork`;
     }
   }
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeModal();
+    if (e.key === 'Escape') { closeModal(); return; }
+    if (e.key !== 'Tab') return;
+    const backdrop = document.getElementById('modal-backdrop');
+    if (!backdrop || !backdrop.classList.contains('open')) return;
+    const focusables = backdrop.querySelectorAll('button, select, a[href], [tabindex]:not([tabindex="-1"])');
+    if (focusables.length === 0) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (e.shiftKey && (document.activeElement === first || !backdrop.contains(document.activeElement))) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && (document.activeElement === last || !backdrop.contains(document.activeElement))) {
+      e.preventDefault();
+      first.focus();
+    }
   });
 
   // ===== BACKUP / SHARE =====
@@ -4189,11 +4236,13 @@ ${tags} #BuildingInPublic #OpenToWork`;
         if (replace) {
           state.bookmarks = [...new Set([...state.bookmarks, ...filtered])];
           saveState();
+          renderAll();
           toast(`Merged — ${state.bookmarks.length} bookmarks total`);
         }
       } else {
         state.bookmarks = filtered;
         saveState();
+        renderAll();
         toast(`Loaded shared list — ${filtered.length} bookmarks`);
       }
       history.replaceState(null, '', location.pathname);
@@ -4211,7 +4260,6 @@ ${tags} #BuildingInPublic #OpenToWork`;
     };
   }
 
-  // ===== HERO MOTION =====
   // ===== PATH QUIZ =====
   const QUIZ_QUESTIONS = [
     {
@@ -4344,8 +4392,8 @@ ${tags} #BuildingInPublic #OpenToWork`;
     const clockEl = document.getElementById('hero-clock');
     if (clockEl) {
       const tick = () => {
-        const d = new Date();
-        clockEl.textContent = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')} ET`;
+        const t = new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        clockEl.textContent = `${t} ET`;
       };
       tick();
       setInterval(tick, 1000);
@@ -4373,11 +4421,12 @@ ${tags} #BuildingInPublic #OpenToWork`;
     });
   }
   loadState();
-  readSharedList();
   wireBackupControls();
   renderAll();
   mountHero();
   wireFooterPaths();
+  // Deferred so the merge confirm() can't block first paint
+  setTimeout(readSharedList, 0);
 
   // Email assembly (anti-scrape) — pieces never appear together in HTML source
   const MAIL_USER = ['hel', 'lo'].join('');

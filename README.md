@@ -8,7 +8,7 @@ A curated portfolio project guide for students chasing internships, first roles,
 
 ## What's inside
 
-- **34 projects** across 8 career paths — AI Engineer, Cloud, Computer Science, Cybersecurity, Data Analyst, Help Desk, Software Engineer, IT Support
+- **35 projects** across 8 career paths — AI Engineer, Cloud, Computer Science, Cybersecurity, Data Analyst, Help Desk, Software Engineer, IT Support
 - Each project ships with:
   - A 6-step build roadmap
   - A starter AI prompt for vibe-coding
@@ -22,19 +22,20 @@ A curated portfolio project guide for students chasing internships, first roles,
 
 ## Tech
 
-Single static `index.html`. No build step, no framework, no dependencies.
+Single static `index.html`, no framework. Vite bundles the page and the Vercel Analytics module at deploy time.
 
-- Fonts: Inter + JetBrains Mono (Google Fonts)
+- Fonts: Inter + JetBrains Mono (self-hosted in `public/fonts/`)
 - Hosting + analytics: Vercel
 - Icons: Lucide-style line SVGs (inlined)
 
 ## Local development
 
 ```
-Open index.html in a browser. That's it.
+npm install
+npm run dev
 ```
 
-No install, no build, no server.
+Vite serves the site at the printed local URL.
 
 ## Security & privacy
 
@@ -43,7 +44,7 @@ No install, no build, no server.
 - Email addresses obfuscated and assembled at runtime to prevent scraping
 - No backend, no accounts, no PII collected
 - Bookmarks and progress live in `localStorage` only — never transmitted
-- Third-party requests: Google Fonts, YouTube (only when a video thumbnail is clicked), Vercel Analytics
+- Third-party requests: YouTube (only when a video thumbnail is clicked), Vercel Analytics
 
 ## Credit
 

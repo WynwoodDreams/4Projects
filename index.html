@@ -3838,7 +3838,13 @@ ${tags} #BuildingInPublic #OpenToWork`;
   function openModal(id) {
     const p = PROJECTS.find(x => x.id === id);
     if (!p) return;
-    window.bbTrack && window.bbTrack('project_open', { id: p.id, path: p.path });
+    const backdrop = document.getElementById('modal-backdrop');
+    const wasOpen = backdrop ? backdrop.classList.contains('open') : false;
+    // Preserve scroll across in-place re-renders (toggling bookmark/progress from the
+    // bottom of the modal) instead of snapping back to the top.
+    const prevScroll = wasOpen && backdrop ? backdrop.scrollTop : 0;
+    // Only a genuine open counts as a view, not a re-render.
+    if (!wasOpen) window.bbTrack && window.bbTrack('project_open', { id: p.id, path: p.path });
     const isBookmarked = state.bookmarks.includes(p.id);
     const progress = state.progress[p.id] || 'none';
     const pathName = PATHS.find(x => x.id === p.path)?.name ?? '';
@@ -3989,10 +3995,9 @@ ${tags} #BuildingInPublic #OpenToWork`;
       </div>
     `;
 
-    const backdrop = document.getElementById('modal-backdrop');
-    const wasOpen = backdrop.classList.contains('open');
+    if (!backdrop) return;
     backdrop.classList.add('open');
-    backdrop.scrollTop = 0;
+    backdrop.scrollTop = prevScroll;
     document.getElementById('modal-top').classList.remove('visible');
     document.body.classList.add('modal-open');
     document.body.style.overflow = 'hidden';
@@ -4134,7 +4139,9 @@ ${tags} #BuildingInPublic #OpenToWork`;
     if (e.key !== 'Tab') return;
     const backdrop = document.getElementById('modal-backdrop');
     if (!backdrop || !backdrop.classList.contains('open')) return;
-    const focusables = backdrop.querySelectorAll('button, select, a[href], [tabindex]:not([tabindex="-1"])');
+    const focusables = Array.from(
+      backdrop.querySelectorAll('button, select, a[href], [tabindex]:not([tabindex="-1"])')
+    ).filter(el => el.offsetParent !== null);
     if (focusables.length === 0) return;
     const first = focusables[0];
     const last = focusables[focusables.length - 1];

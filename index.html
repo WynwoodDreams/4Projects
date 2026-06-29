@@ -2915,7 +2915,7 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       useCase: 'Internal company wikis or customer support bots that need to provide answers based on private, frequently updated technical manuals rather than general internet knowledge.',
       bonus: 'Implement "Agentic RAG" where the system can decide to search the web or call an external API if the local knowledge base doesn\'t have the answer.',
       aiAssist: 'Use AI to help choose the best embedding model. Use Cursor\'s Composer mode to build the entire frontend-to-backend connection for file upload and chat in minutes.',
-      prompt: 'I\'m building a RAG system. Help me compare RecursiveCharacterTextSplitter vs TokenTextSplitter for technical documentation. Which one handles code blocks better? Also, write a Python function to upsert these chunks into Pinecone with metadata.',
+      prompt: 'Act as a Senior Software Engineer. Help me build a FastAPI endpoint for a RAG knowledge base that embeds a user\'s question, queries Pinecone for the top-k chunks, and calls an LLM with a prompt that forces inline citations back to the source filename and page. Include the Pydantic request/response models and show how to stream the cited answer to a React frontend.',
       showcase: {
         github: 'Include a "Hallucination Evaluation" report showing how chunking strategies affected quality.',
         linkedin: 'Video demo showing the system citing specific lines from a technical manual.',

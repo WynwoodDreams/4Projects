@@ -2915,7 +2915,7 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       useCase: 'Internal company wikis or customer support bots that need to provide answers based on private, frequently updated technical manuals rather than general internet knowledge.',
       bonus: 'Implement "Agentic RAG" where the system can decide to search the web or call an external API if the local knowledge base doesn\'t have the answer.',
       aiAssist: 'Use AI to help choose the best embedding model. Use Cursor\'s Composer mode to build the entire frontend-to-backend connection for file upload and chat in minutes.',
-      prompt: 'I\'m building a RAG system. Help me compare RecursiveCharacterTextSplitter vs TokenTextSplitter for technical documentation. Which one handles code blocks better? Also, write a Python function to upsert these chunks into Pinecone with metadata.',
+      prompt: 'Act as a Senior Software Engineer. Help me build a FastAPI endpoint for a RAG knowledge base that embeds a user\'s question, queries Pinecone for the top-k chunks, and calls an LLM with a prompt that forces inline citations back to the source filename and page. Include the Pydantic request/response models and show how to stream the cited answer to a React frontend.',
       showcase: {
         github: 'Include a "Hallucination Evaluation" report showing how chunking strategies affected quality.',
         linkedin: 'Video demo showing the system citing specific lines from a technical manual.',
@@ -3838,7 +3838,13 @@ ${tags} #BuildingInPublic #OpenToWork`;
   function openModal(id) {
     const p = PROJECTS.find(x => x.id === id);
     if (!p) return;
-    window.bbTrack && window.bbTrack('project_open', { id: p.id, path: p.path });
+    const backdrop = document.getElementById('modal-backdrop');
+    const wasOpen = backdrop ? backdrop.classList.contains('open') : false;
+    // Preserve scroll across in-place re-renders (toggling bookmark/progress from the
+    // bottom of the modal) instead of snapping back to the top.
+    const prevScroll = wasOpen && backdrop ? backdrop.scrollTop : 0;
+    // Only a genuine open counts as a view, not a re-render.
+    if (!wasOpen) window.bbTrack && window.bbTrack('project_open', { id: p.id, path: p.path });
     const isBookmarked = state.bookmarks.includes(p.id);
     const progress = state.progress[p.id] || 'none';
     const pathName = PATHS.find(x => x.id === p.path)?.name ?? '';
@@ -3989,10 +3995,9 @@ ${tags} #BuildingInPublic #OpenToWork`;
       </div>
     `;
 
-    const backdrop = document.getElementById('modal-backdrop');
-    const wasOpen = backdrop.classList.contains('open');
+    if (!backdrop) return;
     backdrop.classList.add('open');
-    backdrop.scrollTop = 0;
+    backdrop.scrollTop = prevScroll;
     document.getElementById('modal-top').classList.remove('visible');
     document.body.classList.add('modal-open');
     document.body.style.overflow = 'hidden';
@@ -4134,7 +4139,9 @@ ${tags} #BuildingInPublic #OpenToWork`;
     if (e.key !== 'Tab') return;
     const backdrop = document.getElementById('modal-backdrop');
     if (!backdrop || !backdrop.classList.contains('open')) return;
-    const focusables = backdrop.querySelectorAll('button, select, a[href], [tabindex]:not([tabindex="-1"])');
+    const focusables = Array.from(
+      backdrop.querySelectorAll('button, select, a[href], [tabindex]:not([tabindex="-1"])')
+    ).filter(el => el.offsetParent !== null);
     if (focusables.length === 0) return;
     const first = focusables[0];
     const last = focusables[focusables.length - 1];

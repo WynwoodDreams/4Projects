@@ -2325,6 +2325,13 @@
   .result-section-title .num { color: var(--green); text-shadow: 0 0 8px var(--green-glow); }
 
   .rec-card { cursor: pointer; text-decoration: none; color: inherit; min-height: 0; }
+  /* Green "background light" for match cards */
+  .rec-card::before {
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(0,255,133,0.15), transparent 65%),
+      radial-gradient(ellipse at 100% 100%, rgba(0,255,133,0.06), transparent 65%);
+    opacity: 0.5;
+  }
   .rec-card .summary { margin-bottom: 12px; }
   .rec-match { font-size: 12px; color: var(--ink-muted); margin-bottom: 12px; }
   .rec-match strong { color: var(--green); font-weight: 600; }

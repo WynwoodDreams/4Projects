@@ -2261,6 +2261,21 @@
   /* Prompt cards reuse .project-card */
   .prompt-card { cursor: default; min-height: 0; }
   .prompt-card:hover { transform: none; }
+  /* Teal "background light" for prompt cards */
+  .prompt-card::before {
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(0,194,168,0.16), transparent 65%),
+      radial-gradient(ellipse at 100% 100%, rgba(0,194,168,0.07), transparent 65%);
+    opacity: 0.52;
+  }
+  .prompt-card:hover {
+    border-color: rgba(0,194,168,0.55);
+    box-shadow:
+      0 0 0 1px rgba(0,194,168,0.55),
+      0 0 24px -2px rgba(0,194,168,0.34),
+      0 0 60px -12px rgba(0,194,168,0.28),
+      0 24px 60px -22px rgba(0,0,0,0.65);
+  }
   .prompt-kicker {
     font-family: 'JetBrains Mono', monospace; font-size: 10px;
     letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600;

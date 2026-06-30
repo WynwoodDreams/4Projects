@@ -202,6 +202,35 @@
   }
   .stat-pill svg { color: var(--green); filter: drop-shadow(0 0 4px var(--green-glow)); }
   .stat-pill .num { color: var(--green); font-weight: 600; text-shadow: 0 0 8px var(--green-glow); }
+  a.nav-link {
+    text-decoration: none;
+    background: linear-gradient(180deg, var(--green) 0%, var(--green-2) 100%);
+    color: #02110A;
+    font-weight: 700;
+    border-color: transparent;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.45),
+      0 0 0 1px rgba(0,255,133,0.55),
+      0 8px 24px -8px rgba(0,255,133,0.55);
+    animation: navPulse 2.6s ease-in-out infinite;
+  }
+  a.nav-link span { color: #02110A; }
+  a.nav-link svg { color: #02110A; filter: none; }
+  a.nav-link:hover {
+    border-color: transparent;
+    transform: translateY(-1px);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.55),
+      0 0 0 1px rgba(0,255,133,0.80),
+      0 12px 30px -10px rgba(0,255,133,0.80);
+  }
+  @keyframes navPulse {
+    0%, 100% { box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), 0 0 0 1px rgba(0,255,133,0.55), 0 8px 24px -8px rgba(0,255,133,0.45); }
+    50%      { box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), 0 0 0 1px rgba(0,255,133,0.90), 0 8px 30px -4px rgba(0,255,133,0.85); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    a.nav-link { animation: none; }
+  }
 
   /* ===== HERO ===== */
   .hero {
@@ -2084,6 +2113,7 @@
     .feed-window { height: 190px; }
     .controls { top: 54px; }
     .header-actions .stat-pill { display: none; }
+    .header-actions .nav-link { display: inline-flex; }
     .brand-mark { font-size: 11px; letter-spacing: 0.12em; }
 
     /* Mobile: only the brand header sticks; controls scroll away */
@@ -2274,6 +2304,10 @@
       </div>
     </div>
     <div class="header-actions">
+      <a class="stat-pill nav-link" href="/certifications.html" title="Free AI certifications">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg>
+        <span>Free Certs</span>
+      </a>
       <button class="stat-pill" id="pill-saved" title="Show saved projects">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
         <span><span class="num" id="bookmark-count">0</span> saved</span>

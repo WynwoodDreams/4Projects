@@ -235,6 +235,42 @@
   a.nav-link2 svg { color: var(--green); filter: drop-shadow(0 0 4px var(--green-glow)); }
   a.nav-link2:hover { border-color: var(--green); box-shadow: 0 0 0 1px var(--green), 0 12px 30px -16px rgba(0,255,133,0.25); }
 
+  /* ===== Hero CTA buttons (spotlight Certs + Prompts) ===== */
+  .hero-cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 13px 22px; border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .hero-cta svg { width: 15px; height: 15px; }
+  .hero-cta-primary {
+    background: linear-gradient(180deg, var(--green) 0%, var(--green-2) 100%);
+    color: #02110A; border: 1px solid transparent;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), 0 0 0 1px rgba(0,255,133,0.55), 0 10px 28px -10px rgba(0,255,133,0.6);
+  }
+  .hero-cta-primary:hover { transform: translateY(-2px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), 0 0 0 1px rgba(0,255,133,0.85), 0 16px 36px -10px rgba(0,255,133,0.8); }
+  .hero-cta-ghost { background: rgba(0,255,133,0.06); color: var(--green); border: 1px solid var(--line-3); }
+  .hero-cta-ghost:hover { transform: translateY(-2px); border-color: var(--green); box-shadow: 0 0 0 1px var(--green), 0 14px 30px -16px rgba(0,255,133,0.4); }
+
+  /* ===== "More from BuildersBench" promo band ===== */
+  .promo-section { padding: 4px 0 64px; }
+  .promo-eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-muted);
+    display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+  }
+  .promo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .promo-card { text-decoration: none; color: inherit; min-height: 0; }
+  .promo-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .promo-icon { width: 32px; height: 32px; color: var(--green); filter: drop-shadow(0 0 8px var(--green-glow)); display: inline-flex; align-items: center; justify-content: center; }
+  .promo-icon svg { width: 100%; height: 100%; stroke-width: 2; }
+  .promo-card h3 { font-family: 'Inter', sans-serif; font-size: 19px; font-weight: 600; color: var(--ink); letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 8px; padding: 0; }
+  .promo-card .summary { font-size: 13.5px; color: var(--ink-soft); line-height: 1.55; margin-bottom: 16px; flex: 1; }
+  @media (max-width: 860px) { .promo-grid { grid-template-columns: 1fr; } }
+
   /* ===== HERO ===== */
   .hero {
     padding: 56px 0 36px;
@@ -1815,8 +1851,8 @@
   }
   .footer-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    gap: 60px;
+    grid-template-columns: 1.7fr 1fr 1fr 1fr;
+    gap: 44px;
     margin-bottom: 36px;
   }
   .footer-brand {
@@ -2116,7 +2152,7 @@
     .feed-window { height: 190px; }
     .controls { top: 54px; }
     .header-actions .stat-pill { display: none; }
-    .header-actions .nav-link, .header-actions .nav-link2 { display: inline-flex; }
+    /* Header nav pills hide on mobile — the hero CTAs cover Certs + Prompts. */
     .brand-mark { font-size: 11px; letter-spacing: 0.12em; }
 
     /* Mobile: only the brand header sticks; controls scroll away */
@@ -2337,6 +2373,16 @@
         <p class="hero-lede">
           Industry-relevant builds across eight career tracks — curated for students chasing internships, first roles, and career pivots. Each project ships with real-world context, showcase tips, and AI prompts.
         </p>
+        <div class="hero-cta-row">
+          <a class="hero-cta hero-cta-primary" href="/certifications.html" title="Free, official AI certifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg>
+            Free AI Certs
+          </a>
+          <a class="hero-cta hero-cta-ghost" href="/prompts.html" title="AI prompt library for building projects">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+            Prompt Library
+          </a>
+        </div>
       </div>
       <aside class="hero-side hero-quiz" aria-label="Find your starting path quiz">
         <div class="hero-side-label">
@@ -2387,6 +2433,42 @@
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
+
+<!-- MORE FROM BUILDERSBENCH -->
+<section class="promo-section" id="more-resources">
+  <div class="container">
+    <div class="promo-eyebrow"><span class="dot"></span>More from BuildersBench</div>
+    <div class="promo-grid">
+      <a class="project-card promo-card" href="/certifications.html">
+        <div class="promo-card-top">
+          <span class="promo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg></span>
+          <span class="path-count">19 FREE</span>
+        </div>
+        <h3>Free AI Certifications</h3>
+        <p class="summary">Official, free certs from Anthropic, Google, AWS, NVIDIA and more — what each covers, and where to enroll.</p>
+        <span class="view-more">Browse certs →</span>
+      </a>
+      <a class="project-card promo-card" href="/prompts.html">
+        <div class="promo-card-top">
+          <span class="promo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></span>
+          <span class="path-count">18 PROMPTS</span>
+        </div>
+        <h3>AI Prompt Library</h3>
+        <p class="summary">Copy-paste prompts for every stage of building a project — plan, build, debug, document, and ship faster with AI.</p>
+        <span class="view-more">Browse prompts →</span>
+      </a>
+      <a class="project-card promo-card" href="#deploy-cheatsheet">
+        <div class="promo-card-top">
+          <span class="promo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 1 0-1.41-8.78 5.5 5.5 0 0 0-10.59 2.16A4 4 0 0 0 6 19h11.5Z"/></svg></span>
+          <span class="path-count">FREE TIER</span>
+        </div>
+        <h3>Deploy Cheatsheet</h3>
+        <p class="summary">Where to host your project for free — sorted by what you're building, from Vercel to Hugging Face Spaces.</p>
+        <span class="view-more">View hosting →</span>
+      </a>
+    </div>
+  </div>
+</section>
 
 <!-- SUGGEST A PROJECT -->
 <section class="suggest-section">
@@ -2461,6 +2543,14 @@
           <li><a href="#path-tabs" data-footer-path="helpdesk">Help Desk</a></li>
           <li><a href="#path-tabs" data-footer-path="swe">Software Engineer</a></li>
           <li><a href="#path-tabs" data-footer-path="tech-it">Tech / IT Support</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Resources</h5>
+        <ul class="footer-paths">
+          <li><a href="/certifications.html">Free AI Certs</a></li>
+          <li><a href="/prompts.html">Prompt Library</a></li>
+          <li><a href="#deploy-cheatsheet">Deploy cheatsheet</a></li>
         </ul>
       </div>
       <div class="footer-col">

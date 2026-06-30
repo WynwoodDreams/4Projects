@@ -9,6 +9,7 @@ export default defineConfig({
       input: {
         main: fileURLToPath(new URL('./index.html', import.meta.url)),
         certifications: fileURLToPath(new URL('./certifications.html', import.meta.url)),
+        prompts: fileURLToPath(new URL('./prompts.html', import.meta.url)),
       },
     },
   },

@@ -1830,8 +1830,9 @@
     padding-top: 22px;
     border-top: 1px solid rgba(255,255,255,0.16);
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    gap: 18px;
+    gap: 8px 18px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
     letter-spacing: 0.18em;
@@ -2247,6 +2248,11 @@
   /* Header nav links stay visible where stat-pills hide on mobile */
   .header-actions .nav-link { display: inline-flex; color: var(--green); border-color: var(--line-3); }
   .header-actions .nav-link svg { color: var(--green); }
+  /* Very narrow screens: compact the two nav pills to icon-only so they fit */
+  @media (max-width: 430px) {
+    .header-actions .nav-link span { display: none; }
+    .header-actions .nav-link { padding: 7px 9px; }
+  }
 
   /* Filter chip row */
   .prompt-filters {

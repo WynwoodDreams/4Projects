@@ -2317,26 +2317,66 @@
   .alt-path { font-size: 12.5px; color: var(--ink-muted); margin-top: 12px; }
   .alt-path a { color: var(--green); text-decoration: none; border-bottom: 1px solid var(--line-3); cursor: pointer; }
 
+  /* Section dividers — each plan section gets its own accent rule */
   .result-section-title {
     font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.18em;
     text-transform: uppercase; color: var(--ink); font-weight: 600;
-    margin: 30px 0 14px; display: flex; align-items: center; gap: 10px;
+    margin: 38px 0 16px; display: flex; align-items: center; gap: 12px;
   }
-  .result-section-title .num { color: var(--green); text-shadow: 0 0 8px var(--green-glow); }
+  .result-section-title .num { font-weight: 700; }
+  .result-section-title .sec-rule { flex: 1; height: 1px; }
+  .sec-projects .num { color: var(--green); text-shadow: 0 0 8px var(--green-glow); }
+  .sec-projects .sec-rule { background: linear-gradient(90deg, rgba(0,255,133,0.55), rgba(0,255,133,0.12) 30%, transparent 70%); box-shadow: 0 0 12px rgba(0,255,133,0.35); }
+  .sec-certs .num { color: var(--gold); text-shadow: 0 0 8px rgba(255,200,87,0.5); }
+  .sec-certs .sec-rule { background: linear-gradient(90deg, rgba(255,200,87,0.55), rgba(255,200,87,0.12) 30%, transparent 70%); box-shadow: 0 0 12px rgba(255,200,87,0.3); }
+  .sec-prompts .num { color: var(--teal); text-shadow: 0 0 8px var(--teal-glow); }
+  .sec-prompts .sec-rule { background: linear-gradient(90deg, rgba(0,194,168,0.55), rgba(0,194,168,0.12) 30%, transparent 70%); box-shadow: 0 0 12px rgba(0,194,168,0.3); }
+  .sec-link { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.12em; color: var(--ink-muted); text-decoration: none; white-space: nowrap; }
+  .sec-link:hover { color: var(--teal); }
 
   /* Uniform recommendation grid — projects and certs share the same card size */
   .rec-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
   @media (max-width: 920px) { .rec-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 560px) { .rec-grid { grid-template-columns: 1fr; } }
 
-  .rec-card, .cert-rec-card { cursor: pointer; text-decoration: none; color: inherit; min-height: 260px; }
-  /* Green "background light" for both recommendation card types */
-  .rec-card::before, .cert-rec-card::before {
+  .rec-card, .cert-rec-card, .prompt-rec-card { cursor: pointer; text-decoration: none; color: inherit; min-height: 260px; }
+  /* Green "background light" — project cards */
+  .rec-card::before {
     background:
       radial-gradient(ellipse at 50% 0%, rgba(0,255,133,0.15), transparent 65%),
       radial-gradient(ellipse at 100% 100%, rgba(0,255,133,0.06), transparent 65%);
     opacity: 0.5;
   }
+  /* Gold "background light" — cert cards */
+  .cert-rec-card::before {
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(255,200,87,0.15), transparent 65%),
+      radial-gradient(ellipse at 100% 100%, rgba(255,200,87,0.06), transparent 65%);
+    opacity: 0.5;
+  }
+  .cert-rec-card:hover {
+    border-color: rgba(255,200,87,0.55);
+    box-shadow: 0 0 0 1px rgba(255,200,87,0.55), 0 0 24px -2px rgba(255,200,87,0.32), 0 0 60px -12px rgba(255,200,87,0.28), 0 24px 60px -22px rgba(0,0,0,0.65);
+  }
+  /* Teal "background light" — prompt cards */
+  .prompt-rec-card::before {
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(0,194,168,0.15), transparent 65%),
+      radial-gradient(ellipse at 100% 100%, rgba(0,194,168,0.06), transparent 65%);
+    opacity: 0.5;
+  }
+  .prompt-rec-card:hover {
+    border-color: rgba(0,194,168,0.55);
+    box-shadow: 0 0 0 1px rgba(0,194,168,0.55), 0 0 24px -2px rgba(0,194,168,0.32), 0 0 60px -12px rgba(0,194,168,0.28), 0 24px 60px -22px rgba(0,0,0,0.65);
+  }
+  .prompt-rec-card { cursor: default; }
+  .prompt-rec-card .prompt-kicker { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; color: var(--teal); margin-bottom: 10px; }
+  .prompt-rec-card .summary { flex: 0 0 auto; margin-bottom: 0; }
+  .prompt-rec-card .summary strong { color: var(--ink); font-weight: 600; }
+  .prompt-rec-card .prompt-box { padding-top: 42px; flex: 1; white-space: pre-wrap; word-break: break-word; margin-top: 12px; }
+  .prompt-rec-card .prompt-text { display: block; }
+  .copy-prompt-btn.copied { color: var(--teal); border-color: rgba(0,194,168,0.45); }
+
   .rec-card .summary { margin-bottom: 12px; }
   .rec-match { font-size: 12px; color: var(--ink-muted); margin-bottom: 12px; }
   .rec-match strong { color: var(--green); font-weight: 600; }
@@ -2476,6 +2516,9 @@
   <div class="container" id="match-output"></div>
 </section>
 
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
 <!-- FOOTER -->
 <footer>
   <div class="container">
@@ -2575,6 +2618,16 @@
     { provider: 'NVIDIA', name: 'DLI Self-Paced AI Courses', level: 'Intermediate', url: 'https://learn.nvidia.com/', paths: ['ai','cs'], tags: ['deep learning','gpu'], note: 'Hands-on deep learning and GPU-accelerated computing.' }
   ];
 
+  // ===== STARTER PROMPTS (from the Prompt Library) to build with =====
+  const REC_PROMPTS = [
+    { kicker: 'Plan', title: 'Break it into a build plan',
+      text: 'Act as a senior engineer mentoring a junior. I\'m building [PROJECT IDEA] to put on my portfolio. Break it into a step-by-step build plan with milestones I can finish in [TIME]. For each step, list the files I\'ll create and the one concept I need to understand. Keep it scoped small enough that I\'ll actually finish it.' },
+    { kicker: 'Debug', title: 'Explain an error (and why)',
+      text: 'I got this error:\n\n[PASTE THE FULL ERROR]\n\nHere\'s the relevant code:\n\n[PASTE CODE]\n\nExplain in plain English what it means, the most likely cause, and the smallest fix. Don\'t just hand me code — tell me why it broke so I don\'t repeat it.' },
+    { kicker: 'Ship', title: 'Write a recruiter-ready README',
+      text: 'Write a recruiter-ready README for this project:\n\n[DESCRIBE THE PROJECT + PASTE KEY FEATURES]\n\nInclude a one-line hook, a demo placeholder, the problem it solves, the tech stack and why, setup steps, and a short "what I\'d build next." Keep it skimmable with clear headings.' }
+  ];
+
   // ===== PROJECT CATALOG (compiled from the live PROJECTS data) =====
   const PROJECTS = [{"id":"tech-it-0","path":"tech-it","level":"beginner","title":"Automated Microsoft 365 User Management with PowerShell and AI Assistance","summary":"This project involves building PowerShell scripts to automate common Microsoft 365 user management tasks, such as onboarding new employees and offboarding departing ones. Students will leverage AI tools to assist in script development and debugging, demonstrating proficiency in cloud administration, automation, and AI-assisted problem-solving.","skills":"PowerShell scripting, Microsoft 365 administration, Cloud user management, Automation, Active Directory (Azure AD), Troubleshooting, AI prompting, Script debugging","tech":["PowerShell","Microsoft 365 (Azure AD)","Google Gemini / ChatGPT","Git / GitHub"]},{"id":"it-1","path":"tech-it","level":"intermediate","title":"AI-Powered IT Support Ticket Automator","summary":"A Python system that uses an LLM to auto-categorize, prioritize, and draft responses for incoming IT tickets.","skills":"NLP, API Integration, Prompt Engineering, Python","tech":["Python","OpenAI API","FastAPI","Jira/Zendesk"]},{"id":"it-2","path":"cloud","level":"intermediate","title":"Cloud-Native Serverless Monitoring & Alerting System","summary":"A serverless AWS solution that tracks uptime and performance of remote IT assets, triggering Slack alerts on failure.","skills":"Cloud Infrastructure, Serverless, RMM, Webhooks","tech":["AWS Lambda","CloudWatch","Python","Slack API","Docker"]},{"id":"it-3","path":"cyber","level":"advanced","title":"Automated Cybersecurity Compliance & Patch Auditor","summary":"A security auditing tool that scans systems for vulnerabilities, missing patches, and config drift — outputs a professional PDF report.","skills":"Vulnerability Assessment, Network Security, Scripting","tech":["Python","Nmap","ReportLab","Bash","GitHub Actions"]},{"id":"cy-1","path":"cyber","level":"intermediate","title":"Adversarial Prompt Injection Detector for LLM Applications","summary":"A real-time security gateway between users and an LLM that blocks prompt injections and jailbreak attempts.","skills":"Adversarial ML, LLM Security, API Security","tech":["Python","LangChain","OpenAI API","Scikit-learn","FastAPI","Docker"]},{"id":"cy-2","path":"cyber","level":"advanced","title":"Deepfake Audio Detection System for VoIP Security","summary":"A real-time audio analysis engine that detects synthesized or cloned voices in VoIP streams using MFCC features.","skills":"Audio Signal Processing, Deep Learning, VoIP Security","tech":["Python","Librosa","TensorFlow/PyTorch","FastAPI"]},{"id":"cy-3","path":"cyber","level":"intermediate","title":"Behavioral Biometrics Engine for Continuous Authentication","summary":"A security system that authenticates users based on typing rhythm and mouse movement patterns — not static passwords.","skills":"Anomaly Detection, Time-series Analysis, IAM","tech":["Python","Scikit-learn","Flask","JavaScript"]},{"id":"ai-1","path":"ai","level":"intermediate","title":"Multi-Agent Research & Execution System","summary":"A collaborative AI system where specialized agents (Researcher, Writer, Fact-Checker) work together to autonomously generate reports.","skills":"Agent Orchestration, Tool-calling, State Management","tech":["CrewAI","LangGraph","Python","OpenAI/Claude API"]},{"id":"ai-2","path":"ai","level":"advanced","title":"Multimodal RAG for Enterprise Knowledge","summary":"A Retrieval-Augmented Generation pipeline that handles documents with text AND images — charts, tables, diagrams.","skills":"Multimodal RAG, Vector DBs, Image/Text Embeddings","tech":["LlamaIndex","Pinecone","Python","Claude 3.5"]},{"id":"ai-3","path":"ai","level":"intermediate","title":"AI-Powered Code Reviewer Bot","summary":"A GitHub Actions bot that auto-reviews pull requests for style, bugs, and security issues — suggesting refactors.","skills":"LLM Fine-tuning/Prompting, CI/CD, Static Analysis","tech":["GitHub Actions","Python","OpenAI API","SonarQube"]},{"id":"da-1","path":"data","level":"intermediate","title":"AI-Powered Customer Intelligence & RFM Dashboard","summary":"A two-page Streamlit dashboard that runs RFM analysis on retail data and uses AI to generate marketing recommendations.","skills":"Data Cleaning, RFM Modeling, BI, Prompt Engineering","tech":["Python","Streamlit","Pandas","Plotly","OpenAI API"]},{"id":"da-2","path":"data","level":"advanced","title":"Real-Time Market Sentiment & Price Correlation Tracker","summary":"A live pipeline that fetches crypto/stock prices AND news sentiment, visualizing the correlation in real-time.","skills":"API Integration, Real-time Processing, Sentiment Analysis, Data Viz","tech":["Python","WebSocket","NLTK/TextBlob","Streamlit","AWS Lambda"]},{"id":"da-3","path":"data","level":"intermediate","title":"Supply Chain Optimization & Demand Forecasting Tool","summary":"A predictive analytics tool that forecasts demand and identifies supply chain bottlenecks via an interactive BI report.","skills":"Time-Series Forecasting, Predictive Modeling, Supply Chain Analytics, SQL","tech":["Python","Scikit-learn","Prophet","PostgreSQL","Power BI"]},{"id":"sw-1","path":"swe","level":"intermediate","title":"Production-Grade URL Shortener with Observability","summary":"A high-performance URL shortener with Redis caching, rate-limiting, and real-time analytics on a Grafana dashboard.","skills":"System Design, Backend, Caching, Rate Limiting","tech":["Go/Python","Redis","PostgreSQL","Prometheus","Grafana"]},{"id":"sw-2","path":"swe","level":"advanced","title":"Distributed Job Queue & Worker System","summary":"An async task processing system with persistent storage, auto-retries, dead-letter queues, and job prioritization.","skills":"Distributed Systems, Concurrency, Fault Tolerance","tech":["Go","PostgreSQL","Docker"]},{"id":"sw-3","path":"swe","level":"intermediate","title":"AI-Powered RAG Knowledge Base for Developers","summary":"A RAG system where users upload technical docs and ask questions — with accurate, cited answers from a vector DB.","skills":"AI/ML Integration, Vector Databases, Semantic Search","tech":["Python","LangChain","Pinecone/Milvus","FastAPI","React"]},{"id":"hd-1","path":"ai","level":"intermediate","title":"AI-Powered Self-Service IT Support Bot","summary":"An intelligent chatbot using RAG to answer IT questions from a knowledge base — with fallback ticket creation.","skills":"Prompt Engineering, RAG, Workflow Automation","tech":["Botpress/Voiceflow","OpenAI API","Google Sheets","Zapier"]},{"id":"hd-2","path":"helpdesk","level":"beginner","title":"Automated User Lifecycle Management (Entra ID)","summary":"A no-code automated onboarding workflow that creates accounts, assigns licenses, and emails managers — all from a form.","skills":"Cloud Identity (IAM), Low-Code, Governance","tech":["Microsoft Entra ID","Power Automate","MS Forms"]},{"id":"hd-3","path":"data","level":"intermediate","title":"IT Asset Management Dashboard","summary":"An interactive dashboard tracking IT assets via the Snipe-IT API — visualizing allocation, lifecycle, and refresh cycles.","skills":"Asset Tracking, Data Viz, API Integration","tech":["Snipe-IT API","Python","Power BI/Tableau"]},{"id":"cs-1","path":"cs","level":"intermediate","title":"Production-Ready RAG Pipeline with Source Attribution","summary":"A RAG system with a citation engine that highlights exact source text, a faithfulness evaluator, and hybrid search.","skills":"Vector DBs, Semantic Search, LLM Evaluation","tech":["Python","LangChain","ChromaDB","Ragas","Docker"]},{"id":"cs-2","path":"ai","level":"advanced","title":"Multi-Agent Autonomous Research System (Supervisor Pattern)","summary":"A system where AI agents (Researcher, Writer, Fact-Checker) collaborate under a Supervisor agent that manages workflow.","skills":"Agentic Workflows, State Management, Tool Calling","tech":["Python","LangGraph","Tavily","Claude 3.5","Redis"]},{"id":"cs-3","path":"cs","level":"intermediate","title":"Distributed Edge IoT Monitoring System","summary":"A system that collects simulated IoT sensor data, processes it at the edge via Docker, and sends only critical alerts to a dashboard.","skills":"Distributed Systems, Edge Computing, MQTT","tech":["Python","Docker","MQTT","InfluxDB","TensorFlow Lite"]},{"id":"cl-1","path":"cloud","level":"intermediate","title":"Serverless AI Content Summarizer with Amazon Bedrock","summary":"A fully serverless web app where users upload docs for AI summarization using AWS Lambda and Bedrock (Claude 3).","skills":"Serverless, GenAI Integration, Event-Driven","tech":["AWS Lambda","Amazon Bedrock","S3","DynamoDB","SNS"]},{"id":"cl-2","path":"cloud","level":"intermediate","title":"Multi-Cloud FinOps & Cost Optimization Dashboard","summary":"A dashboard that aggregates billing data from AWS and Azure, identifies \"zombie\" resources, and visualizes potential savings.","skills":"FinOps, IaC, Multi-cloud API, Data Viz","tech":["Terraform","Python","AWS/Azure Billing APIs","Grafana"]},{"id":"cl-3","path":"cloud","level":"advanced","title":"Cloud-Native Platform Engineering: Self-Healing GitOps Pipeline","summary":"A production-grade Kubernetes environment with ArgoCD GitOps, Istio service mesh, and automated canary releases.","skills":"Platform Engineering, K8s, GitOps, Istio","tech":["Kubernetes (EKS)","ArgoCD","Istio","Helm","Terraform"]},{"id":"it-4","path":"tech-it","level":"intermediate","title":"AI-Driven Network Traffic Anomaly Detector","summary":"A monitoring tool that ingests live network telemetry and uses an unsupervised ML model to flag anomalous traffic before it escalates into an outage or breach.","skills":"Anomaly Detection, Network Telemetry, Real-time Inference","tech":["Python","Scikit-learn","MQTT","Docker","InfluxDB"]},{"id":"it-5","path":"tech-it","level":"beginner","title":"Automated Cloud Cost Guardrails","summary":"A safety net for AWS spend — Budgets, Cost Anomaly Detection, and SNS alerts that notify you (and optionally auto-stop resources) before a runaway bill arrives.","skills":"AWS Cost Management, Event-driven Automation, IAM","tech":["AWS Budgets","AWS Cost Anomaly Detection","SNS","Lambda","IAM"]},{"id":"cs-4","path":"cs","level":"advanced","title":"Autonomous AI Agent for Software Testing","summary":"An agent that reads a Python codebase, generates pytest tests, runs them, analyzes failures, and proposes patches — all from a CI pipeline.","skills":"Agentic Workflows, Code Analysis, Test Generation, CI/CD","tech":["Python","Gemini/Claude API","pytest","GitHub Actions","AST"]},{"id":"cy-4","path":"cyber","level":"beginner","title":"AI-Powered SOC Analyst Agent Home Lab","summary":"A beginner-friendly home lab that pairs Kali + Ubuntu VMs with an AI penetration-testing agent — your first hands-on security project that produces real artifacts.","skills":"Virtualization, Linux Command Line, AI-Augmented SecOps","tech":["VirtualBox","Kali Linux","Ubuntu","Python","Open-source AI tools"]},{"id":"ai-4","path":"ai","level":"beginner","title":"Automated Customer Support AI Agent","summary":"A no/low-code AI agent that ingests support tickets, drafts responses, and routes complex issues — your first end-to-end agentic workflow.","skills":"AI Agents, Workflow Automation, API Integration","tech":["OpenAI Agent Builder","Zapier","n8n","OpenAI GPT models"]},{"id":"da-4","path":"data","level":"beginner","title":"Rapid BI Dashboard Built with Generative AI","summary":"A polished BI dashboard built end-to-end with AI — Claude generates the dataset, GPT writes the DAX, and Dribbble inspires the layout, all in under an hour.","skills":"Data Visualization, Business Intelligence, AI-Augmented Workflows","tech":["Claude","ChatGPT","Power BI","Dribbble (inspiration)"]},{"id":"sw-4","path":"swe","level":"beginner","title":"Conversational AI Agent with Tool Use","summary":"An AI agent that doesn't just chat — it actually does things. Calls APIs, queries databases, triggers workflows. Built on Amazon Bedrock AgentCore.","skills":"Function Calling, Tool Definitions, Cloud Integration","tech":["Amazon Bedrock AgentCore","AWS Lambda","DynamoDB","API Gateway"]},{"id":"cs-5","path":"cs","level":"beginner","title":"Build an AI Agent From Scratch in Python","summary":"A from-scratch agent that pairs an LLM with custom tools — no LangChain, no CrewAI, just pure Python so you understand exactly how agents work under the hood.","skills":"Python Programming, Agent Loops, LLM Tool Use","tech":["Python","OpenAI API","LangChain (optional)","JSON tool schemas"]},{"id":"hd-4","path":"helpdesk","level":"beginner","title":"Microsoft Forms + Power Automate Ticket Routing System","summary":"A complete no-code ticket intake system — Microsoft Forms collects the request, Power Automate routes it to the right tier, and SharePoint stores the audit trail.","skills":"Low-Code Automation, Service Desk Workflows, Microsoft 365","tech":["Microsoft Forms","Power Automate","SharePoint","Outlook"]},{"id":"hd-5","path":"helpdesk","level":"beginner","title":"Windows Autopilot Device Enrollment with Intune","summary":"A zero-touch deployment flow — ship a sealed laptop to a remote employee and have it self-configure into your tenant on first sign-in, with compliance enforced.","skills":"MDM, Zero-Touch Provisioning, Endpoint Compliance","tech":["Microsoft Intune","Windows Autopilot","Entra ID","Microsoft 365"]}];
 
@@ -2667,6 +2720,15 @@
       </a>`;
   }
 
+  function promptRecCardHTML(p) {
+    return `
+      <article class="project-card prompt-rec-card">
+        <div class="prompt-kicker">› ${esc(p.kicker)}</div>
+        <h3>${esc(p.title)}</h3>
+        <div class="prompt-box"><button class="copy-prompt-btn" type="button">Copy</button><span class="prompt-text">${esc(p.text)}</span></div>
+      </article>`;
+  }
+
   function projectCardHTML(item) {
     const p = item.p;
     const matchLine = item.hits.length
@@ -2750,11 +2812,14 @@
         ${hasAlt ? `<div class="alt-path">Also a fit: <a data-pick2="${second}">${esc(PATHS[second].name)} →</a></div>` : ''}
       </div>
 
-      <div class="result-section-title"><span class="num">01</span> Build these projects</div>
+      <div class="result-section-title sec-projects"><span class="num">01</span><span>Build these projects</span><span class="sec-rule"></span></div>
       <div class="rec-grid">${projects.map(projectCardHTML).join('')}</div>
 
-      <div class="result-section-title"><span class="num">02</span> Earn these certs</div>
+      <div class="result-section-title sec-certs"><span class="num">02</span><span>Earn these certs</span><span class="sec-rule"></span></div>
       <div class="rec-grid">${certs.map(certCardHTML).join('')}</div>
+
+      <div class="result-section-title sec-prompts"><span class="num">03</span><span>Build with these prompts</span><span class="sec-rule"></span><a class="sec-link" href="/prompts.html">All 18 prompts →</a></div>
+      <div class="rec-grid">${REC_PROMPTS.map(promptRecCardHTML).join('')}</div>
 
       <p class="match-disclaimer">
         This is a keyword match over the BuildersBench catalog — a transparent first pass, not a recruiter.
@@ -2765,8 +2830,35 @@
     const alt = out.querySelector('[data-pick2]');
     if (alt) alt.onclick = (e) => { e.preventDefault(); document.getElementById('match-input').value = PATHS[alt.dataset.pick2].name + ' — ' + clean; run(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
     wireMail();
+    wireCopyButtons();
     equalizeRecCards();
     requestAnimationFrame(equalizeRecCards);
+  }
+
+  // ===== TOAST + COPY =====
+  let toastTimeout;
+  function toast(msg) {
+    const el = document.getElementById('toast');
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => el.classList.remove('show'), 2200);
+  }
+  function wireCopyButtons() {
+    document.querySelectorAll('.prompt-rec-card').forEach(card => {
+      const btn = card.querySelector('.copy-prompt-btn');
+      if (!btn || btn.dataset.wired) return;
+      btn.dataset.wired = '1';
+      const text = card.querySelector('.prompt-text').textContent;
+      btn.onclick = () => {
+        navigator.clipboard.writeText(text).then(() => {
+          btn.classList.add('copied'); btn.textContent = 'Copied ✓';
+          setTimeout(() => { btn.classList.remove('copied'); btn.textContent = 'Copy'; }, 2000);
+          toast('Prompt copied — paste it into your AI assistant');
+        }).catch(() => toast('Copy failed — select and copy manually'));
+      };
+    });
   }
 
   // Make every recommendation card (projects + certs) exactly the same height

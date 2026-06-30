@@ -2324,9 +2324,14 @@
   }
   .result-section-title .num { color: var(--green); text-shadow: 0 0 8px var(--green-glow); }
 
-  .rec-card { cursor: pointer; text-decoration: none; color: inherit; min-height: 0; }
-  /* Green "background light" for match cards */
-  .rec-card::before {
+  /* Uniform recommendation grid — projects and certs share the same card size */
+  .rec-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media (max-width: 920px) { .rec-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .rec-grid { grid-template-columns: 1fr; } }
+
+  .rec-card, .cert-rec-card { cursor: pointer; text-decoration: none; color: inherit; min-height: 260px; }
+  /* Green "background light" for both recommendation card types */
+  .rec-card::before, .cert-rec-card::before {
     background:
       radial-gradient(ellipse at 50% 0%, rgba(0,255,133,0.15), transparent 65%),
       radial-gradient(ellipse at 100% 100%, rgba(0,255,133,0.06), transparent 65%);
@@ -2336,17 +2341,51 @@
   .rec-match { font-size: 12px; color: var(--ink-muted); margin-bottom: 12px; }
   .rec-match strong { color: var(--green); font-weight: 600; }
 
-  .cert-rec-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
-  .cert-rec {
-    display: flex; align-items: center; justify-content: space-between; gap: 14px;
-    border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px;
-    background: rgba(255,255,255,0.02); text-decoration: none; color: inherit;
-    transition: border-color 0.2s ease, transform 0.2s ease;
+  .cert-rec-card .cost-badge {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase; font-weight: 700; padding: 5px 11px; border-radius: 999px;
+    border: 1px solid var(--green); color: var(--green); background: rgba(0,255,133,0.08);
+    text-shadow: 0 0 8px var(--green-glow); white-space: nowrap;
   }
-  .cert-rec:hover { border-color: var(--line-3); transform: translateY(-2px); }
-  .cert-rec-name { font-size: 14px; color: var(--ink); font-weight: 500; line-height: 1.3; }
-  .cert-rec-provider { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); margin-top: 3px; }
-  .cert-rec .view-more { white-space: nowrap; }
+  .cert-rec-card .summary { flex: 1; margin-bottom: 12px; }
+  .cert-rec-provider { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); }
+
+  /* Key skills block */
+  .skills-block { margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--line); }
+  .skills-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; }
+  .skills-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink); font-weight: 600; }
+  .skills-legend { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-muted); display: inline-flex; align-items: center; }
+  .skills-legend .dot-have, .skills-legend .dot-learn { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+  .skills-legend .dot-have { background: var(--green); box-shadow: 0 0 6px var(--green-glow); }
+  .skills-legend .dot-learn { border: 1px solid var(--line-strong); }
+  .skill-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .skill-chip {
+    font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 500;
+    padding: 7px 13px; border-radius: 999px; border: 1px solid var(--line-strong);
+    color: var(--ink-soft); background: rgba(255,255,255,0.02);
+  }
+  .skill-chip.is-have {
+    border-color: rgba(0,255,133,0.55); color: var(--green); background: rgba(0,255,133,0.10);
+    text-shadow: 0 0 8px var(--green-glow); font-weight: 600;
+  }
+
+  /* Before-match: what you'll get */
+  .match-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media (max-width: 760px) { .match-steps { grid-template-columns: 1fr; } }
+  .match-step {
+    display: flex; align-items: flex-start; gap: 14px; padding: 20px;
+    border: 1px solid var(--line); border-radius: 14px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.008));
+  }
+  .match-step-num {
+    flex-shrink: 0; width: 30px; height: 30px; border-radius: 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px;
+    color: var(--green); border: 1px solid var(--line-3); background: rgba(0,255,133,0.06);
+  }
+  .match-step-body { display: flex; flex-direction: column; gap: 4px; }
+  .match-step-body strong { color: var(--ink); font-size: 14.5px; font-weight: 600; }
+  .match-step-body span { color: var(--ink-muted); font-size: 13px; line-height: 1.45; }
 
   .match-disclaimer {
     margin-top: 30px; font-size: 12.5px; color: var(--ink-muted); font-style: italic;
@@ -2497,6 +2536,18 @@
     'tech-it': { name: 'Tech / IT Support',  salary: '$52k – $85k',   roles: 'IT Support Specialist · Systems Administrator · IT Automation Engineer', blurb: 'Where hardware meets automation — the operations backbone every team needs.' }
   };
 
+  // ===== CORE SKILLS PER ROLE (highlighted in the result) =====
+  const CORE_SKILLS = {
+    ai:        ['Python', 'LLMs & prompting', 'RAG & vector DBs', 'PyTorch / TensorFlow', 'APIs & tool use', 'ML fundamentals', 'AI agents', 'Evaluation'],
+    cloud:     ['AWS / Azure / GCP', 'Docker & Kubernetes', 'Terraform (IaC)', 'CI/CD pipelines', 'Linux', 'Serverless', 'Networking', 'Monitoring'],
+    cs:        ['Data structures & algorithms', 'C++ or Go', 'Operating systems', 'Concurrency', 'Distributed systems', 'Complexity analysis', 'Testing', 'Git'],
+    cyber:     ['Networking & TCP/IP', 'SIEM & log analysis', 'Threat detection', 'Incident response', 'Linux', 'Python scripting', 'Vulnerability assessment', 'Security fundamentals'],
+    data:      ['SQL', 'Excel / spreadsheets', 'Tableau / Power BI', 'Python or R', 'Statistics', 'Dashboards', 'ETL & data cleaning', 'Data storytelling'],
+    helpdesk:  ['Troubleshooting', 'Customer service', 'Ticketing systems', 'Windows & macOS', 'Active Directory', 'Basic networking', 'Remote support', 'Documentation'],
+    swe:       ['A core language (JS / Python / Java)', 'Data structures & algorithms', 'REST APIs', 'Databases & SQL', 'Git & version control', 'Testing', 'A web framework', 'System design basics'],
+    'tech-it': ['Windows administration', 'Active Directory', 'Networking', 'PowerShell scripting', 'Hardware troubleshooting', 'Microsoft 365', 'Ticketing & support', 'Imaging & deployment']
+  };
+
   // ===== PATH SIGNAL KEYWORDS (multi-word phrases score higher) =====
   const PATH_KEYWORDS = {
     ai:        ['artificial intelligence','machine learning','deep learning','large language model','natural language','computer vision','generative ai','gen ai','hugging face','prompt engineering','data scientist','neural network','ai','ml','llm','nlp','rag','langchain','pytorch','tensorflow','openai','genai','agentic','embeddings','fine-tuning','model'],
@@ -2511,16 +2562,16 @@
 
   // ===== AI CERTS (with path affinity) =====
   const CERTS = [
-    { provider: 'Anthropic Academy', name: 'Claude Platform 101 — build on the Claude API', level: 'Intermediate', url: 'https://www.anthropic.com/learn', paths: ['ai','swe'], tags: ['claude','api','llm'] },
-    { provider: 'Anthropic Academy', name: 'Introduction to Model Context Protocol', level: 'Advanced', url: 'https://www.anthropic.com/learn', paths: ['ai','swe'], tags: ['mcp','agents','python'] },
-    { provider: 'Anthropic Academy', name: 'AI Fluency Series', level: 'Foundational', url: 'https://www.anthropic.com/learn', paths: ['ai','data','helpdesk','tech-it','cs','swe','cloud','cyber'], tags: ['ai fluency','ethics'] },
-    { provider: 'LangChain Academy', name: 'Introduction to LangGraph (multi-agent apps)', level: 'Advanced', url: 'https://academy.langchain.com/', paths: ['ai'], tags: ['agents','langchain'] },
-    { provider: 'Google AI', name: 'Google AI Essentials', level: 'Foundational', url: 'https://grow.google/ai/', paths: ['data','helpdesk','tech-it','cs','swe','cloud','cyber','ai'], tags: ['ai fluency','productivity'] },
-    { provider: 'Microsoft', name: 'Applied Skills in AI (Azure AI, ML, Gen AI)', level: 'Intermediate', url: 'https://learn.microsoft.com/credentials/applied-skills/', paths: ['cloud','ai','data'], tags: ['azure','ml','gen ai'] },
-    { provider: 'IBM SkillsBuild', name: 'AI Fundamentals (digital badge)', level: 'Foundational', url: 'https://skillsbuild.org/', paths: ['data','ai','swe','helpdesk','tech-it','cs'], tags: ['ml','nlp','fundamentals'] },
-    { provider: 'IBM', name: 'IBM AI Developer Professional Certificate', level: 'Intermediate', url: 'https://www.coursera.org/professional-certificates/applied-artifical-intelligence-ibm-watson-ai', paths: ['ai','swe','data'], tags: ['gen ai','career'] },
-    { provider: 'AWS', name: 'AWS Certified AI Practitioner', level: 'Foundational', url: 'https://aws.amazon.com/certification/certified-ai-practitioner/', paths: ['cloud','ai','cyber'], tags: ['aws','cloud','ml'] },
-    { provider: 'NVIDIA', name: 'DLI Self-Paced AI Courses (Deep Learning, GPU)', level: 'Intermediate', url: 'https://learn.nvidia.com/', paths: ['ai','cs'], tags: ['deep learning','gpu'] }
+    { provider: 'Anthropic Academy', name: 'Claude Platform 101', level: 'Intermediate', url: 'https://www.anthropic.com/learn', paths: ['ai','swe'], tags: ['claude','api','llm'], note: 'Build real features on the Claude Developer Platform and API.' },
+    { provider: 'Anthropic Academy', name: 'Introduction to Model Context Protocol', level: 'Advanced', url: 'https://www.anthropic.com/learn', paths: ['ai','swe'], tags: ['mcp','agents','python'], note: 'Give AI agents standardized access to tools and data with MCP.' },
+    { provider: 'Anthropic Academy', name: 'AI Fluency Series', level: 'Foundational', url: 'https://www.anthropic.com/learn', paths: ['ai','data','helpdesk','tech-it','cs','swe','cloud','cyber'], tags: ['ai fluency','ethics'], note: 'Effective, ethical, hands-on AI collaboration for any role.' },
+    { provider: 'LangChain Academy', name: 'Introduction to LangGraph', level: 'Advanced', url: 'https://academy.langchain.com/', paths: ['ai'], tags: ['agents','langchain'], note: 'Build stateful, multi-agent AI applications with LangGraph.' },
+    { provider: 'Google AI', name: 'Google AI Essentials', level: 'Foundational', url: 'https://grow.google/ai/', paths: ['data','helpdesk','tech-it','cs','swe','cloud','cyber','ai'], tags: ['ai fluency','productivity'], note: 'Core AI skills and tools you can put to work on day one.' },
+    { provider: 'Microsoft', name: 'Applied Skills in AI', level: 'Intermediate', url: 'https://learn.microsoft.com/credentials/applied-skills/', paths: ['cloud','ai','data'], tags: ['azure','ml','gen ai'], note: 'Lab-validated Azure AI, ML, and generative-AI skills.' },
+    { provider: 'IBM SkillsBuild', name: 'AI Fundamentals', level: 'Foundational', url: 'https://skillsbuild.org/', paths: ['data','ai','swe','helpdesk','tech-it','cs'], tags: ['ml','nlp','fundamentals'], note: 'ML, NLP, and computer-vision basics — earns a digital badge.' },
+    { provider: 'IBM', name: 'IBM AI Developer Professional Certificate', level: 'Intermediate', url: 'https://www.coursera.org/professional-certificates/applied-artifical-intelligence-ibm-watson-ai', paths: ['ai','swe','data'], tags: ['gen ai','career'], note: 'Job-ready AI and generative-AI developer skills.' },
+    { provider: 'AWS', name: 'AWS Certified AI Practitioner', level: 'Foundational', url: 'https://aws.amazon.com/certification/certified-ai-practitioner/', paths: ['cloud','ai','cyber'], tags: ['aws','cloud','ml'], note: 'Foundational AI/ML knowledge inside the AWS cloud.' },
+    { provider: 'NVIDIA', name: 'DLI Self-Paced AI Courses', level: 'Intermediate', url: 'https://learn.nvidia.com/', paths: ['ai','cs'], tags: ['deep learning','gpu'], note: 'Hands-on deep learning and GPU-accelerated computing.' }
   ];
 
   // ===== PROJECT CATALOG (compiled from the live PROJECTS data) =====
@@ -2580,7 +2631,41 @@
     return scored.slice(0, n).map(x => x.c);
   }
 
+  // Core skills for the role, flagged with whether the posting already mentions them
+  const SKILL_STOP = new Set(['and','or','the','for','with','of','a','an','to','basics','fundamentals','core','tools','systems','data']);
+  function skillsForRole(pathId, text) {
+    const t = norm(text);
+    return (CORE_SKILLS[pathId] || []).map(skill => {
+      const tokens = skill.toLowerCase().split(/[^a-z0-9+#]+/).filter(w => w.length > 2 && !SKILL_STOP.has(w));
+      const have = tokens.some(tok => t.includes(tok));
+      return { skill, have };
+    });
+  }
+  function certLevelClass(level) {
+    const l = String(level).toLowerCase();
+    if (l.startsWith('found') || l.startsWith('begin')) return 'beginner';
+    if (l.startsWith('adv')) return 'advanced';
+    return 'intermediate';
+  }
+
   // ===== RENDER =====
+  function certCardHTML(c) {
+    return `
+      <a class="project-card cert-rec-card" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">
+        <div class="card-top">
+          <span class="level-badge level-${certLevelClass(c.level)}">${esc(c.level)}</span>
+          <span class="cost-badge">Free</span>
+        </div>
+        <h3>${esc(c.name)}</h3>
+        <p class="summary">${esc(c.note || '')}</p>
+        <div class="tech-tags">${(c.tags || []).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
+        <div class="card-footer">
+          <span class="cert-rec-provider">${esc(c.provider)}</span>
+          <span class="view-more">Enroll →</span>
+        </div>
+      </a>`;
+  }
+
   function projectCardHTML(item) {
     const p = item.p;
     const matchLine = item.hits.length
@@ -2603,7 +2688,12 @@
     const out = document.getElementById('match-output');
     const clean = (text || '').trim();
     if (!clean) {
-      out.innerHTML = `<p class="match-empty">Enter a job title or description above to get your plan.</p>`;
+      out.innerHTML = `
+        <div class="match-steps">
+          <div class="match-step"><span class="match-step-num">1</span><div class="match-step-body"><strong>Your best-fit path</strong><span>Which of the 8 career tracks the job maps to.</span></div></div>
+          <div class="match-step"><span class="match-step-num">2</span><div class="match-step-body"><strong>Projects to build</strong><span>The portfolio pieces that prove you can do the work.</span></div></div>
+          <div class="match-step"><span class="match-step-num">3</span><div class="match-step-body"><strong>Certs to earn</strong><span>Free credentials that back up your skills.</span></div></div>
+        </div>`;
       return;
     }
 
@@ -2635,7 +2725,8 @@
     const conf = total >= 6 ? 'Strong match' : total >= 3 ? 'Good match' : 'Possible match';
     const projects = rankProjects(top, clean, 3);
     const certs = rankCerts(top, clean, 3);
-    const chips = [...new Set(matched[top])].slice(0, 10);
+    const skills = skillsForRole(top, clean);
+    const haveCount = skills.filter(s => s.have).length;
 
     out.innerHTML = `
       <div class="result-best">
@@ -2646,24 +2737,23 @@
           <div class="result-meta-item"><span class="result-meta-label">Typical salary</span><span class="result-meta-value">${esc(path.salary)}</span></div>
           <div class="result-meta-item"><span class="result-meta-label">Roles</span><span class="result-meta-value">${esc(path.roles)}</span></div>
         </div>
-        ${chips.length ? `<div class="matched-chips">${chips.map(c => `<span class="matched-chip">${esc(c)}</span>`).join('')}</div>` : ''}
+        <div class="skills-block">
+          <div class="skills-head">
+            <span class="skills-title">Key skills for this role</span>
+            ${haveCount ? `<span class="skills-legend"><span class="dot-have"></span>in your posting&nbsp;&nbsp;<span class="dot-learn"></span>to learn</span>` : `<span class="skills-legend">the toolkit to aim for</span>`}
+          </div>
+          <div class="skill-chips">
+            ${skills.map(s => `<span class="skill-chip ${s.have ? 'is-have' : ''}">${esc(s.skill)}</span>`).join('')}
+          </div>
+        </div>
         ${hasAlt ? `<div class="alt-path">Also a fit: <a data-pick2="${second}">${esc(PATHS[second].name)} →</a></div>` : ''}
       </div>
 
       <div class="result-section-title"><span class="num">01</span> Build these projects</div>
-      <div class="project-grid">${projects.map(projectCardHTML).join('')}</div>
+      <div class="rec-grid">${projects.map(projectCardHTML).join('')}</div>
 
-      <div class="result-section-title"><span class="num">02</span> Back it with these certs</div>
-      <div class="cert-rec-list">
-        ${certs.map(c => `
-          <a class="cert-rec" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">
-            <div>
-              <div class="cert-rec-name">${esc(c.name)}</div>
-              <div class="cert-rec-provider">${esc(c.provider)} · ${esc(c.level)} · Free</div>
-            </div>
-            <span class="view-more">Enroll →</span>
-          </a>`).join('')}
-      </div>
+      <div class="result-section-title"><span class="num">02</span> Earn these certs</div>
+      <div class="rec-grid">${certs.map(certCardHTML).join('')}</div>
 
       <p class="match-disclaimer">
         This is a keyword match over the BuildersBench catalog — a transparent first pass, not a recruiter.

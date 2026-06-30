@@ -1830,8 +1830,9 @@
     padding-top: 22px;
     border-top: 1px solid rgba(255,255,255,0.16);
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    gap: 18px;
+    gap: 8px 18px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
     letter-spacing: 0.18em;
@@ -2333,6 +2334,12 @@
   .sec-prompts .sec-rule { background: linear-gradient(90deg, rgba(0,194,168,0.55), rgba(0,194,168,0.12) 30%, transparent 70%); box-shadow: 0 0 12px rgba(0,194,168,0.3); }
   .sec-link { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.12em; color: var(--ink-muted); text-decoration: none; white-space: nowrap; }
   .sec-link:hover { color: var(--teal); }
+  @media (max-width: 560px) {
+    /* keep the label + rule on the first line; drop the link beneath it */
+    .result-section-title { flex-wrap: wrap; row-gap: 7px; }
+    .result-section-title > span:not(.num):not(.sec-rule) { white-space: nowrap; }
+    .result-section-title .sec-link { flex-basis: 100%; text-align: right; }
+  }
 
   /* Uniform recommendation grid — projects and certs share the same card size */
   .rec-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }

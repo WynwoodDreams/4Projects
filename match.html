@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Free AI Certifications — BuildersBench</title>
-<meta name="description" content="A curated directory of free, official AI certifications from Anthropic, LangChain, Google, Microsoft, IBM, AWS, and NVIDIA — what each covers, why it matters, and where to enroll." />
+<title>Job → Plan — BuildersBench Career Match</title>
+<meta name="description" content="Paste a job title or description and get a personalized plan: the career path, the portfolio projects to build, and the free certs to earn." />
 <meta name="theme-color" content="#0a0f0a" />
-<link rel="canonical" href="https://4-projects.vercel.app/certifications.html" />
+<link rel="canonical" href="https://4-projects.vercel.app/match.html" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='none' stroke='%2300e676' stroke-width='2'/%3E%3Cpath d='M8 12l3 3 5-6' fill='none' stroke='%2300e676' stroke-width='2'/%3E%3C/svg%3E" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Free AI Certifications — BuildersBench" />
-<meta property="og:description" content="Free, official AI certifications from Anthropic, LangChain, Google, Microsoft, IBM, AWS, and NVIDIA — what each covers and where to enroll." />
-<meta property="og:url" content="https://4-projects.vercel.app/certifications.html" />
+<meta property="og:title" content="Job → Plan — BuildersBench Career Match" />
+<meta property="og:description" content="Paste a job and get a plan: the path, the projects to build, and the certs to earn." />
+<meta property="og:url" content="https://4-projects.vercel.app/match.html" />
 <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Free AI Certifications — BuildersBench" />
-<meta name="twitter:description" content="Free, official AI certifications from the leading AI orgs — what each covers and where to enroll." />
+<meta name="twitter:title" content="Job → Plan — BuildersBench Career Match" />
+<meta name="twitter:description" content="Paste a job title or description and get your build-and-certify plan." />
 <style id="self-hosted-fonts">
 @font-face { font-family: 'Inter'; font-style: normal; font-weight: 300; font-display: swap; src: url('/fonts/inter-300.woff2') format('woff2'); }
 @font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/inter-400.woff2') format('woff2'); }
@@ -2227,125 +2227,130 @@
     .path-tab { padding: 9px 10px; }
   }
 </style>
-<style id="cert-page-style">
-  /* ===== Certifications page — additive styles only ===== */
-  .cert-hero { padding: 52px 0 26px; }
-  .cert-hero h1 { max-width: 16ch; }
+<style id="match-page-style">
+  /* ===== Career Match page — additive styles only ===== */
+  .cert-hero { padding: 52px 0 20px; }
+  .cert-hero h1 { max-width: 17ch; }
   .cert-hero .hero-lede { max-width: 60ch; }
-  .cert-hero-stats { display: flex; gap: 30px; margin-top: 26px; flex-wrap: wrap; }
-  .cert-stat { display: flex; flex-direction: column; gap: 2px; }
-  .cert-stat-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 30px; font-weight: 700; color: var(--green);
-    line-height: 1; text-shadow: 0 0 14px var(--green-glow);
-  }
-  .cert-stat-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--ink-muted);
-  }
-  .cert-note { margin-top: 20px; font-size: 12.5px; color: var(--ink-muted); font-style: italic; max-width: 70ch; }
 
-  /* Keep nav links visible even where stat-pills hide on mobile */
   .header-actions .nav-link { display: inline-flex; color: var(--green); border-color: var(--line-3); }
   .header-actions .nav-link svg { color: var(--green); }
 
-  /* ===== Provider cards (one card per provider) ===== */
-  .provider-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(370px, 1fr));
-    gap: 16px;
-    align-items: start;
-    margin: 8px 0 40px;
+  /* Input */
+  .match-box { margin-top: 26px; max-width: 760px; }
+  .match-field {
+    display: flex; flex-direction: column; gap: 12px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.012));
+    border: 1px solid var(--line-strong); border-radius: 16px; padding: 16px;
   }
-  .provider-card { cursor: default; min-height: 0; }
-  .provider-card:hover { transform: none; }       /* it's not a single link, so don't imply it is */
-  /* Gold "background light" for cert cards */
-  .provider-card::before {
+  .match-field textarea {
+    width: 100%; resize: vertical; min-height: 92px;
+    background: rgba(0,0,0,0.45); border: 1px solid var(--line); border-radius: 10px;
+    color: var(--ink); font-family: 'Inter', sans-serif; font-size: 15px; line-height: 1.5;
+    padding: 14px 16px; outline: none; transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .match-field textarea::placeholder { color: var(--ink-muted); }
+  .match-field textarea:focus { border-color: var(--line-3); box-shadow: 0 0 0 1px var(--line-3); }
+  .match-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .match-go {
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 13px 24px; border-radius: 999px; border: 1px solid transparent;
+    font-family: 'JetBrains Mono', monospace; font-size: 12.5px; letter-spacing: 0.12em;
+    text-transform: uppercase; font-weight: 700; cursor: pointer;
+    background: linear-gradient(180deg, var(--green) 0%, var(--green-2) 100%); color: #02110A;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), 0 0 0 1px rgba(0,255,133,0.55), 0 10px 28px -10px rgba(0,255,133,0.6);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .match-go:hover { transform: translateY(-2px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), 0 0 0 1px rgba(0,255,133,0.85), 0 16px 36px -10px rgba(0,255,133,0.8); }
+  .match-go svg { width: 15px; height: 15px; }
+  .match-hint { font-size: 12px; color: var(--ink-muted); }
+
+  .match-examples { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 16px; }
+  .match-examples .filter-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--ink-muted); margin-right: 2px;
+  }
+  .ex-chip {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.04em;
+    padding: 7px 13px; border-radius: 999px; border: 1px dashed var(--line-strong);
+    background: rgba(255,255,255,0.03); color: var(--ink-soft); cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .ex-chip:hover { border-color: var(--line-3); color: var(--green); }
+
+  /* Results */
+  .match-results { padding-bottom: 56px; }
+  .match-empty { color: var(--ink-muted); font-size: 14px; padding: 8px 0; }
+
+  .result-best {
+    border: 1px solid var(--line-3); border-radius: 16px; padding: 22px 24px;
+    background: linear-gradient(180deg, rgba(0,255,133,0.06), rgba(255,255,255,0.01));
+    margin-bottom: 12px;
+  }
+  .result-eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--ink-muted); margin-bottom: 8px;
+  }
+  .result-path-name {
+    font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 700;
+    letter-spacing: 0.02em; text-transform: uppercase; color: var(--ink);
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .result-path-name .icon { width: 28px; height: 28px; color: var(--green); filter: drop-shadow(0 0 8px var(--green-glow)); display: inline-flex; }
+  .result-path-name .icon svg { width: 100%; height: 100%; stroke-width: 2; }
+  .confidence {
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.14em;
+    padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line-3);
+    color: var(--green); background: rgba(0,255,133,0.06); text-transform: uppercase;
+  }
+  .result-why { color: var(--ink-soft); font-size: 14px; line-height: 1.55; margin: 12px 0 14px; max-width: 64ch; }
+  .result-meta { display: flex; gap: 26px; flex-wrap: wrap; margin-bottom: 14px; }
+  .result-meta-item { display: flex; flex-direction: column; gap: 2px; }
+  .result-meta-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-muted); }
+  .result-meta-value { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink); }
+  .matched-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .matched-chip {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.06em;
+    padding: 4px 9px; border-radius: 5px; background: rgba(0,255,133,0.08);
+    color: var(--green); border: 1px solid rgba(0,255,133,0.28);
+  }
+  .alt-path { font-size: 12.5px; color: var(--ink-muted); margin-top: 12px; }
+  .alt-path a { color: var(--green); text-decoration: none; border-bottom: 1px solid var(--line-3); cursor: pointer; }
+
+  .result-section-title {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--ink); font-weight: 600;
+    margin: 30px 0 14px; display: flex; align-items: center; gap: 10px;
+  }
+  .result-section-title .num { color: var(--green); text-shadow: 0 0 8px var(--green-glow); }
+
+  .rec-card { cursor: pointer; text-decoration: none; color: inherit; min-height: 0; }
+  /* Green "background light" for match cards */
+  .rec-card::before {
     background:
-      radial-gradient(ellipse at 50% 0%, rgba(255,200,87,0.16), transparent 65%),
-      radial-gradient(ellipse at 100% 100%, rgba(255,200,87,0.07), transparent 65%);
-    opacity: 0.55;
+      radial-gradient(ellipse at 50% 0%, rgba(0,255,133,0.15), transparent 65%),
+      radial-gradient(ellipse at 100% 100%, rgba(0,255,133,0.06), transparent 65%);
+    opacity: 0.5;
   }
-  .provider-card:hover {
-    border-color: rgba(255,200,87,0.55);
-    box-shadow:
-      0 0 0 1px rgba(255,200,87,0.55),
-      0 0 24px -2px rgba(255,200,87,0.32),
-      0 0 60px -12px rgba(255,200,87,0.28),
-      0 24px 60px -22px rgba(0,0,0,0.65);
-  }
-  .provider-card .cost-badge { position: absolute; top: 18px; right: 18px; }
+  .rec-card .summary { margin-bottom: 12px; }
+  .rec-match { font-size: 12px; color: var(--ink-muted); margin-bottom: 12px; }
+  .rec-match strong { color: var(--green); font-weight: 600; }
 
-  .provider-card-head {
-    display: flex; align-items: center; gap: 14px;
-    margin-bottom: 14px; padding-right: 64px;
+  .cert-rec-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+  .cert-rec {
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px;
+    background: rgba(255,255,255,0.02); text-decoration: none; color: inherit;
+    transition: border-color 0.2s ease, transform 0.2s ease;
   }
-  .provider-icon {
-    width: 34px; height: 34px; flex-shrink: 0;
-    color: var(--green); filter: drop-shadow(0 0 8px var(--green-glow));
-    display: inline-flex; align-items: center; justify-content: center;
-  }
-  .provider-icon svg { width: 100%; height: 100%; stroke-width: 2; }
-  .provider-card-head h3 {
-    font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 600;
-    color: var(--ink); letter-spacing: -0.02em; line-height: 1.2; padding: 0; margin: 0;
-  }
-  .provider-count {
-    font-family: 'JetBrains Mono', monospace; font-size: 10px;
-    letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-muted);
-  }
+  .cert-rec:hover { border-color: var(--line-3); transform: translateY(-2px); }
+  .cert-rec-name { font-size: 14px; color: var(--ink); font-weight: 500; line-height: 1.3; }
+  .cert-rec-provider { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); margin-top: 3px; }
+  .cert-rec .view-more { white-space: nowrap; }
 
-  .cert-list { list-style: none; margin: 4px 0 16px; padding: 0; flex: 1; }
-  .cert-row {
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    padding: 9px 0; border-bottom: 1px dashed var(--line);
-  }
-  .cert-row:last-child { border-bottom: none; }
-  .cert-row-name { font-size: 13.5px; color: var(--ink-soft); line-height: 1.35; }
-  a.cert-row-name {
-    color: var(--ink); text-decoration: none;
-    border-bottom: 1px solid var(--line-3); transition: color 0.15s ease, border-color 0.15s ease;
-  }
-  a.cert-row-name:hover { color: var(--green); border-color: var(--green); }
-  .cert-row-meta { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-  .cert-level {
-    font-family: 'JetBrains Mono', monospace; font-size: 9px;
-    letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600;
-    padding: 3px 8px; border-radius: 999px; border: 1px solid currentColor;
-    background: rgba(0,0,0,0.30); white-space: nowrap;
-  }
-  .cert-flag {
-    font-family: 'JetBrains Mono', monospace; font-size: 8.5px;
-    letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold);
-    white-space: nowrap; border: 1px solid rgba(255,200,87,0.45);
-    border-radius: 999px; padding: 3px 7px; background: rgba(255,200,87,0.06);
-  }
-
-  .cost-badge {
-    font-family: 'JetBrains Mono', monospace; font-size: 10px;
-    letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700;
-    padding: 5px 11px; border-radius: 999px; border: 1px solid var(--green);
-    color: var(--green); background: rgba(0,255,133,0.08);
-    text-shadow: 0 0 8px var(--green-glow); white-space: nowrap;
-  }
-  .cert-format {
-    font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
-    letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted);
-  }
-  .provider-cta {
-    text-decoration: none; padding: 8px 14px;
-    border: 1px solid var(--line-3); border-radius: 999px; background: rgba(0,255,133,0.06);
-    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-    white-space: nowrap;
-  }
-  .provider-cta:hover {
-    border-color: var(--green);
-    box-shadow: 0 0 0 1px var(--green), 0 12px 30px -16px rgba(0,255,133,0.30);
-    transform: translateY(-1px);
-  }
-  @media (max-width: 520px) {
-    .provider-grid { grid-template-columns: 1fr; }
-    .card-footer { flex-wrap: wrap; gap: 10px; }
+  .match-disclaimer {
+    margin-top: 30px; font-size: 12.5px; color: var(--ink-muted); font-style: italic;
+    border-top: 1px dashed var(--line); padding-top: 18px; max-width: 72ch;
   }
 </style>
 </head>
@@ -2365,29 +2370,20 @@
               </radialGradient>
             </defs>
             <g stroke="#00FF85" stroke-width="0.7" stroke-linecap="round" opacity="0.9">
-              <line x1="5" y1="5" x2="21" y2="7"/>
-              <line x1="5" y1="5" x2="12" y2="12"/>
-              <line x1="5" y1="5" x2="18" y2="16"/>
-              <line x1="5" y1="5" x2="9" y2="20"/>
-              <line x1="12" y1="12" x2="21" y2="7"/>
-              <line x1="12" y1="12" x2="18" y2="16"/>
-              <line x1="12" y1="12" x2="9" y2="20"/>
-              <line x1="18" y1="16" x2="9" y2="20"/>
+              <line x1="5" y1="5" x2="21" y2="7"/><line x1="5" y1="5" x2="12" y2="12"/>
+              <line x1="5" y1="5" x2="18" y2="16"/><line x1="5" y1="5" x2="9" y2="20"/>
+              <line x1="12" y1="12" x2="21" y2="7"/><line x1="12" y1="12" x2="18" y2="16"/>
+              <line x1="12" y1="12" x2="9" y2="20"/><line x1="18" y1="16" x2="9" y2="20"/>
               <line x1="21" y1="7" x2="18" y2="16"/>
             </g>
             <g>
-              <circle cx="5" cy="5" r="2.8" fill="url(#bb-node-glow)"/>
-              <circle cx="21" cy="7" r="2.3" fill="url(#bb-node-glow)"/>
-              <circle cx="12" cy="12" r="3.2" fill="url(#bb-node-glow)"/>
-              <circle cx="18" cy="16" r="2.3" fill="url(#bb-node-glow)"/>
+              <circle cx="5" cy="5" r="2.8" fill="url(#bb-node-glow)"/><circle cx="21" cy="7" r="2.3" fill="url(#bb-node-glow)"/>
+              <circle cx="12" cy="12" r="3.2" fill="url(#bb-node-glow)"/><circle cx="18" cy="16" r="2.3" fill="url(#bb-node-glow)"/>
               <circle cx="9" cy="20" r="2.3" fill="url(#bb-node-glow)"/>
             </g>
             <g fill="#ffffff">
-              <circle cx="5" cy="5" r="0.95"/>
-              <circle cx="21" cy="7" r="0.75"/>
-              <circle cx="12" cy="12" r="1.15"/>
-              <circle cx="18" cy="16" r="0.75"/>
-              <circle cx="9" cy="20" r="0.75"/>
+              <circle cx="5" cy="5" r="0.95"/><circle cx="21" cy="7" r="0.75"/><circle cx="12" cy="12" r="1.15"/>
+              <circle cx="18" cy="16" r="0.75"/><circle cx="9" cy="20" r="0.75"/>
             </g>
           </svg>
         </span>
@@ -2406,25 +2402,38 @@
 <!-- HERO -->
 <section class="hero cert-hero">
   <div class="container">
-    <div class="hero-eyebrow"><span class="dot"></span>Free &amp; Official · AI Certifications</div>
-    <h1>Get certified <span class="serif">—</span> <span class="accent">for free.</span></h1>
+    <div class="hero-eyebrow"><span class="dot"></span>Career Match · Job → Plan</div>
+    <h1>Paste a job. <span class="accent">Get your plan.</span></h1>
     <p class="hero-lede">
-      Official AI certifications from the organizations building the field. Every program below is free to start — hands-on courses and credentials you can put straight on your resume, LinkedIn, and the projects you ship from this guide.
+      Drop in a job title or a full job description. We'll match it to a career path, then hand you the exact portfolio projects to build and the free certifications to earn for it.
     </p>
-    <div class="cert-hero-stats">
-      <div class="cert-stat"><span class="cert-stat-num">7</span><span class="cert-stat-label">Providers</span></div>
-      <div class="cert-stat"><span class="cert-stat-num" id="stat-certs">0</span><span class="cert-stat-label">Certifications</span></div>
-      <div class="cert-stat"><span class="cert-stat-num">$0</span><span class="cert-stat-label">To start</span></div>
+    <div class="match-box">
+      <div class="match-field">
+        <textarea id="match-input" placeholder="e.g. Junior Data Analyst — SQL, Tableau, Excel, building dashboards and reporting for the marketing team…" aria-label="Job title or description"></textarea>
+        <div class="match-row">
+          <span class="match-hint">Paste a title or the whole posting — more detail = a sharper match.</span>
+          <button class="match-go" id="match-go" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            Find my plan
+          </button>
+        </div>
+      </div>
+      <div class="match-examples">
+        <span class="filter-label">Try</span>
+        <button class="ex-chip" type="button">Junior Data Analyst</button>
+        <button class="ex-chip" type="button">Cloud Engineer Intern</button>
+        <button class="ex-chip" type="button">SOC Analyst</button>
+        <button class="ex-chip" type="button">Software Engineer</button>
+        <button class="ex-chip" type="button">IT Support Specialist</button>
+        <button class="ex-chip" type="button">AI Engineer</button>
+      </div>
     </div>
-    <p class="cert-note">
-      "Free" reflects free courses and training. A few credential exams or printable certificates may carry a fee — flagged in the list — so there are no surprises. Always confirm current pricing on the provider's site.
-    </p>
   </div>
 </section>
 
-<!-- CERTS -->
-<section class="projects-section">
-  <div class="container" id="certs-container"></div>
+<!-- RESULTS -->
+<section class="match-results">
+  <div class="container" id="match-output"></div>
 </section>
 
 <!-- FOOTER -->
@@ -2432,8 +2441,8 @@
   <div class="container">
     <div class="footer-grid">
       <div>
-        <div class="footer-brand">Credentials <span class="ital">that back</span> the build.</div>
-        <p class="footer-tagline">Pair a portfolio project with a recognized certification — proof you can do the work and the receipts to match.</p>
+        <div class="footer-brand">From job post <span class="ital">to</span> portfolio.</div>
+        <p class="footer-tagline">Stop guessing what to build. Match a real job to the projects and certs that get you there.</p>
       </div>
       <div class="footer-col">
         <h5>Explore</h5>
@@ -2442,7 +2451,6 @@
           <li><a href="/match.html">Career Match</a></li>
           <li><a href="/prompts.html">Prompt Library</a></li>
           <li><a href="/certifications.html">Certifications</a></li>
-          <li><a href="/index.html#deploy-cheatsheet">Deploy cheatsheet</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -2464,167 +2472,250 @@
 <button id="back-to-top" title="Back to top" aria-label="Back to top">↑</button>
 
 <script>
-  // ===== ICONS (lucide-style line icons) =====
+  // ===== ICONS =====
   const SVG_OPEN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
-
-  // ===== PROVIDER DATA =====
-  const PROVIDERS = [
-    {
-      id: 'anthropic', name: 'Anthropic Academy', url: 'https://www.anthropic.com/learn',
-      blurb: 'Practical, hands-on courses for building with Claude — from everyday use to the Claude API and the Model Context Protocol (MCP).',
-      icon: SVG_OPEN + '<path d="M12 3v18M4.5 7.5l15 9M19.5 7.5l-15 9"/></svg>'
-    },
-    {
-      id: 'langchain', name: 'LangChain Academy', url: 'https://academy.langchain.com/',
-      blurb: 'Self-paced courses on building context-aware, reasoning AI agents with LangChain, LangGraph, and LangSmith.',
-      icon: SVG_OPEN + '<path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 0 1 0 10h-2"/><line x1="8" y1="12" x2="16" y2="12"/></svg>'
-    },
-    {
-      id: 'google', name: 'Google AI', url: 'https://grow.google/ai/',
-      blurb: 'Accessible AI training through Grow with Google — from core AI fluency to applying AI in your job search and studies.',
-      icon: SVG_OPEN + '<path d="M12 3l1.9 5.6L19.5 10l-5.6 1.4L12 17l-1.9-5.6L4.5 10l5.6-1.4z"/></svg>'
-    },
-    {
-      id: 'microsoft', name: 'Microsoft Applied Skills', url: 'https://learn.microsoft.com/credentials/applied-skills/',
-      blurb: 'Scenario-based, lab-validated credentials proving practical AI skills across Azure AI services, ML, and generative AI.',
-      icon: SVG_OPEN + '<rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>'
-    },
-    {
-      id: 'ibm', name: 'IBM SkillsBuild', url: 'https://skillsbuild.org/',
-      blurb: 'Industry-relevant AI training and digital badges covering machine learning, NLP, computer vision, and generative AI.',
-      icon: SVG_OPEN + '<rect x="3" y="4" width="18" height="6" rx="1"/><rect x="3" y="14" width="18" height="6" rx="1"/><path d="M7 7h.01M7 17h.01"/></svg>'
-    },
-    {
-      id: 'aws', name: 'AWS Training', url: 'https://aws.amazon.com/training/',
-      blurb: 'Validate AI, ML, and generative AI skills within the AWS cloud — free training on Skill Builder plus foundational credentials.',
-      icon: SVG_OPEN + '<path d="M17.5 19a4.5 4.5 0 1 0-1.41-8.78 5.5 5.5 0 0 0-10.59 2.16A4 4 0 0 0 6 19h11.5Z"/></svg>'
-    },
-    {
-      id: 'nvidia', name: 'NVIDIA Deep Learning Institute', url: 'https://learn.nvidia.com/',
-      blurb: 'Hands-on training in deep learning, generative AI, and GPU-accelerated computing, with certificates on completion.',
-      icon: SVG_OPEN + '<rect x="6" y="6" width="12" height="12" rx="1"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg>'
-    }
-  ];
-
-  // ===== CERT DATA =====
-  // level: beginner | intermediate | advanced  (controls level-tag color)
-  // cost:  free | partial   (partial shows a gold flag with costLabel)
-  // url (optional): a genuine direct link for that specific cert
-  const CERTS = {
-    anthropic: [
-      { name: 'Claude 101', level: 'beginner', levelLabel: 'Foundational', cost: 'free' },
-      { name: 'Claude Code 101', level: 'beginner', levelLabel: 'Foundational', cost: 'free' },
-      { name: 'Claude Platform 101', level: 'intermediate', levelLabel: 'Intermediate', cost: 'free' },
-      { name: 'Introduction to Model Context Protocol', level: 'advanced', levelLabel: 'Advanced', cost: 'free' },
-      { name: 'AI Fluency Series', level: 'beginner', levelLabel: 'Foundational', cost: 'free' }
-    ],
-    langchain: [
-      { name: 'Quickstart: LangSmith Essentials', level: 'beginner', levelLabel: 'Foundational', cost: 'free' },
-      { name: 'Introduction to LangSmith Deployment', level: 'intermediate', levelLabel: 'Intermediate', cost: 'free' },
-      { name: 'Introduction to LangGraph', level: 'advanced', levelLabel: 'Advanced', cost: 'free' },
-      { name: 'Project: Deep Agents', level: 'advanced', levelLabel: 'Advanced', cost: 'free' }
-    ],
-    google: [
-      { name: 'Google AI Essentials', level: 'beginner', levelLabel: 'Foundational', cost: 'partial', costLabel: 'Free to audit' },
-      { name: 'Google AI Professional Certificate', level: 'intermediate', levelLabel: 'Intermediate', cost: 'partial', costLabel: 'Free to audit' },
-      { name: 'AI for Job Search, Students & Educators', level: 'beginner', levelLabel: 'Foundational', cost: 'free' }
-    ],
-    microsoft: [
-      { name: 'Applied Skills in AI (Azure AI, ML, Gen AI)', level: 'intermediate', levelLabel: 'Intermediate', cost: 'free' }
-    ],
-    ibm: [
-      { name: 'AI Fundamentals with IBM SkillsBuild', level: 'beginner', levelLabel: 'Foundational', cost: 'free' },
-      { name: 'Generative AI with IBM', level: 'beginner', levelLabel: 'Foundational', cost: 'free' },
-      { name: 'IBM AI Developer Professional Certificate', level: 'intermediate', levelLabel: 'Intermediate', cost: 'partial', costLabel: 'Free to audit',
-        url: 'https://www.coursera.org/professional-certificates/applied-artifical-intelligence-ibm-watson-ai' }
-    ],
-    aws: [
-      { name: 'AWS Certified AI Practitioner', level: 'beginner', levelLabel: 'Foundational', cost: 'partial', costLabel: 'Free prep · paid exam',
-        url: 'https://aws.amazon.com/certification/certified-ai-practitioner/' },
-      { name: 'AWS Skill Builder Digital Badges', level: 'beginner', levelLabel: 'Foundational', cost: 'free',
-        url: 'https://skillbuilder.aws/' }
-    ],
-    nvidia: [
-      { name: 'DLI Self-Paced AI Courses (Gen AI, Deep Learning, GPU)', level: 'intermediate', levelLabel: 'Intermediate', cost: 'free' }
-    ]
+  const PATH_ICONS = {
+    ai:        SVG_OPEN + '<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 9h2M20 15h2M9 2v2M9 20v2"/></svg>',
+    cloud:     SVG_OPEN + '<path d="M17.5 19a4.5 4.5 0 1 0-1.41-8.78 5.5 5.5 0 0 0-10.59 2.16A4 4 0 0 0 6 19h11.5Z"/></svg>',
+    cs:        SVG_OPEN + '<path d="M21.42 10.92a1 1 0 0 0-.02-1.84L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.83l8.57 3.91a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16c0 1.66 2.69 3 6 3s6-1.34 6-3v-3.5"/></svg>',
+    cyber:     SVG_OPEN + '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>',
+    data:      SVG_OPEN + '<path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>',
+    helpdesk:  SVG_OPEN + '<path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H4a1 1 0 0 1-1-1zM21 14h-3a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h2a1 1 0 0 0 1-1z"/><path d="M3 14a9 9 0 0 1 18 0"/></svg>',
+    swe:       SVG_OPEN + '<path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>',
+    'tech-it': SVG_OPEN + '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>'
   };
 
-  // ===== RENDER =====
+  // ===== CAREER PATHS =====
+  const PATHS = {
+    ai:        { name: 'AI Engineer',        salary: '$110k – $180k', roles: 'AI Engineer · ML Engineer · Applied Research Engineer', blurb: 'Building autonomous systems that go beyond chat — the highest-paying track in tech.' },
+    cloud:     { name: 'Cloud Computing',    salary: '$95k – $160k',  roles: 'Cloud Engineer · DevOps Engineer · Platform Engineer',     blurb: 'Serverless, multi-cloud, and platform engineering — the spine of every modern company.' },
+    cs:        { name: 'Computer Science',   salary: '$80k – $140k',  roles: 'Software Engineer · Systems Engineer · Research Engineer',  blurb: 'Research-grade systems with real rigor — perfect for technical interviews.' },
+    cyber:     { name: 'Cybersecurity',      salary: '$75k – $135k',  roles: 'SOC Analyst · Security Engineer · AI Security Researcher',  blurb: 'Defending against the next generation of attacks. Defense roles are exploding.' },
+    data:      { name: 'Data Analyst',       salary: '$65k – $110k',  roles: 'Data Analyst · BI Developer · Analytics Engineer',         blurb: 'Turning raw data into business strategy — the widest doorway into tech.' },
+    helpdesk:  { name: 'Help Desk',          salary: '$42k – $65k',   roles: 'Help Desk Technician · Tier 1/2 Support · Support Engineer', blurb: 'The AI-augmented first line of support — a real entry point without heavy coding.' },
+    swe:       { name: 'Software Engineer',  salary: '$85k – $150k',  roles: 'Software Engineer · Full-Stack Developer · Backend Engineer', blurb: 'Production-grade systems that scale — the most-needed, always-paid skill in tech.' },
+    'tech-it': { name: 'Tech / IT Support',  salary: '$52k – $85k',   roles: 'IT Support Specialist · Systems Administrator · IT Automation Engineer', blurb: 'Where hardware meets automation — the operations backbone every team needs.' }
+  };
+
+  // ===== PATH SIGNAL KEYWORDS (multi-word phrases score higher) =====
+  const PATH_KEYWORDS = {
+    ai:        ['artificial intelligence','machine learning','deep learning','large language model','natural language','computer vision','generative ai','gen ai','hugging face','prompt engineering','data scientist','neural network','ai','ml','llm','nlp','rag','langchain','pytorch','tensorflow','openai','genai','agentic','embeddings','fine-tuning','model'],
+    cloud:     ['google cloud','site reliability','platform engineer','infrastructure as code','aws','azure','gcp','kubernetes','docker','terraform','devops','serverless','lambda','cloudformation','ansible','helm','ci/cd','cicd','sre','ec2','microservices','containers'],
+    cs:        ['data structures','computer science','operating systems','distributed systems','algorithms','compiler','concurrency','low-level','embedded','c++','systems programming'],
+    cyber:     ['incident response','penetration testing','threat intelligence','vulnerability management','security operations','cybersecurity','information security','infosec','soc','siem','pentest','malware','owasp','firewall','splunk','blue team','red team','phishing','encryption','security'],
+    data:      ['data analyst','data analysis','business intelligence','power bi','data visualization','data warehouse','sql','tableau','excel','dashboard','dashboards','analytics','pandas','statistics','etl','looker','bigquery','reporting','kpi','spreadsheets'],
+    helpdesk:  ['help desk','service desk','technical support','customer support','end user','call center','tier 1','tier 2','helpdesk','ticketing','zendesk','troubleshooting'],
+    swe:       ['software engineer','full stack','full-stack','back end','front end','web development','rest api','software developer','javascript','typescript','react','node','backend','frontend','java','golang','graphql','microservices','programming','spring','django','flask','api','databases'],
+    'tech-it': ['it support','active directory','system administrator','microsoft 365','office 365','desktop support','it specialist','help','hardware','networking','powershell','sysadmin','intune','vpn','dns','dhcp','imaging','windows server','servers']
+  };
+
+  // ===== AI CERTS (with path affinity) =====
+  const CERTS = [
+    { provider: 'Anthropic Academy', name: 'Claude Platform 101 — build on the Claude API', level: 'Intermediate', url: 'https://www.anthropic.com/learn', paths: ['ai','swe'], tags: ['claude','api','llm'] },
+    { provider: 'Anthropic Academy', name: 'Introduction to Model Context Protocol', level: 'Advanced', url: 'https://www.anthropic.com/learn', paths: ['ai','swe'], tags: ['mcp','agents','python'] },
+    { provider: 'Anthropic Academy', name: 'AI Fluency Series', level: 'Foundational', url: 'https://www.anthropic.com/learn', paths: ['ai','data','helpdesk','tech-it','cs','swe','cloud','cyber'], tags: ['ai fluency','ethics'] },
+    { provider: 'LangChain Academy', name: 'Introduction to LangGraph (multi-agent apps)', level: 'Advanced', url: 'https://academy.langchain.com/', paths: ['ai'], tags: ['agents','langchain'] },
+    { provider: 'Google AI', name: 'Google AI Essentials', level: 'Foundational', url: 'https://grow.google/ai/', paths: ['data','helpdesk','tech-it','cs','swe','cloud','cyber','ai'], tags: ['ai fluency','productivity'] },
+    { provider: 'Microsoft', name: 'Applied Skills in AI (Azure AI, ML, Gen AI)', level: 'Intermediate', url: 'https://learn.microsoft.com/credentials/applied-skills/', paths: ['cloud','ai','data'], tags: ['azure','ml','gen ai'] },
+    { provider: 'IBM SkillsBuild', name: 'AI Fundamentals (digital badge)', level: 'Foundational', url: 'https://skillsbuild.org/', paths: ['data','ai','swe','helpdesk','tech-it','cs'], tags: ['ml','nlp','fundamentals'] },
+    { provider: 'IBM', name: 'IBM AI Developer Professional Certificate', level: 'Intermediate', url: 'https://www.coursera.org/professional-certificates/applied-artifical-intelligence-ibm-watson-ai', paths: ['ai','swe','data'], tags: ['gen ai','career'] },
+    { provider: 'AWS', name: 'AWS Certified AI Practitioner', level: 'Foundational', url: 'https://aws.amazon.com/certification/certified-ai-practitioner/', paths: ['cloud','ai','cyber'], tags: ['aws','cloud','ml'] },
+    { provider: 'NVIDIA', name: 'DLI Self-Paced AI Courses (Deep Learning, GPU)', level: 'Intermediate', url: 'https://learn.nvidia.com/', paths: ['ai','cs'], tags: ['deep learning','gpu'] }
+  ];
+
+  // ===== PROJECT CATALOG (compiled from the live PROJECTS data) =====
+  const PROJECTS = [{"id":"tech-it-0","path":"tech-it","level":"beginner","title":"Automated Microsoft 365 User Management with PowerShell and AI Assistance","summary":"This project involves building PowerShell scripts to automate common Microsoft 365 user management tasks, such as onboarding new employees and offboarding departing ones. Students will leverage AI tools to assist in script development and debugging, demonstrating proficiency in cloud administration, automation, and AI-assisted problem-solving.","skills":"PowerShell scripting, Microsoft 365 administration, Cloud user management, Automation, Active Directory (Azure AD), Troubleshooting, AI prompting, Script debugging","tech":["PowerShell","Microsoft 365 (Azure AD)","Google Gemini / ChatGPT","Git / GitHub"]},{"id":"it-1","path":"tech-it","level":"intermediate","title":"AI-Powered IT Support Ticket Automator","summary":"A Python system that uses an LLM to auto-categorize, prioritize, and draft responses for incoming IT tickets.","skills":"NLP, API Integration, Prompt Engineering, Python","tech":["Python","OpenAI API","FastAPI","Jira/Zendesk"]},{"id":"it-2","path":"cloud","level":"intermediate","title":"Cloud-Native Serverless Monitoring & Alerting System","summary":"A serverless AWS solution that tracks uptime and performance of remote IT assets, triggering Slack alerts on failure.","skills":"Cloud Infrastructure, Serverless, RMM, Webhooks","tech":["AWS Lambda","CloudWatch","Python","Slack API","Docker"]},{"id":"it-3","path":"cyber","level":"advanced","title":"Automated Cybersecurity Compliance & Patch Auditor","summary":"A security auditing tool that scans systems for vulnerabilities, missing patches, and config drift — outputs a professional PDF report.","skills":"Vulnerability Assessment, Network Security, Scripting","tech":["Python","Nmap","ReportLab","Bash","GitHub Actions"]},{"id":"cy-1","path":"cyber","level":"intermediate","title":"Adversarial Prompt Injection Detector for LLM Applications","summary":"A real-time security gateway between users and an LLM that blocks prompt injections and jailbreak attempts.","skills":"Adversarial ML, LLM Security, API Security","tech":["Python","LangChain","OpenAI API","Scikit-learn","FastAPI","Docker"]},{"id":"cy-2","path":"cyber","level":"advanced","title":"Deepfake Audio Detection System for VoIP Security","summary":"A real-time audio analysis engine that detects synthesized or cloned voices in VoIP streams using MFCC features.","skills":"Audio Signal Processing, Deep Learning, VoIP Security","tech":["Python","Librosa","TensorFlow/PyTorch","FastAPI"]},{"id":"cy-3","path":"cyber","level":"intermediate","title":"Behavioral Biometrics Engine for Continuous Authentication","summary":"A security system that authenticates users based on typing rhythm and mouse movement patterns — not static passwords.","skills":"Anomaly Detection, Time-series Analysis, IAM","tech":["Python","Scikit-learn","Flask","JavaScript"]},{"id":"ai-1","path":"ai","level":"intermediate","title":"Multi-Agent Research & Execution System","summary":"A collaborative AI system where specialized agents (Researcher, Writer, Fact-Checker) work together to autonomously generate reports.","skills":"Agent Orchestration, Tool-calling, State Management","tech":["CrewAI","LangGraph","Python","OpenAI/Claude API"]},{"id":"ai-2","path":"ai","level":"advanced","title":"Multimodal RAG for Enterprise Knowledge","summary":"A Retrieval-Augmented Generation pipeline that handles documents with text AND images — charts, tables, diagrams.","skills":"Multimodal RAG, Vector DBs, Image/Text Embeddings","tech":["LlamaIndex","Pinecone","Python","Claude 3.5"]},{"id":"ai-3","path":"ai","level":"intermediate","title":"AI-Powered Code Reviewer Bot","summary":"A GitHub Actions bot that auto-reviews pull requests for style, bugs, and security issues — suggesting refactors.","skills":"LLM Fine-tuning/Prompting, CI/CD, Static Analysis","tech":["GitHub Actions","Python","OpenAI API","SonarQube"]},{"id":"da-1","path":"data","level":"intermediate","title":"AI-Powered Customer Intelligence & RFM Dashboard","summary":"A two-page Streamlit dashboard that runs RFM analysis on retail data and uses AI to generate marketing recommendations.","skills":"Data Cleaning, RFM Modeling, BI, Prompt Engineering","tech":["Python","Streamlit","Pandas","Plotly","OpenAI API"]},{"id":"da-2","path":"data","level":"advanced","title":"Real-Time Market Sentiment & Price Correlation Tracker","summary":"A live pipeline that fetches crypto/stock prices AND news sentiment, visualizing the correlation in real-time.","skills":"API Integration, Real-time Processing, Sentiment Analysis, Data Viz","tech":["Python","WebSocket","NLTK/TextBlob","Streamlit","AWS Lambda"]},{"id":"da-3","path":"data","level":"intermediate","title":"Supply Chain Optimization & Demand Forecasting Tool","summary":"A predictive analytics tool that forecasts demand and identifies supply chain bottlenecks via an interactive BI report.","skills":"Time-Series Forecasting, Predictive Modeling, Supply Chain Analytics, SQL","tech":["Python","Scikit-learn","Prophet","PostgreSQL","Power BI"]},{"id":"sw-1","path":"swe","level":"intermediate","title":"Production-Grade URL Shortener with Observability","summary":"A high-performance URL shortener with Redis caching, rate-limiting, and real-time analytics on a Grafana dashboard.","skills":"System Design, Backend, Caching, Rate Limiting","tech":["Go/Python","Redis","PostgreSQL","Prometheus","Grafana"]},{"id":"sw-2","path":"swe","level":"advanced","title":"Distributed Job Queue & Worker System","summary":"An async task processing system with persistent storage, auto-retries, dead-letter queues, and job prioritization.","skills":"Distributed Systems, Concurrency, Fault Tolerance","tech":["Go","PostgreSQL","Docker"]},{"id":"sw-3","path":"swe","level":"intermediate","title":"AI-Powered RAG Knowledge Base for Developers","summary":"A RAG system where users upload technical docs and ask questions — with accurate, cited answers from a vector DB.","skills":"AI/ML Integration, Vector Databases, Semantic Search","tech":["Python","LangChain","Pinecone/Milvus","FastAPI","React"]},{"id":"hd-1","path":"ai","level":"intermediate","title":"AI-Powered Self-Service IT Support Bot","summary":"An intelligent chatbot using RAG to answer IT questions from a knowledge base — with fallback ticket creation.","skills":"Prompt Engineering, RAG, Workflow Automation","tech":["Botpress/Voiceflow","OpenAI API","Google Sheets","Zapier"]},{"id":"hd-2","path":"helpdesk","level":"beginner","title":"Automated User Lifecycle Management (Entra ID)","summary":"A no-code automated onboarding workflow that creates accounts, assigns licenses, and emails managers — all from a form.","skills":"Cloud Identity (IAM), Low-Code, Governance","tech":["Microsoft Entra ID","Power Automate","MS Forms"]},{"id":"hd-3","path":"data","level":"intermediate","title":"IT Asset Management Dashboard","summary":"An interactive dashboard tracking IT assets via the Snipe-IT API — visualizing allocation, lifecycle, and refresh cycles.","skills":"Asset Tracking, Data Viz, API Integration","tech":["Snipe-IT API","Python","Power BI/Tableau"]},{"id":"cs-1","path":"cs","level":"intermediate","title":"Production-Ready RAG Pipeline with Source Attribution","summary":"A RAG system with a citation engine that highlights exact source text, a faithfulness evaluator, and hybrid search.","skills":"Vector DBs, Semantic Search, LLM Evaluation","tech":["Python","LangChain","ChromaDB","Ragas","Docker"]},{"id":"cs-2","path":"ai","level":"advanced","title":"Multi-Agent Autonomous Research System (Supervisor Pattern)","summary":"A system where AI agents (Researcher, Writer, Fact-Checker) collaborate under a Supervisor agent that manages workflow.","skills":"Agentic Workflows, State Management, Tool Calling","tech":["Python","LangGraph","Tavily","Claude 3.5","Redis"]},{"id":"cs-3","path":"cs","level":"intermediate","title":"Distributed Edge IoT Monitoring System","summary":"A system that collects simulated IoT sensor data, processes it at the edge via Docker, and sends only critical alerts to a dashboard.","skills":"Distributed Systems, Edge Computing, MQTT","tech":["Python","Docker","MQTT","InfluxDB","TensorFlow Lite"]},{"id":"cl-1","path":"cloud","level":"intermediate","title":"Serverless AI Content Summarizer with Amazon Bedrock","summary":"A fully serverless web app where users upload docs for AI summarization using AWS Lambda and Bedrock (Claude 3).","skills":"Serverless, GenAI Integration, Event-Driven","tech":["AWS Lambda","Amazon Bedrock","S3","DynamoDB","SNS"]},{"id":"cl-2","path":"cloud","level":"intermediate","title":"Multi-Cloud FinOps & Cost Optimization Dashboard","summary":"A dashboard that aggregates billing data from AWS and Azure, identifies \"zombie\" resources, and visualizes potential savings.","skills":"FinOps, IaC, Multi-cloud API, Data Viz","tech":["Terraform","Python","AWS/Azure Billing APIs","Grafana"]},{"id":"cl-3","path":"cloud","level":"advanced","title":"Cloud-Native Platform Engineering: Self-Healing GitOps Pipeline","summary":"A production-grade Kubernetes environment with ArgoCD GitOps, Istio service mesh, and automated canary releases.","skills":"Platform Engineering, K8s, GitOps, Istio","tech":["Kubernetes (EKS)","ArgoCD","Istio","Helm","Terraform"]},{"id":"it-4","path":"tech-it","level":"intermediate","title":"AI-Driven Network Traffic Anomaly Detector","summary":"A monitoring tool that ingests live network telemetry and uses an unsupervised ML model to flag anomalous traffic before it escalates into an outage or breach.","skills":"Anomaly Detection, Network Telemetry, Real-time Inference","tech":["Python","Scikit-learn","MQTT","Docker","InfluxDB"]},{"id":"it-5","path":"tech-it","level":"beginner","title":"Automated Cloud Cost Guardrails","summary":"A safety net for AWS spend — Budgets, Cost Anomaly Detection, and SNS alerts that notify you (and optionally auto-stop resources) before a runaway bill arrives.","skills":"AWS Cost Management, Event-driven Automation, IAM","tech":["AWS Budgets","AWS Cost Anomaly Detection","SNS","Lambda","IAM"]},{"id":"cs-4","path":"cs","level":"advanced","title":"Autonomous AI Agent for Software Testing","summary":"An agent that reads a Python codebase, generates pytest tests, runs them, analyzes failures, and proposes patches — all from a CI pipeline.","skills":"Agentic Workflows, Code Analysis, Test Generation, CI/CD","tech":["Python","Gemini/Claude API","pytest","GitHub Actions","AST"]},{"id":"cy-4","path":"cyber","level":"beginner","title":"AI-Powered SOC Analyst Agent Home Lab","summary":"A beginner-friendly home lab that pairs Kali + Ubuntu VMs with an AI penetration-testing agent — your first hands-on security project that produces real artifacts.","skills":"Virtualization, Linux Command Line, AI-Augmented SecOps","tech":["VirtualBox","Kali Linux","Ubuntu","Python","Open-source AI tools"]},{"id":"ai-4","path":"ai","level":"beginner","title":"Automated Customer Support AI Agent","summary":"A no/low-code AI agent that ingests support tickets, drafts responses, and routes complex issues — your first end-to-end agentic workflow.","skills":"AI Agents, Workflow Automation, API Integration","tech":["OpenAI Agent Builder","Zapier","n8n","OpenAI GPT models"]},{"id":"da-4","path":"data","level":"beginner","title":"Rapid BI Dashboard Built with Generative AI","summary":"A polished BI dashboard built end-to-end with AI — Claude generates the dataset, GPT writes the DAX, and Dribbble inspires the layout, all in under an hour.","skills":"Data Visualization, Business Intelligence, AI-Augmented Workflows","tech":["Claude","ChatGPT","Power BI","Dribbble (inspiration)"]},{"id":"sw-4","path":"swe","level":"beginner","title":"Conversational AI Agent with Tool Use","summary":"An AI agent that doesn't just chat — it actually does things. Calls APIs, queries databases, triggers workflows. Built on Amazon Bedrock AgentCore.","skills":"Function Calling, Tool Definitions, Cloud Integration","tech":["Amazon Bedrock AgentCore","AWS Lambda","DynamoDB","API Gateway"]},{"id":"cs-5","path":"cs","level":"beginner","title":"Build an AI Agent From Scratch in Python","summary":"A from-scratch agent that pairs an LLM with custom tools — no LangChain, no CrewAI, just pure Python so you understand exactly how agents work under the hood.","skills":"Python Programming, Agent Loops, LLM Tool Use","tech":["Python","OpenAI API","LangChain (optional)","JSON tool schemas"]},{"id":"hd-4","path":"helpdesk","level":"beginner","title":"Microsoft Forms + Power Automate Ticket Routing System","summary":"A complete no-code ticket intake system — Microsoft Forms collects the request, Power Automate routes it to the right tier, and SharePoint stores the audit trail.","skills":"Low-Code Automation, Service Desk Workflows, Microsoft 365","tech":["Microsoft Forms","Power Automate","SharePoint","Outlook"]},{"id":"hd-5","path":"helpdesk","level":"beginner","title":"Windows Autopilot Device Enrollment with Intune","summary":"A zero-touch deployment flow — ship a sealed laptop to a remote employee and have it self-configure into your tenant on first sign-in, with compliance enforced.","skills":"MDM, Zero-Touch Provisioning, Endpoint Compliance","tech":["Microsoft Intune","Windows Autopilot","Entra ID","Microsoft 365"]}];
+
+  const LEVEL_RANK = { beginner: 0, intermediate: 1, advanced: 2 };
+  const LEVEL_LABEL = { beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced' };
+
   function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+  function norm(s) { return ' ' + String(s).toLowerCase().replace(/[^a-z0-9+#./ -]+/g, ' ').replace(/\s+/g, ' ') + ' '; }
 
-  function providerCardHTML(prov) {
-    const items = CERTS[prov.id] || [];
-    const n = items.length;
-    const rows = items.map(c => {
-      const lvl = `<span class="cert-level level-${c.level}">${esc(c.levelLabel)}</span>`;
-      const flag = c.cost === 'partial' ? `<span class="cert-flag">${esc(c.costLabel || 'Paid option')}</span>` : '';
-      const name = c.url
-        ? `<a class="cert-row-name" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">${esc(c.name)} ↗</a>`
-        : `<span class="cert-row-name">${esc(c.name)}</span>`;
-      return `<li class="cert-row">${name}<span class="cert-row-meta">${flag}${lvl}</span></li>`;
-    }).join('');
-    const ctaLabel = n === 1 ? 'Browse course →' : `Browse ${n} courses →`;
+  function isPhrase(kw) { return /[ /+#.]/.test(kw); }
+
+  // ===== MATCH ENGINE =====
+  function scorePaths(text) {
+    const t = norm(text);
+    const scores = {}, matched = {};
+    for (const pid in PATH_KEYWORDS) {
+      scores[pid] = 0; matched[pid] = [];
+      PATH_KEYWORDS[pid].forEach(kw => {
+        const hit = isPhrase(kw) ? t.includes(kw) : t.includes(' ' + kw + ' ');
+        if (hit) { scores[pid] += isPhrase(kw) ? 2 : 1; matched[pid].push(kw); }
+      });
+    }
+    return { scores, matched };
+  }
+
+  function rankProjects(pathId, text, n) {
+    const t = norm(text);
+    const inPath = PROJECTS.filter(p => p.path === pathId);
+    const scored = inPath.map(p => {
+      const terms = [
+        ...p.skills.split(',').map(s => s.trim().toLowerCase()),
+        ...p.tech.map(s => s.toLowerCase())
+      ].filter(s => s.length > 2);
+      const hits = [...new Set(terms.filter(term => {
+        const base = term.split('(')[0].split('/')[0].trim();
+        return base.length > 2 && t.includes(base);
+      }))];
+      return { p, hits, score: hits.length };
+    });
+    scored.sort((a, b) => (b.score - a.score) || (LEVEL_RANK[a.p.level] - LEVEL_RANK[b.p.level]));
+    return scored.slice(0, n);
+  }
+
+  function rankCerts(pathId, text, n) {
+    const t = norm(text);
+    const scored = CERTS.map(c => {
+      let s = 0;
+      if (c.paths.includes(pathId)) s += 3;
+      c.tags.forEach(tag => { if (t.includes(tag)) s += 2; });
+      // generalist certs (broad path list) get a small baseline so there's always something
+      if (c.paths.length >= 6) s += 1;
+      return { c, s };
+    }).filter(x => x.s > 0);
+    scored.sort((a, b) => b.s - a.s);
+    return scored.slice(0, n).map(x => x.c);
+  }
+
+  // ===== RENDER =====
+  function projectCardHTML(item) {
+    const p = item.p;
+    const matchLine = item.hits.length
+      ? `<p class="rec-match">Matches: <strong>${esc(item.hits.slice(0, 5).join(', '))}</strong></p>`
+      : '';
     return `
-      <article class="project-card provider-card">
-        <span class="cost-badge">Free</span>
-        <div class="provider-card-head">
-          <span class="provider-icon">${prov.icon}</span>
-          <div class="provider-head-text">
-            <h3>${esc(prov.name)}</h3>
-            <span class="provider-count">${n} ${n === 1 ? 'course' : 'courses'}</span>
+      <a class="project-card rec-card" href="/index.html#project=${encodeURIComponent(p.id)}">
+        <div class="card-top">
+          <span class="level-badge level-${p.level}">${esc(LEVEL_LABEL[p.level] || p.level)}</span>
+        </div>
+        <h3>${esc(p.title)}</h3>
+        <p class="summary">${esc(p.summary)}</p>
+        ${matchLine}
+        <div class="tech-tags">${p.tech.slice(0, 4).map(tt => `<span class="tag">${esc(tt)}</span>`).join('')}</div>
+        <div class="card-footer"><span class="view-more">View project →</span></div>
+      </a>`;
+  }
+
+  function render(text) {
+    const out = document.getElementById('match-output');
+    const clean = (text || '').trim();
+    if (!clean) {
+      out.innerHTML = `<p class="match-empty">Enter a job title or description above to get your plan.</p>`;
+      return;
+    }
+
+    const { scores, matched } = scorePaths(clean);
+    const ranked = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
+    const top = ranked[0];
+
+    if (!top || scores[top] === 0) {
+      out.innerHTML = `
+        <div class="result-best">
+          <div class="result-eyebrow">No clear match yet</div>
+          <div class="result-path-name">Tell me a bit more</div>
+          <p class="result-why">I couldn't spot a clear career path in that. Add a few skills or tools (e.g. "SQL", "AWS", "React", "SOC"), or pick a path to explore:</p>
+          <div class="matched-chips">
+            ${Object.keys(PATHS).map(pid => `<span class="matched-chip" data-pick="${pid}" style="cursor:pointer">${esc(PATHS[pid].name)}</span>`).join('')}
           </div>
+        </div>`;
+      out.querySelectorAll('[data-pick]').forEach(el => el.onclick = () => {
+        document.getElementById('match-input').value = PATHS[el.dataset.pick].name;
+        run();
+      });
+      return;
+    }
+
+    const path = PATHS[top];
+    const second = ranked[1];
+    const hasAlt = second && scores[second] > 0 && scores[second] >= scores[top] * 0.6;
+    const total = scores[top] + (scores[second] || 0);
+    const conf = total >= 6 ? 'Strong match' : total >= 3 ? 'Good match' : 'Possible match';
+    const projects = rankProjects(top, clean, 3);
+    const certs = rankCerts(top, clean, 3);
+    const chips = [...new Set(matched[top])].slice(0, 10);
+
+    out.innerHTML = `
+      <div class="result-best">
+        <div class="result-eyebrow">Your best-fit path</div>
+        <div class="result-path-name"><span class="icon">${PATH_ICONS[top] || ''}</span>${esc(path.name)} <span class="confidence">${conf}</span></div>
+        <p class="result-why">${esc(path.blurb)}</p>
+        <div class="result-meta">
+          <div class="result-meta-item"><span class="result-meta-label">Typical salary</span><span class="result-meta-value">${esc(path.salary)}</span></div>
+          <div class="result-meta-item"><span class="result-meta-label">Roles</span><span class="result-meta-value">${esc(path.roles)}</span></div>
         </div>
-        <p class="summary">${esc(prov.blurb)}</p>
-        <ul class="cert-list">${rows}</ul>
-        <div class="card-footer">
-          <span class="cert-format">Official · Free to start</span>
-          <a class="view-more provider-cta" href="${esc(prov.url)}" target="_blank" rel="noopener noreferrer">${ctaLabel}</a>
-        </div>
-      </article>`;
+        ${chips.length ? `<div class="matched-chips">${chips.map(c => `<span class="matched-chip">${esc(c)}</span>`).join('')}</div>` : ''}
+        ${hasAlt ? `<div class="alt-path">Also a fit: <a data-pick2="${second}">${esc(PATHS[second].name)} →</a></div>` : ''}
+      </div>
+
+      <div class="result-section-title"><span class="num">01</span> Build these projects</div>
+      <div class="project-grid">${projects.map(projectCardHTML).join('')}</div>
+
+      <div class="result-section-title"><span class="num">02</span> Back it with these certs</div>
+      <div class="cert-rec-list">
+        ${certs.map(c => `
+          <a class="cert-rec" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">
+            <div>
+              <div class="cert-rec-name">${esc(c.name)}</div>
+              <div class="cert-rec-provider">${esc(c.provider)} · ${esc(c.level)} · Free</div>
+            </div>
+            <span class="view-more">Enroll →</span>
+          </a>`).join('')}
+      </div>
+
+      <p class="match-disclaimer">
+        This is a keyword match over the BuildersBench catalog — a transparent first pass, not a recruiter.
+        A conversational AI version that reads your full résumé and the posting is on the roadmap. Want it sooner?
+        <a href="#" data-mail="feedback" style="color:var(--green);text-decoration:none;border-bottom:1px solid var(--line-3);">Tell us</a>.
+      </p>`;
+
+    const alt = out.querySelector('[data-pick2]');
+    if (alt) alt.onclick = (e) => { e.preventDefault(); document.getElementById('match-input').value = PATHS[alt.dataset.pick2].name + ' — ' + clean; run(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+    wireMail();
   }
 
-  function render() {
-    const container = document.getElementById('certs-container');
-    let certTotal = 0;
-    const cards = PROVIDERS.map(p => { certTotal += (CERTS[p.id] || []).length; return providerCardHTML(p); }).join('');
-    container.innerHTML = `<div class="provider-grid">${cards}</div>`;
-    const statEl = document.getElementById('stat-certs');
-    if (statEl) statEl.textContent = certTotal;
+  function run() {
+    const text = document.getElementById('match-input').value;
+    render(text);
+    if ((text || '').trim()) {
+      document.querySelector('.match-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
-  render();
 
-  // ===== Footer year =====
+  // ===== WIRE =====
+  document.getElementById('match-go').onclick = run;
+  document.getElementById('match-input').addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') run();
+  });
+  document.querySelectorAll('.ex-chip').forEach(chip => {
+    chip.onclick = () => { document.getElementById('match-input').value = chip.textContent.trim(); run(); };
+  });
+  render('');
+
+  // ===== Footer year + mail + back-to-top =====
   const yearEl = document.getElementById('footer-year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // ===== Email assembly (anti-scrape) =====
-  const MAIL_USER = ['hel', 'lo'].join('');
-  const MAIL_DOMAIN = ['jobstatsmiami', 'com'].join('.');
+  const MAIL_USER = ['hel', 'lo'].join(''), MAIL_DOMAIN = ['jobstatsmiami', 'com'].join('.');
   const MAIL_ADDR = MAIL_USER + String.fromCharCode(64) + MAIL_DOMAIN;
-  const MAIL_SUBJECTS = {
-    suggest:  'Project Suggestion — buildersbench.dev',
-    feedback: 'buildersbench.dev — Feedback',
-    contact:  'buildersbench.dev — Hello'
-  };
-  const MAIL_BODIES = {
-    suggest: 'Project idea:\n\nTarget role/path:\n\nWhy it matters now:\n\nTech stack:\n\nLinks / references:\n'
-  };
-  document.querySelectorAll('a[data-mail]').forEach(a => {
-    const kind = a.dataset.mail;
-    const params = new URLSearchParams();
-    if (MAIL_SUBJECTS[kind]) params.set('subject', MAIL_SUBJECTS[kind]);
-    if (MAIL_BODIES[kind])   params.set('body',    MAIL_BODIES[kind]);
-    const qs = params.toString();
-    a.href = 'mailto:' + MAIL_ADDR + (qs ? '?' + qs : '');
-    if (a.dataset.mailShow && !a.textContent.trim()) a.textContent = MAIL_ADDR;
-  });
+  const MAIL_SUBJECTS = { suggest: 'Project Suggestion — buildersbench.dev', feedback: 'buildersbench.dev — Career Match feedback', contact: 'buildersbench.dev — Hello' };
+  function wireMail() {
+    document.querySelectorAll('a[data-mail]').forEach(a => {
+      if (a.dataset.wired) return; a.dataset.wired = '1';
+      const kind = a.dataset.mail; const params = new URLSearchParams();
+      if (MAIL_SUBJECTS[kind]) params.set('subject', MAIL_SUBJECTS[kind]);
+      const qs = params.toString();
+      a.href = 'mailto:' + MAIL_ADDR + (qs ? '?' + qs : '');
+      if (a.dataset.mailShow && !a.textContent.trim()) a.textContent = MAIL_ADDR;
+    });
+  }
+  wireMail();
 
-  // ===== Back to top =====
   const btt = document.getElementById('back-to-top');
   if (btt) {
-    window.addEventListener('scroll', () => {
-      btt.classList.toggle('visible', window.scrollY > 400);
-    }, { passive: true });
+    window.addEventListener('scroll', () => btt.classList.toggle('visible', window.scrollY > 400), { passive: true });
     btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
   }
 </script>

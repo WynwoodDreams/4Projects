@@ -2347,7 +2347,8 @@
     border: 1px solid var(--green); color: var(--green); background: rgba(0,255,133,0.08);
     text-shadow: 0 0 8px var(--green-glow); white-space: nowrap;
   }
-  .cert-rec-card .summary { flex: 1; margin-bottom: 12px; }
+  .cert-rec-card .summary { flex: 0 0 auto; margin-bottom: 12px; }
+  .cert-rec-card .card-footer { margin-top: auto; }
   .cert-rec-provider { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); }
 
   /* Key skills block */
@@ -2764,7 +2765,27 @@
     const alt = out.querySelector('[data-pick2]');
     if (alt) alt.onclick = (e) => { e.preventDefault(); document.getElementById('match-input').value = PATHS[alt.dataset.pick2].name + ' — ' + clean; run(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
     wireMail();
+    equalizeRecCards();
+    requestAnimationFrame(equalizeRecCards);
   }
+
+  // Make every recommendation card (projects + certs) exactly the same height
+  function equalizeRecCards() {
+    const out = document.getElementById('match-output');
+    const cards = out.querySelectorAll('.rec-card, .cert-rec-card');
+    if (!cards.length) return;
+    cards.forEach(c => { c.style.height = 'auto'; });
+    if (window.innerWidth <= 560) return; // stacked single-column on mobile
+    let max = 0;
+    cards.forEach(c => { max = Math.max(max, c.offsetHeight); });
+    if (max) cards.forEach(c => { c.style.height = max + 'px'; });
+  }
+  let _eqScheduled = false;
+  window.addEventListener('resize', () => {
+    if (_eqScheduled) return;
+    _eqScheduled = true;
+    requestAnimationFrame(() => { _eqScheduled = false; equalizeRecCards(); });
+  }, { passive: true });
 
   function run() {
     const text = document.getElementById('match-input').value;

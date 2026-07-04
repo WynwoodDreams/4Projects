@@ -1023,7 +1023,7 @@
     letter-spacing: -0.01em;
     color: var(--ink);
     line-height: 1.3;
-    padding-right: 20px;
+    padding-right: 44px;
   }
   .bench-card-remove {
     position: absolute;
@@ -1067,6 +1067,86 @@
     border: 1px dashed var(--line-strong);
     border-radius: 14px;
   }
+  .bench-velocity {
+    margin-top: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+  .bench-velocity .num {
+    color: var(--green);
+    font-weight: 600;
+    text-shadow: 0 0 8px var(--green-glow);
+  }
+  .bench-focus {
+    margin-bottom: 24px;
+    padding: 16px;
+    background: rgba(0,255,133,0.04);
+    border: 1px solid var(--line-3);
+    border-radius: 14px;
+  }
+  .bench-focus[hidden] { display: none; }
+  .bench-focus-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .bench-focus-title { color: var(--green); text-shadow: 0 0 8px var(--green-glow); }
+  .bench-focus-count { color: var(--ink-muted); }
+  .bench-focus-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+  }
+  .bench-focus-card {
+    padding: 14px;
+    background: rgba(0,0,0,0.30);
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .bench-focus-card:hover { border-color: var(--line-3); box-shadow: 0 0 0 1px var(--line-3); }
+  .bench-focus-card h4 {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+  .bench-focus-next {
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.45;
+  }
+  .bench-card-focus {
+    position: absolute;
+    top: 8px;
+    right: 32px;
+    background: none;
+    border: none;
+    color: var(--ink-muted);
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 2px;
+    transition: color 0.15s ease, text-shadow 0.15s ease;
+  }
+  .bench-card-focus:hover { color: var(--green); }
+  .bench-card-focus.active { color: var(--green); text-shadow: 0 0 8px var(--green-glow); }
+  .bench-card.focused { border-color: var(--line-3); }
   @media (max-width: 900px) {
     .bench-board { grid-template-columns: 1fr; }
   }
@@ -2670,8 +2750,10 @@
   <div class="container">
     <div class="bench-header">
       <h2>My Bench</h2>
-      <p>Your bookmarked projects, organized like a sprint board. Drag a card to a new column, or use the arrows on mobile — status updates the roadmap checklist automatically.</p>
+      <p>Your bookmarked projects, organized like a sprint board. Drag a card to a new column, or use the arrows on mobile — status updates the roadmap checklist automatically. Pin up to 3 projects with the ◎ button to set this week's focus.</p>
+      <div class="bench-velocity" id="bench-velocity"></div>
     </div>
+    <div class="bench-focus" id="bench-focus"></div>
     <div class="bench-board" id="bench-board"></div>
   </div>
 </section>
@@ -3834,8 +3916,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
     view: 'grid', // 'grid' | 'bench' — bench is not persisted, always starts on the grid
     bookmarks: [],
     progress: {}, // { projectId: 'started' | 'done' } — derived from stepProgress, kept for backward compatibility
-    stepProgress: {} // { projectId: [bool, bool, ...] } — one entry per roadmap step
+    stepProgress: {}, // { projectId: [bool, bool, ...] } — one entry per roadmap step
+    stepDates: {}, // { projectId: [timestamp|null, ...] } — when each step was checked off; powers the weekly stat
+    focus: [] // up to FOCUS_LIMIT project ids pinned as "this week's focus" on the bench
   };
+  const FOCUS_LIMIT = 3;
+  const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
   function loadState() {
     try {
@@ -3857,6 +3943,15 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
             if (Array.isArray(arr)) state.stepProgress[id] = arr.map(Boolean);
           });
         }
+        state.stepDates = {};
+        if (parsed.stepDates && typeof parsed.stepDates === 'object') {
+          Object.entries(parsed.stepDates).forEach(([id, arr]) => {
+            if (Array.isArray(arr)) state.stepDates[id] = arr.map(t => typeof t === 'number' ? t : null);
+          });
+        }
+        state.focus = Array.isArray(parsed.focus)
+          ? parsed.focus.filter(id => typeof id === 'string').slice(0, FOCUS_LIMIT)
+          : [];
         // Migrate pre-checklist data: a project marked 'done'/'started' via the
         // old dropdown but with no granular step data gets a one-time backfill
         // so existing users don't see their progress reset to zero.
@@ -3881,7 +3976,9 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         bookmarks: state.bookmarks,
         progress: state.progress,
-        stepProgress: state.stepProgress
+        stepProgress: state.stepProgress,
+        stepDates: state.stepDates,
+        focus: state.focus
       }));
     } catch (e) {
       if (typeof toast === 'function') toast('Storage full — your changes may not persist');
@@ -3904,12 +4001,34 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
     return (state.stepProgress[id] || []).filter(Boolean).length;
   }
 
+  // Keeps stepDates aligned with stepProgress: stamps "now" on newly checked
+  // steps, clears the stamp on unchecked ones. Call after any stepProgress write.
+  function syncStepDates(id) {
+    const checked = state.stepProgress[id] || [];
+    const dates = (state.stepDates[id] || []).slice(0, checked.length);
+    while (dates.length < checked.length) dates.push(null);
+    checked.forEach((on, i) => {
+      if (on && dates[i] == null) dates[i] = Date.now();
+      if (!on) dates[i] = null;
+    });
+    state.stepDates[id] = dates;
+  }
+
+  function stepsThisWeek() {
+    const cutoff = Date.now() - WEEK_MS;
+    return Object.values(state.stepDates)
+      .flat()
+      .filter(t => typeof t === 'number' && t >= cutoff)
+      .length;
+  }
+
   function toggleStep(id, index) {
     const p = PROJECTS.find(x => x.id === id);
     if (!p || !p.steps) return;
     const arr = (state.stepProgress[id] || new Array(p.steps.length).fill(false)).slice();
     arr[index] = !arr[index];
     state.stepProgress[id] = arr;
+    syncStepDates(id);
     const status = recomputeStatus(id);
     saveState();
     renderStats();
@@ -3922,6 +4041,7 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
     const p = PROJECTS.find(x => x.id === id);
     if (!p || !p.steps) return;
     state.stepProgress[id] = new Array(p.steps.length).fill(value);
+    syncStepDates(id);
     recomputeStatus(id);
     saveState();
     renderStats();
@@ -4256,6 +4376,8 @@ ${tags} #BuildingInPublic #OpenToWork`;
     const idx = state.bookmarks.indexOf(id);
     if (idx > -1) {
       state.bookmarks.splice(idx, 1);
+      const fIdx = state.focus.indexOf(id);
+      if (fIdx > -1) state.focus.splice(fIdx, 1);
       toast('Bookmark removed');
     } else {
       state.bookmarks.push(id);
@@ -4264,6 +4386,23 @@ ${tags} #BuildingInPublic #OpenToWork`;
     saveState();
     renderStats();
     renderProjects();
+    renderBench();
+  }
+
+  function toggleFocus(id) {
+    const idx = state.focus.indexOf(id);
+    if (idx > -1) {
+      state.focus.splice(idx, 1);
+      toast('Removed from this week\'s focus');
+    } else {
+      if (state.focus.length >= FOCUS_LIMIT) {
+        toast(`Focus is limited to ${FOCUS_LIMIT} projects — finish one first`);
+        return;
+      }
+      state.focus.push(id);
+      toast('Pinned to this week\'s focus');
+    }
+    saveState();
     renderBench();
   }
 
@@ -4308,6 +4447,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     } else {
       state.stepProgress[id] = new Array(total).fill(false).map((_, i) => i === 0);
     }
+    syncStepDates(id);
     recomputeStatus(id);
     saveState();
     renderStats();
@@ -4322,8 +4462,10 @@ ${tags} #BuildingInPublic #OpenToWork`;
     const meta = LEVEL_META[p.level] || LEVEL_META.intermediate;
     const status = state.progress[p.id] || 'none';
     const idx = BENCH_ORDER.indexOf(status);
+    const isFocused = state.focus.includes(p.id);
     return `
-      <article class="bench-card" draggable="true" data-id="${p.id}" tabindex="0" role="button" aria-label="Open ${p.title}">
+      <article class="bench-card ${isFocused ? 'focused' : ''}" draggable="true" data-id="${p.id}" tabindex="0" role="button" aria-label="Open ${p.title}">
+        <button class="bench-card-focus ${isFocused ? 'active' : ''}" data-focus-id="${p.id}" aria-pressed="${isFocused}" aria-label="${isFocused ? 'Unpin' : 'Pin'} ${p.title} ${isFocused ? 'from' : 'to'} this week's focus" title="${isFocused ? 'Unpin from focus' : 'Pin to this week’s focus'}">◎</button>
         <button class="bench-card-remove" data-remove-id="${p.id}" aria-label="Remove ${p.title} from your bench" title="Remove from bench">×</button>
         <span class="level-badge level-${p.level}">${meta.label}</span>
         <h4>${p.title}</h4>
@@ -4341,10 +4483,66 @@ ${tags} #BuildingInPublic #OpenToWork`;
     `;
   }
 
+  function renderFocusStrip() {
+    const strip = document.getElementById('bench-focus');
+    if (!strip) return;
+    const focused = state.focus.map(id => PROJECTS.find(p => p.id === id)).filter(Boolean);
+    if (focused.length === 0) {
+      strip.innerHTML = '';
+      strip.hidden = true;
+      return;
+    }
+    strip.hidden = false;
+    strip.innerHTML = `
+      <div class="bench-focus-header">
+        <span class="bench-focus-title">◎ This Week's Focus</span>
+        <span class="bench-focus-count">${focused.length}/${FOCUS_LIMIT}</span>
+      </div>
+      <div class="bench-focus-row">
+        ${focused.map(p => {
+          const total = p.steps ? p.steps.length : 0;
+          const done = stepsCompleted(p.id);
+          const pct = total ? Math.round((done / total) * 100) : 0;
+          const nextIdx = (state.stepProgress[p.id] || []).findIndex(v => !v);
+          const next = total === 0 ? null
+            : done >= total ? null
+            : p.steps[nextIdx === -1 ? 0 : nextIdx];
+          return `
+          <article class="bench-focus-card" data-id="${p.id}" tabindex="0" role="button" aria-label="Open ${p.title}">
+            <h4>${p.title}</h4>
+            ${total > 0 ? `
+            <div class="card-progress ${done >= total ? 'status-done' : ''}">
+              <div class="card-progress-track"><div class="card-progress-fill" style="width:${pct}%"></div></div>
+              <span class="card-progress-label">${done}/${total}</span>
+            </div>
+            ` : ''}
+            <p class="bench-focus-next">${next ? `Next: ${next.title}` : 'All steps complete 🎉'}</p>
+          </article>
+        `;
+        }).join('')}
+      </div>
+    `;
+    strip.querySelectorAll('.bench-focus-card').forEach(card => {
+      card.addEventListener('click', () => openModal(card.dataset.id));
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(card.dataset.id); }
+      });
+    });
+  }
+
   function renderBench() {
     const board = document.getElementById('bench-board');
     if (!board) return;
     const items = state.bookmarks.map(id => PROJECTS.find(p => p.id === id)).filter(Boolean);
+
+    const velocity = document.getElementById('bench-velocity');
+    if (velocity) {
+      const n = stepsThisWeek();
+      velocity.innerHTML = n > 0
+        ? `<span class="num">${n}</span> step${n === 1 ? '' : 's'} completed in the last 7 days`
+        : 'No steps completed in the last 7 days — pick a focus project and knock one out';
+    }
+    renderFocusStrip();
 
     if (items.length === 0) {
       board.innerHTML = `<div class="bench-empty">Your bench is empty. Bookmark a project from the grid to add it here, then drag it across Backlog, In Progress, and Done as you build.</div>`;
@@ -4369,7 +4567,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     board.querySelectorAll('.bench-card').forEach(card => {
       const id = card.dataset.id;
       card.addEventListener('click', (e) => {
-        if (e.target.closest('.bench-card-remove') || e.target.closest('.bench-move-btn')) return;
+        if (e.target.closest('.bench-card-remove') || e.target.closest('.bench-move-btn') || e.target.closest('.bench-card-focus')) return;
         openModal(id);
       });
       card.addEventListener('keydown', (e) => {
@@ -4387,6 +4585,12 @@ ${tags} #BuildingInPublic #OpenToWork`;
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         toggleBookmark(btn.dataset.removeId);
+      });
+    });
+    board.querySelectorAll('.bench-card-focus').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleFocus(btn.dataset.focusId);
       });
     });
     board.querySelectorAll('.bench-move-btn').forEach(btn => {
@@ -4799,7 +5003,9 @@ ${tags} #BuildingInPublic #OpenToWork`;
       exportedAt: new Date().toISOString(),
       bookmarks: state.bookmarks,
       progress: state.progress,
-      stepProgress: state.stepProgress
+      stepProgress: state.stepProgress,
+      stepDates: state.stepDates,
+      focus: state.focus
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -4845,6 +5051,17 @@ ${tags} #BuildingInPublic #OpenToWork`;
             ? Array(total).fill(true)
             : Array(total).fill(false).map((_, i) => i === 0);
         });
+        state.stepDates = {};
+        if (data.stepDates && typeof data.stepDates === 'object') {
+          Object.entries(data.stepDates).forEach(([id, arr]) => {
+            if (validIds.has(id) && Array.isArray(arr)) {
+              state.stepDates[id] = arr.map(t => typeof t === 'number' ? t : null);
+            }
+          });
+        }
+        state.focus = Array.isArray(data.focus)
+          ? data.focus.filter(id => validIds.has(id) && state.bookmarks.includes(id)).slice(0, FOCUS_LIMIT)
+          : [];
         state.progress = {};
         PROJECTS.forEach(p => recomputeStatus(p.id));
         saveState();

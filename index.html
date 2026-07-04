@@ -907,10 +907,58 @@
   }
   .reset-btn:hover { color: var(--green); text-shadow: 0 0 8px var(--green-glow); }
 
-  .backup-controls {
-    display: flex;
-    gap: 6px;
+  .list-menu {
+    position: relative;
     margin-right: 8px;
+  }
+  .list-menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .list-menu-toggle .chev { transition: transform 0.18s ease; }
+  .list-menu-toggle[aria-expanded="true"] .chev { transform: rotate(180deg); }
+  .list-menu-toggle[aria-expanded="true"] {
+    color: var(--green);
+    border-color: var(--line-3);
+  }
+  .list-menu-panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 50;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    padding: 6px;
+    background: #0A1512;
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    box-shadow: 0 18px 44px -12px rgba(0,0,0,0.75), 0 0 0 1px rgba(0,255,133,0.10);
+  }
+  .list-menu-panel[hidden] { display: none; }
+  .list-menu-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    text-align: left;
+    padding: 10px 12px;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .list-menu-item:hover:not(:disabled) {
+    color: var(--green);
+    background: rgba(0,255,133,0.08);
+  }
+  .list-menu-item:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
   .backup-btn {
     font-family: 'JetBrains Mono', monospace;
@@ -2507,7 +2555,6 @@
 
     /* Touch targets — minimum 44px height */
     .filter-chip { padding: 12px 14px; font-size: 12px; }
-    .backup-btn { padding: 11px 11px; font-size: 10px; letter-spacing: 0.10em; }
     .bookmark-btn { padding: 10px; top: 10px; right: 10px; }
     .toolkit-tab { padding: 12px 12px; }
     .toolkit-tabs { flex-wrap: wrap; gap: 0; }
@@ -2534,19 +2581,18 @@
       margin: 0;
     }
     .filter-spacer { display: none; }
-    .backup-controls {
+    .list-menu {
       width: 100%;
-      flex-wrap: wrap;
-      gap: 6px;
       margin-right: 0;
-      position: relative;
-      padding-top: 20px;
     }
-    .backup-btn {
-      padding: 9px 11px;
-      font-size: 9.5px;
-      letter-spacing: 0.10em;
-      flex: 1;
+    .list-menu-toggle {
+      width: 100%;
+      justify-content: center;
+      padding: 11px;
+    }
+    .list-menu-panel {
+      left: 0;
+      right: 0;
       min-width: 0;
     }
     .reset-btn {
@@ -2600,7 +2646,6 @@
     .container { padding: 0 12px; }
     .deploy-grid { grid-template-columns: 1fr; }
     .modal { padding: 24px 14px 36px; }
-    .backup-btn { font-size: 9px; padding: 10px 8px; }
     .path-tab { width: 78px; height: 88px; }
   }
 </style>
@@ -2728,11 +2773,16 @@
         <button class="filter-chip" data-status="done">Done</button>
       </div>
       <div class="filter-spacer"></div>
-      <div class="backup-controls">
-        <span class="filter-label">Your list</span>
-        <button class="backup-btn" id="share-btn" title="Copy a shareable link to your list">🔗 Share list</button>
-        <button class="backup-btn" id="export-btn" title="Download your list as a JSON file">⬇ Export</button>
-        <button class="backup-btn" id="import-btn" title="Load a previously exported list">⬆ Import</button>
+      <div class="list-menu" id="list-menu">
+        <button class="backup-btn list-menu-toggle" id="list-menu-toggle" aria-haspopup="true" aria-expanded="false" title="Share, export, or import your list">
+          My List
+          <svg class="chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="list-menu-panel" id="list-menu-panel" hidden>
+          <button class="list-menu-item" id="share-btn" title="Copy a shareable link to your list">🔗 Share list</button>
+          <button class="list-menu-item" id="export-btn" title="Download your list as a JSON file">⬇ Export backup</button>
+          <button class="list-menu-item" id="import-btn" title="Load a previously exported list">⬆ Import backup</button>
+        </div>
         <input type="file" id="import-file" accept="application/json" style="display:none" />
       </div>
       <button class="reset-btn" id="reset-btn">Reset filters</button>
@@ -5120,9 +5170,26 @@ ${tags} #BuildingInPublic #OpenToWork`;
   }
 
   function wireBackupControls() {
-    document.getElementById('export-btn').onclick = exportList;
-    document.getElementById('share-btn').onclick = shareList;
-    document.getElementById('import-btn').onclick = () => document.getElementById('import-file').click();
+    const toggle = document.getElementById('list-menu-toggle');
+    const panel = document.getElementById('list-menu-panel');
+    const setOpen = (open) => {
+      panel.hidden = !open;
+      toggle.setAttribute('aria-expanded', String(open));
+    };
+    toggle.onclick = (e) => {
+      e.stopPropagation();
+      setOpen(panel.hidden);
+    };
+    document.addEventListener('click', (e) => {
+      if (!panel.hidden && !e.target.closest('#list-menu')) setOpen(false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !panel.hidden) { setOpen(false); toggle.focus(); }
+    });
+
+    document.getElementById('export-btn').onclick = () => { setOpen(false); exportList(); };
+    document.getElementById('share-btn').onclick = () => { setOpen(false); shareList(); };
+    document.getElementById('import-btn').onclick = () => { setOpen(false); document.getElementById('import-file').click(); };
     document.getElementById('import-file').onchange = (e) => {
       const file = e.target.files[0];
       if (file) importList(file);

@@ -1181,26 +1181,42 @@
 
   .card-footer {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     padding-top: 12px;
     border-top: 1px dashed var(--line-strong);
   }
-  .progress-select {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.10em;
-    text-transform: uppercase;
-    font-weight: 500;
-    padding: 6px 11px;
-    border: 1px solid rgba(255,255,255,0.20);
-    background: rgba(0,0,0,0.45);
-    border-radius: 6px;
-    cursor: pointer;
-    color: var(--ink-soft);
+  .card-progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
   }
-  .progress-select:hover { border-color: var(--line-3); color: var(--green); }
-  .progress-select:focus { outline: 1px solid var(--green); outline-offset: 1px; }
+  .card-progress-track {
+    flex: 1;
+    height: 5px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.10);
+    overflow: hidden;
+  }
+  .card-progress-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--gold), var(--gold));
+    transition: width 0.25s ease;
+  }
+  .card-progress.status-done .card-progress-fill {
+    background: linear-gradient(90deg, var(--green), var(--green-2));
+    box-shadow: 0 0 8px var(--green-glow);
+  }
+  .card-progress-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+    white-space: nowrap;
+  }
+  .card-progress.status-done .card-progress-label { color: var(--green); }
   .view-more {
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
@@ -1634,6 +1650,8 @@
 
   .modal-actions {
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     gap: 12px;
     margin-top: 28px;
     padding-top: 20px;
@@ -1675,6 +1693,21 @@
     border-color: var(--line-strong);
   }
   .btn-secondary:hover { border-color: var(--line-3); color: var(--green); transform: translateY(-1px); box-shadow: 0 0 0 1px var(--line-3), 0 12px 30px -16px rgba(0,255,133,0.25); }
+  .modal-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 11px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 600;
+    border-radius: 8px;
+    border: 1px solid var(--line-strong);
+    color: var(--ink-muted);
+  }
+  .modal-status-badge.status-started { border-color: var(--gold); color: var(--gold); }
+  .modal-status-badge.status-done { border-color: var(--green); color: var(--green); text-shadow: 0 0 8px var(--green-glow); }
 
   /* ===== EMPTY STATE ===== */
   .empty-state {
@@ -2069,7 +2102,7 @@
     width: 1px;
     background: var(--line-strong);
   }
-  .build-step-num {
+  .build-step-check {
     width: 32px;
     height: 32px;
     border-radius: 50%;
@@ -2086,7 +2119,19 @@
     z-index: 2;
     flex-shrink: 0;
     text-shadow: 0 0 8px var(--green-glow);
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.15s ease;
   }
+  .build-step-check:hover { border-color: var(--green); box-shadow: 0 0 10px var(--green-glow); }
+  .build-step-check:focus-visible { outline: 1px solid var(--green); outline-offset: 2px; }
+  .build-step.is-complete .build-step-check {
+    background: var(--green);
+    color: #02110A;
+    text-shadow: none;
+    box-shadow: 0 0 10px var(--green-glow);
+  }
+  .build-step.is-complete .build-step-body strong { color: var(--ink-soft); text-decoration: line-through; text-decoration-color: var(--line-3); }
   .build-step-body { padding-top: 5px; }
   .build-step-body strong {
     display: block;
@@ -2100,6 +2145,19 @@
     font-size: 13px;
     color: var(--ink-soft);
     line-height: 1.55;
+  }
+  .steps-progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .steps-progress-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+    white-space: nowrap;
   }
 
   /* ===== TOAST ===== */
@@ -3591,7 +3649,8 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
     currentPath: 'all',
     currentStatus: 'all',
     bookmarks: [],
-    progress: {} // { projectId: 'started' | 'done' }
+    progress: {}, // { projectId: 'started' | 'done' } — derived from stepProgress, kept for backward compatibility
+    stepProgress: {} // { projectId: [bool, bool, ...] } — one entry per roadmap step
   };
 
   function loadState() {
@@ -3602,12 +3661,34 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         state.bookmarks = Array.isArray(parsed.bookmarks)
           ? parsed.bookmarks.filter(id => typeof id === 'string')
           : [];
-        state.progress = {};
+        const legacyProgress = {};
         if (parsed.progress && typeof parsed.progress === 'object') {
           Object.entries(parsed.progress).forEach(([id, val]) => {
-            if (val === 'started' || val === 'done') state.progress[id] = val;
+            if (val === 'started' || val === 'done') legacyProgress[id] = val;
           });
         }
+        state.stepProgress = {};
+        if (parsed.stepProgress && typeof parsed.stepProgress === 'object') {
+          Object.entries(parsed.stepProgress).forEach(([id, arr]) => {
+            if (Array.isArray(arr)) state.stepProgress[id] = arr.map(Boolean);
+          });
+        }
+        // Migrate pre-checklist data: a project marked 'done'/'started' via the
+        // old dropdown but with no granular step data gets a one-time backfill
+        // so existing users don't see their progress reset to zero.
+        Object.entries(legacyProgress).forEach(([id, val]) => {
+          if (state.stepProgress[id]) return;
+          const proj = PROJECTS.find(x => x.id === id);
+          const total = proj?.steps?.length || 0;
+          if (!total) return;
+          if (val === 'done') state.stepProgress[id] = Array(total).fill(true);
+          else state.stepProgress[id] = Array(total).fill(false).map((_, i) => i === 0);
+        });
+        state.progress = {};
+        PROJECTS.forEach(p => {
+          const status = recomputeStatus(p.id);
+          if (status !== 'none') state.progress[p.id] = status;
+        });
       }
     } catch (e) { /* ignore */ }
   }
@@ -3615,11 +3696,52 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         bookmarks: state.bookmarks,
-        progress: state.progress
+        progress: state.progress,
+        stepProgress: state.stepProgress
       }));
     } catch (e) {
       if (typeof toast === 'function') toast('Storage full — your changes may not persist');
     }
+  }
+
+  // Recomputes and writes state.progress[id] from state.stepProgress[id].
+  function recomputeStatus(id) {
+    const p = PROJECTS.find(x => x.id === id);
+    if (!p || !p.steps || p.steps.length === 0) return state.progress[id] || 'none';
+    const arr = state.stepProgress[id] || [];
+    const done = arr.filter(Boolean).length;
+    const status = done === 0 ? 'none' : done >= p.steps.length ? 'done' : 'started';
+    if (status === 'none') delete state.progress[id];
+    else state.progress[id] = status;
+    return status;
+  }
+
+  function stepsCompleted(id) {
+    return (state.stepProgress[id] || []).filter(Boolean).length;
+  }
+
+  function toggleStep(id, index) {
+    const p = PROJECTS.find(x => x.id === id);
+    if (!p || !p.steps) return;
+    const arr = (state.stepProgress[id] || new Array(p.steps.length).fill(false)).slice();
+    arr[index] = !arr[index];
+    state.stepProgress[id] = arr;
+    const status = recomputeStatus(id);
+    saveState();
+    renderStats();
+    renderProjects();
+    if (status === 'done') toast('All steps complete — nice work');
+  }
+
+  function setAllSteps(id, value) {
+    const p = PROJECTS.find(x => x.id === id);
+    if (!p || !p.steps) return;
+    state.stepProgress[id] = new Array(p.steps.length).fill(value);
+    recomputeStatus(id);
+    saveState();
+    renderStats();
+    renderProjects();
+    toast(value ? 'Marked all steps complete' : 'Progress reset');
   }
 
   // ===== TEMPLATE GENERATORS =====
@@ -3887,7 +4009,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     container.querySelectorAll('.project-card').forEach(card => {
       const id = card.dataset.id;
       card.addEventListener('click', (e) => {
-        if (e.target.closest('.bookmark-btn') || e.target.closest('.progress-select')) return;
+        if (e.target.closest('.bookmark-btn')) return;
         openModal(id);
       });
       card.addEventListener('keydown', (e) => {
@@ -3902,11 +4024,6 @@ ${tags} #BuildingInPublic #OpenToWork`;
         e.stopPropagation();
         toggleBookmark(id);
       });
-      const sel = card.querySelector('.progress-select');
-      sel.addEventListener('click', (e) => e.stopPropagation());
-      sel.addEventListener('change', (e) => {
-        setProgress(id, e.target.value);
-      });
     });
   }
 
@@ -3915,6 +4032,10 @@ ${tags} #BuildingInPublic #OpenToWork`;
     const progress = state.progress[p.id] || 'none';
     const statusClass = progress === 'started' ? 'started' : progress === 'done' ? 'done' : '';
     const meta = LEVEL_META[p.level] || LEVEL_META.intermediate;
+    const total = p.steps ? p.steps.length : 0;
+    const done = stepsCompleted(p.id);
+    const pct = total ? Math.round((done / total) * 100) : 0;
+    const progressLabel = total === 0 ? '' : progress === 'done' ? 'Complete' : `${done}/${total} steps`;
     return `
       <article class="project-card ${statusClass}" data-id="${p.id}" tabindex="0" role="button" aria-label="View details: ${p.title}">
         <button class="bookmark-btn ${isBookmarked ? 'active' : ''}" aria-label="Bookmark ${p.title}" aria-pressed="${isBookmarked}">
@@ -3929,12 +4050,13 @@ ${tags} #BuildingInPublic #OpenToWork`;
         <div class="tech-tags">
           ${p.tech.slice(0, 4).map(t => `<span class="tag">${t}</span>`).join('')}
         </div>
+        ${total > 0 ? `
+        <div class="card-progress status-${statusClass || 'none'}">
+          <div class="card-progress-track"><div class="card-progress-fill" style="width:${pct}%"></div></div>
+          <span class="card-progress-label">${progressLabel}</span>
+        </div>
+        ` : ''}
         <div class="card-footer">
-          <select class="progress-select" aria-label="Progress for ${p.title}">
-            <option value="none" ${progress === 'none' ? 'selected' : ''}>Not started</option>
-            <option value="started" ${progress === 'started' ? 'selected' : ''}>In progress</option>
-            <option value="done" ${progress === 'done' ? 'selected' : ''}>Completed ✓</option>
-          </select>
           <span class="view-more">View details →</span>
         </div>
       </article>
@@ -3955,16 +4077,6 @@ ${tags} #BuildingInPublic #OpenToWork`;
     renderStats();
     renderProjects();
   }
-  function setProgress(id, value) {
-    if (value === 'none') delete state.progress[id];
-    else state.progress[id] = value;
-    saveState();
-    renderStats();
-    renderProjects();
-    if (value === 'done') toast('Nice work — marked as complete');
-    else if (value === 'started') toast('Marked in progress');
-  }
-
   function renderStats() {
     document.getElementById('bookmark-count').textContent = state.bookmarks.length;
     const doneCount = Object.values(state.progress).filter(v => v === 'done').length;
@@ -4032,17 +4144,28 @@ ${tags} #BuildingInPublic #OpenToWork`;
       ${p.steps ? `
       <div class="modal-section">
         <h4>Step-by-Step Build Roadmap</h4>
-        <p style="margin-bottom:8px;">Follow this sequence. Don't skip ahead — each step unlocks the next.</p>
+        <p style="margin-bottom:8px;">Follow this sequence. Check off each step as you finish it — your progress is tracked automatically.</p>
+        <div class="steps-progress">
+          <div class="card-progress-track"><div class="card-progress-fill" style="width:${p.steps.length ? Math.round((stepsCompleted(p.id) / p.steps.length) * 100) : 0}%"></div></div>
+          <span class="steps-progress-label">${stepsCompleted(p.id)} of ${p.steps.length} steps complete</span>
+        </div>
         <div class="build-steps">
-          ${p.steps.map((s, i) => `
-            <div class="build-step">
-              <div class="build-step-num">${i + 1}</div>
+          ${p.steps.map((s, i) => {
+            const isDone = !!(state.stepProgress[p.id] || [])[i];
+            return `
+            <div class="build-step ${isDone ? 'is-complete' : ''}">
+              <button class="build-step-check" data-step-index="${i}" aria-pressed="${isDone}" aria-label="Mark step ${i + 1}, ${s.title}, as ${isDone ? 'not done' : 'done'}">
+                ${isDone
+                  ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>'
+                  : (i + 1)}
+              </button>
               <div class="build-step-body">
                 <strong>${s.title}</strong>
                 <span>${s.desc}</span>
               </div>
             </div>
-          `).join('')}
+          `;
+          }).join('')}
         </div>
       </div>
       ` : ''}
@@ -4138,11 +4261,10 @@ ${tags} #BuildingInPublic #OpenToWork`;
           <svg width="14" height="14" viewBox="0 0 24 24" fill="${isBookmarked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
           ${isBookmarked ? 'Bookmarked' : 'Bookmark this'}
         </button>
-        <select class="progress-select" id="modal-progress" style="padding:10px 14px;">
-          <option value="none" ${progress === 'none' ? 'selected' : ''}>Mark: Not started</option>
-          <option value="started" ${progress === 'started' ? 'selected' : ''}>Mark: In progress</option>
-          <option value="done" ${progress === 'done' ? 'selected' : ''}>Mark: Completed ✓</option>
-        </select>
+        ${p.steps && p.steps.length ? `
+        <span class="modal-status-badge status-${progress}">${progress === 'done' ? 'Completed ✓' : progress === 'started' ? 'In progress' : 'Not started'}</span>
+        <button class="btn-secondary" id="modal-mark-all">${progress === 'done' ? 'Reset progress' : 'Mark all steps complete'}</button>
+        ` : ''}
       </div>
     `;
 
@@ -4251,10 +4373,19 @@ ${tags} #BuildingInPublic #OpenToWork`;
       toggleBookmark(p.id);
       openModal(p.id); // re-render
     };
-    document.getElementById('modal-progress').onchange = (e) => {
-      setProgress(p.id, e.target.value);
-      openModal(p.id); // re-render
-    };
+    modal.querySelectorAll('.build-step-check').forEach(btn => {
+      btn.onclick = () => {
+        toggleStep(p.id, Number(btn.dataset.stepIndex));
+        openModal(p.id); // re-render
+      };
+    });
+    const markAllBtn = document.getElementById('modal-mark-all');
+    if (markAllBtn) {
+      markAllBtn.onclick = () => {
+        setAllSteps(p.id, progress !== 'done');
+        openModal(p.id); // re-render
+      };
+    }
   }
   let lastFocusedBeforeModal = null;
   function closeModal() {
@@ -4318,7 +4449,8 @@ ${tags} #BuildingInPublic #OpenToWork`;
       version: 1,
       exportedAt: new Date().toISOString(),
       bookmarks: state.bookmarks,
-      progress: state.progress
+      progress: state.progress,
+      stepProgress: state.stepProgress
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -4346,12 +4478,26 @@ ${tags} #BuildingInPublic #OpenToWork`;
         }
         const validIds = new Set(PROJECTS.map(p => p.id));
         state.bookmarks = [...new Set(data.bookmarks.filter(id => validIds.has(id)))];
-        state.progress = {};
+        state.stepProgress = {};
+        if (data.stepProgress && typeof data.stepProgress === 'object') {
+          Object.entries(data.stepProgress).forEach(([id, arr]) => {
+            if (validIds.has(id) && Array.isArray(arr)) state.stepProgress[id] = arr.map(Boolean);
+          });
+        }
+        // Back-compat: old exports (pre-checklist) only carry coarse progress —
+        // backfill steps for any project the granular import didn't cover.
         Object.entries(data.progress).forEach(([id, val]) => {
-          if (validIds.has(id) && (val === 'started' || val === 'done')) {
-            state.progress[id] = val;
-          }
+          if (!validIds.has(id) || state.stepProgress[id]) return;
+          if (val !== 'started' && val !== 'done') return;
+          const proj = PROJECTS.find(x => x.id === id);
+          const total = proj?.steps?.length || 0;
+          if (!total) return;
+          state.stepProgress[id] = val === 'done'
+            ? Array(total).fill(true)
+            : Array(total).fill(false).map((_, i) => i === 0);
         });
+        state.progress = {};
+        PROJECTS.forEach(p => recomputeStatus(p.id));
         saveState();
         renderAll();
         refreshBackupButtons();

@@ -202,6 +202,11 @@
   }
   .stat-pill svg { color: var(--green); filter: drop-shadow(0 0 4px var(--green-glow)); }
   .stat-pill .num { color: var(--green); font-weight: 600; text-shadow: 0 0 8px var(--green-glow); }
+  .stat-pill.active {
+    border-color: var(--green);
+    color: var(--green);
+    box-shadow: 0 0 0 1px var(--green), 0 12px 30px -16px rgba(0,255,133,0.35);
+  }
   a.nav-link {
     text-decoration: none;
     background: linear-gradient(180deg, var(--green) 0%, var(--green-2) 100%);
@@ -890,6 +895,140 @@
   .backup-btn:disabled {
     opacity: 0.4;
     cursor: not-allowed;
+  }
+
+  /* ===== MY BENCH (KANBAN) ===== */
+  .bench-section { padding-bottom: 80px; }
+  .bench-header { margin-bottom: 28px; }
+  .bench-header h2 {
+    font-family: 'Inter', sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .bench-header p { font-size: 14px; color: var(--ink-soft); line-height: 1.6; max-width: 640px; }
+  .bench-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    align-items: start;
+  }
+  .bench-column {
+    background: var(--glass);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .bench-column.drag-over {
+    border-color: var(--green);
+    box-shadow: 0 0 0 1px var(--green), 0 0 24px -6px var(--green-glow);
+  }
+  .bench-column-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 6px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--ink-soft);
+    border-bottom: 1px dashed var(--line-strong);
+    margin-bottom: 12px;
+  }
+  .bench-column-count {
+    background: rgba(255,255,255,0.08);
+    color: var(--ink);
+    border-radius: 999px;
+    padding: 2px 9px;
+    font-size: 10.5px;
+  }
+  .bench-column-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 80px;
+  }
+  .bench-column-empty {
+    font-size: 12.5px;
+    color: var(--ink-muted);
+    padding: 14px 4px;
+    text-align: center;
+    border: 1px dashed var(--line-strong);
+    border-radius: 10px;
+  }
+  .bench-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px 14px 12px;
+    background: rgba(0,0,0,0.30);
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    cursor: grab;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  }
+  .bench-card:hover { border-color: var(--line-3); box-shadow: 0 0 0 1px var(--line-3); }
+  .bench-card:active { cursor: grabbing; }
+  .bench-card.dragging { opacity: 0.4; }
+  .bench-card h4 {
+    font-family: 'Inter', sans-serif;
+    font-size: 14.5px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    line-height: 1.3;
+    padding-right: 20px;
+  }
+  .bench-card-remove {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: var(--ink-muted);
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 2px;
+  }
+  .bench-card-remove:hover { color: var(--green); }
+  .bench-card-moves {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+  .bench-move-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    border: 1px solid var(--line-strong);
+    background: rgba(0,0,0,0.35);
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+  }
+  .bench-move-btn:hover:not(:disabled) { border-color: var(--green); color: var(--green); }
+  .bench-move-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .bench-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--ink-muted);
+    border: 1px dashed var(--line-strong);
+    border-radius: 14px;
+  }
+  @media (max-width: 900px) {
+    .bench-board { grid-template-columns: 1fr; }
   }
 
   /* ===== PROJECT GRID ===== */
@@ -2415,6 +2554,10 @@
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
         <span>Prompts</span>
       </a>
+      <button class="stat-pill" id="pill-bench" title="Open My Bench — a Kanban board of your bookmarked projects">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="6" height="16" rx="1"/><rect x="12" y="4" width="6" height="10" rx="1"/><rect x="12" y="17" width="6" height="3" rx="1"/></svg>
+        <span>My Bench</span>
+      </button>
       <button class="stat-pill" id="pill-saved" title="Show saved projects">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
         <span><span class="num" id="bookmark-count">0</span> saved</span>
@@ -2489,8 +2632,19 @@
 </section>
 
 <!-- PROJECTS -->
-<section class="projects-section">
+<section class="projects-section" id="projects-section">
   <div class="container" id="projects-container"></div>
+</section>
+
+<!-- MY BENCH -->
+<section class="bench-section" id="bench-section" hidden>
+  <div class="container">
+    <div class="bench-header">
+      <h2>My Bench</h2>
+      <p>Your bookmarked projects, organized like a sprint board. Drag a card to a new column, or use the arrows on mobile — status updates the roadmap checklist automatically.</p>
+    </div>
+    <div class="bench-board" id="bench-board"></div>
+  </div>
 </section>
 
 <!-- MODAL -->
@@ -3648,6 +3802,7 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
   let state = {
     currentPath: 'all',
     currentStatus: 'all',
+    view: 'grid', // 'grid' | 'bench' — bench is not persisted, always starts on the grid
     bookmarks: [],
     progress: {}, // { projectId: 'started' | 'done' } — derived from stepProgress, kept for backward compatibility
     stepProgress: {} // { projectId: [bool, bool, ...] } — one entry per roadmap step
@@ -3730,6 +3885,7 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
     saveState();
     renderStats();
     renderProjects();
+    renderBench();
     if (status === 'done') toast('All steps complete — nice work');
   }
 
@@ -3741,6 +3897,7 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
     saveState();
     renderStats();
     renderProjects();
+    renderBench();
     toast(value ? 'Marked all steps complete' : 'Progress reset');
   }
 
@@ -3917,6 +4074,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     tabs.querySelectorAll('.path-tab[data-path]').forEach(btn => {
       btn.addEventListener('click', () => {
         state.currentPath = btn.dataset.path;
+        state.view = 'grid';
         renderAll();
       });
     });
@@ -3932,11 +4090,12 @@ ${tags} #BuildingInPublic #OpenToWork`;
   function renderFilters() {
     document.querySelectorAll('.filter-chip[data-status]').forEach(b => {
       b.classList.toggle('active', b.dataset.status === state.currentStatus);
-      b.onclick = () => { state.currentStatus = b.dataset.status; renderAll(); };
+      b.onclick = () => { state.currentStatus = b.dataset.status; state.view = 'grid'; renderAll(); };
     });
     document.getElementById('reset-btn').onclick = () => {
       state.currentPath = 'all';
       state.currentStatus = 'all';
+      state.view = 'grid';
       renderAll();
     };
   }
@@ -4076,7 +4235,159 @@ ${tags} #BuildingInPublic #OpenToWork`;
     saveState();
     renderStats();
     renderProjects();
+    renderBench();
   }
+
+  // ===== MY BENCH (KANBAN) =====
+  const BENCH_COLUMNS = [
+    { key: 'none', label: 'Backlog' },
+    { key: 'started', label: 'In Progress' },
+    { key: 'done', label: 'Done' }
+  ];
+  const BENCH_ORDER = ['none', 'started', 'done'];
+
+  function updateViewVisibility() {
+    const benchSection = document.getElementById('bench-section');
+    const projectsSection = document.getElementById('projects-section');
+    const pathTabs = document.getElementById('path-tabs');
+    const filterGroup = document.querySelector('.filter-group');
+    if (!benchSection || !projectsSection) return;
+    const inBench = state.view === 'bench';
+    benchSection.hidden = !inBench;
+    projectsSection.hidden = inBench;
+    if (pathTabs) pathTabs.hidden = inBench;
+    if (filterGroup) filterGroup.style.display = inBench ? 'none' : '';
+  }
+
+  // Moves a project directly to a target column. 'started' from 'none' seeds the
+  // first step; 'started' from 'done' un-checks the last step — dragging into the
+  // middle column should always land on a partial, never a 0 or 100% state.
+  function setBenchStatus(id, target) {
+    const p = PROJECTS.find(x => x.id === id);
+    if (!p || !p.steps || !p.steps.length) return;
+    const total = p.steps.length;
+    const current = state.progress[id] || 'none';
+    if (current === target) return;
+    if (target === 'none') {
+      state.stepProgress[id] = new Array(total).fill(false);
+    } else if (target === 'done') {
+      state.stepProgress[id] = new Array(total).fill(true);
+    } else if (current === 'done') {
+      const arr = new Array(total).fill(true);
+      arr[total - 1] = false;
+      state.stepProgress[id] = arr;
+    } else {
+      state.stepProgress[id] = new Array(total).fill(false).map((_, i) => i === 0);
+    }
+    recomputeStatus(id);
+    saveState();
+    renderStats();
+    renderProjects();
+    renderBench();
+  }
+
+  function benchCardHTML(p) {
+    const total = p.steps ? p.steps.length : 0;
+    const done = stepsCompleted(p.id);
+    const pct = total ? Math.round((done / total) * 100) : 0;
+    const meta = LEVEL_META[p.level] || LEVEL_META.intermediate;
+    const status = state.progress[p.id] || 'none';
+    const idx = BENCH_ORDER.indexOf(status);
+    return `
+      <article class="bench-card" draggable="true" data-id="${p.id}" tabindex="0" role="button" aria-label="Open ${p.title}">
+        <button class="bench-card-remove" data-remove-id="${p.id}" aria-label="Remove ${p.title} from your bench" title="Remove from bench">×</button>
+        <span class="level-badge level-${p.level}">${meta.label}</span>
+        <h4>${p.title}</h4>
+        ${total > 0 ? `
+        <div class="card-progress status-${status}">
+          <div class="card-progress-track"><div class="card-progress-fill" style="width:${pct}%"></div></div>
+          <span class="card-progress-label">${done}/${total}</span>
+        </div>
+        ` : ''}
+        <div class="bench-card-moves">
+          <button class="bench-move-btn" data-move-id="${p.id}" data-dir="back" ${idx === 0 ? 'disabled' : ''} aria-label="Move ${p.title} back a column">‹</button>
+          <button class="bench-move-btn" data-move-id="${p.id}" data-dir="forward" ${idx === BENCH_ORDER.length - 1 ? 'disabled' : ''} aria-label="Move ${p.title} forward a column">›</button>
+        </div>
+      </article>
+    `;
+  }
+
+  function renderBench() {
+    const board = document.getElementById('bench-board');
+    if (!board) return;
+    const items = state.bookmarks.map(id => PROJECTS.find(p => p.id === id)).filter(Boolean);
+
+    if (items.length === 0) {
+      board.innerHTML = `<div class="bench-empty">Your bench is empty. Bookmark a project from the grid to add it here, then drag it across Backlog, In Progress, and Done as you build.</div>`;
+      return;
+    }
+
+    board.innerHTML = BENCH_COLUMNS.map(col => {
+      const colItems = items.filter(p => (state.progress[p.id] || 'none') === col.key);
+      return `
+        <div class="bench-column" data-status="${col.key}">
+          <div class="bench-column-header">
+            <span>${col.label}</span>
+            <span class="bench-column-count">${colItems.length}</span>
+          </div>
+          <div class="bench-column-body" data-status="${col.key}">
+            ${colItems.map(p => benchCardHTML(p)).join('') || `<div class="bench-column-empty">No projects</div>`}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    board.querySelectorAll('.bench-card').forEach(card => {
+      const id = card.dataset.id;
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('.bench-card-remove') || e.target.closest('.bench-move-btn')) return;
+        openModal(id);
+      });
+      card.addEventListener('keydown', (e) => {
+        if (e.target !== card) return;
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(id); }
+      });
+      card.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', id);
+        e.dataTransfer.effectAllowed = 'move';
+        card.classList.add('dragging');
+      });
+      card.addEventListener('dragend', () => card.classList.remove('dragging'));
+    });
+    board.querySelectorAll('.bench-card-remove').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleBookmark(btn.dataset.removeId);
+      });
+    });
+    board.querySelectorAll('.bench-move-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.moveId;
+        const current = state.progress[id] || 'none';
+        const idx = BENCH_ORDER.indexOf(current);
+        const target = btn.dataset.dir === 'forward'
+          ? BENCH_ORDER[Math.min(idx + 1, BENCH_ORDER.length - 1)]
+          : BENCH_ORDER[Math.max(idx - 1, 0)];
+        setBenchStatus(id, target);
+      });
+    });
+    board.querySelectorAll('.bench-column-body').forEach(zone => {
+      zone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        zone.closest('.bench-column').classList.add('drag-over');
+      });
+      zone.addEventListener('dragleave', () => zone.closest('.bench-column').classList.remove('drag-over'));
+      zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        zone.closest('.bench-column').classList.remove('drag-over');
+        const id = e.dataTransfer.getData('text/plain');
+        setBenchStatus(id, zone.dataset.status);
+      });
+    });
+  }
+
   function renderStats() {
     document.getElementById('bookmark-count').textContent = state.bookmarks.length;
     const doneCount = Object.values(state.progress).filter(v => v === 'done').length;
@@ -4086,15 +4397,24 @@ ${tags} #BuildingInPublic #OpenToWork`;
     document.getElementById('pill-saved').onclick = () => {
       state.currentStatus = state.currentStatus === 'bookmarked' ? 'all' : 'bookmarked';
       state.currentPath = 'all';
+      state.view = 'grid';
       renderAll();
       document.getElementById('path-tabs').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     };
     document.getElementById('pill-done').onclick = () => {
       state.currentStatus = state.currentStatus === 'done' ? 'all' : 'done';
       state.currentPath = 'all';
+      state.view = 'grid';
       renderAll();
       document.getElementById('path-tabs').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     };
+    document.getElementById('pill-bench').onclick = () => {
+      state.view = state.view === 'bench' ? 'grid' : 'bench';
+      renderAll();
+      document.getElementById(state.view === 'bench' ? 'bench-section' : 'path-tabs')
+        .scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    };
+    document.getElementById('pill-bench').classList.toggle('active', state.view === 'bench');
   }
 
   // ===== MODAL =====
@@ -4711,6 +5031,8 @@ ${tags} #BuildingInPublic #OpenToWork`;
     renderProjects();
     renderStats();
     refreshBackupButtons();
+    updateViewVisibility();
+    if (state.view === 'bench') renderBench();
   }
   function wireFooterPaths() {
     document.querySelectorAll('[data-footer-path]').forEach(a => {

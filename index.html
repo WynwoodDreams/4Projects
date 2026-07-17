@@ -262,6 +262,13 @@
   .hero-cta-primary:hover { transform: translateY(-2px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), 0 0 0 1px rgba(0,255,133,0.85), 0 16px 36px -10px rgba(0,255,133,0.8); }
   .hero-cta-ghost { background: rgba(0,255,133,0.06); color: var(--green); border: 1px solid var(--line-3); }
   .hero-cta-ghost:hover { transform: translateY(-2px); border-color: var(--green); box-shadow: 0 0 0 1px var(--green), 0 14px 30px -16px rgba(0,255,133,0.4); }
+  .hero-continue { cursor: pointer; }
+  .hero-continue .cont-icon { font-size: 9px; filter: drop-shadow(0 0 6px var(--green-glow)); }
+  .hero-continue .cont-title {
+    max-width: 24ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    text-transform: none; letter-spacing: 0.02em; color: var(--ink);
+  }
+  .hero-continue .cont-step { color: var(--ink-soft); font-weight: 500; }
 
   /* ===== "More from BuildersBench" promo band ===== */
   .promo-section { padding: 4px 0 64px; }
@@ -863,6 +870,29 @@
     font-weight: 500;
     margin-right: 4px;
   }
+  .search-field {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 12px; border-radius: 999px;
+    background: rgba(0,0,0,0.40); border: 1px solid var(--line);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .search-field:focus-within { border-color: var(--line-3); box-shadow: 0 0 0 1px var(--line-3); }
+  .search-prefix {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
+    color: var(--green); text-shadow: 0 0 8px var(--green-glow);
+  }
+  #project-search {
+    width: 180px; background: none; border: none; outline: none;
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+  #project-search::placeholder { color: var(--ink-muted); }
+  #project-search::-webkit-search-cancel-button { -webkit-appearance: none; }
+  .search-kbd {
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--ink-muted);
+    border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px;
+  }
+  .search-field:focus-within .search-kbd { visibility: hidden; }
   .filter-chip {
     padding: 8px 15px;
     border: 1px solid rgba(255,255,255,0.18);
@@ -2575,6 +2605,9 @@
       align-items: stretch;
       gap: 14px;
     }
+    .search-field { width: 100%; }
+    #project-search { flex: 1; width: auto; }
+    .search-kbd { display: none; }  /* no hardware keyboard to advertise */
     .filter-group {
       width: 100%;
       flex-wrap: wrap;
@@ -2757,6 +2790,8 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
             Prompt Library
           </a>
+          <!-- Shown only when a project is in progress — resumes it at its roadmap -->
+          <button class="hero-cta hero-cta-ghost hero-continue" id="hero-continue" hidden></button>
         </div>
       </div>
       <aside class="hero-side hero-quiz" aria-label="Find your starting path quiz">
@@ -2775,6 +2810,11 @@
   <div class="container">
     <div class="path-tabs" id="path-tabs"></div>
     <div class="filter-row">
+      <div class="search-field">
+        <span class="search-prefix" aria-hidden="true">&gt;</span>
+        <input type="search" id="project-search" placeholder="search projects…" aria-label="Search projects" autocomplete="off" spellcheck="false" />
+        <kbd class="search-kbd" aria-hidden="true" title="Press / to search">/</kbd>
+      </div>
       <div class="filter-group">
         <span class="filter-label">Filter by status</span>
         <button class="filter-chip active" data-status="all">All</button>
@@ -2937,14 +2977,14 @@
       <div class="footer-col">
         <h5>Paths</h5>
         <ul class="footer-paths">
-          <li><a href="#path-tabs" data-footer-path="ai">AI Engineer</a></li>
-          <li><a href="#path-tabs" data-footer-path="cloud">Cloud Computing</a></li>
-          <li><a href="#path-tabs" data-footer-path="cs">Computer Science</a></li>
-          <li><a href="#path-tabs" data-footer-path="cyber">Cybersecurity</a></li>
-          <li><a href="#path-tabs" data-footer-path="data">Data Analyst</a></li>
-          <li><a href="#path-tabs" data-footer-path="helpdesk">Help Desk</a></li>
-          <li><a href="#path-tabs" data-footer-path="swe">Software Engineer</a></li>
-          <li><a href="#path-tabs" data-footer-path="tech-it">Tech / IT Support</a></li>
+          <li><a href="#path=ai" data-footer-path="ai">AI Engineer</a></li>
+          <li><a href="#path=cloud" data-footer-path="cloud">Cloud Computing</a></li>
+          <li><a href="#path=cs" data-footer-path="cs">Computer Science</a></li>
+          <li><a href="#path=cyber" data-footer-path="cyber">Cybersecurity</a></li>
+          <li><a href="#path=data" data-footer-path="data">Data Analyst</a></li>
+          <li><a href="#path=helpdesk" data-footer-path="helpdesk">Help Desk</a></li>
+          <li><a href="#path=swe" data-footer-path="swe">Software Engineer</a></li>
+          <li><a href="#path=tech-it" data-footer-path="tech-it">Tech / IT Support</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -3973,6 +4013,8 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
   let state = {
     currentPath: 'all',
     currentStatus: 'all',
+    search: '', // free-text filter over title/summary/skills/tech — never persisted
+
     view: 'grid', // 'grid' | 'bench' — bench is not persisted, always starts on the grid
     bookmarks: [],
     progress: {}, // { projectId: 'started' | 'done' } — derived from stepProgress, kept for backward compatibility
@@ -4094,6 +4136,7 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
     renderStats();
     renderProjects();
     renderBench();
+    updateContinuePill();
     if (status === 'done') toast('All steps complete — nice work');
   }
 
@@ -4107,6 +4150,7 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
     renderStats();
     renderProjects();
     renderBench();
+    updateContinuePill();
     toast(value ? 'Marked all steps complete' : 'Progress reset');
   }
 
@@ -4300,6 +4344,11 @@ ${tags} #BuildingInPublic #OpenToWork`;
       btn.addEventListener('click', () => {
         state.currentPath = btn.dataset.path;
         state.view = 'grid';
+        // Keep the URL shareable: #path=<id> mirrors the active tab (replaceState avoids
+        // history spam and doesn't re-trigger the hashchange handler)
+        history.replaceState(null, '', state.currentPath === 'all'
+          ? location.pathname + location.search
+          : '#path=' + state.currentPath);
         renderAll();
       });
     });
@@ -4322,18 +4371,27 @@ ${tags} #BuildingInPublic #OpenToWork`;
     document.getElementById('reset-btn').onclick = () => {
       state.currentPath = 'all';
       state.currentStatus = 'all';
+      state.search = '';
+      const searchEl = document.getElementById('project-search');
+      if (searchEl) searchEl.value = '';
       state.view = 'grid';
+      history.replaceState(null, '', location.pathname + location.search);
       renderAll();
     };
   }
 
   // ===== FILTERING =====
   function getFilteredProjects() {
+    const terms = state.search.trim().toLowerCase().split(/\s+/).filter(Boolean);
     return PROJECTS.filter(p => {
       if (state.currentPath !== 'all' && p.path !== state.currentPath) return false;
       if (state.currentStatus === 'bookmarked' && !state.bookmarks.includes(p.id)) return false;
       if (state.currentStatus === 'started' && state.progress[p.id] !== 'started') return false;
       if (state.currentStatus === 'done' && state.progress[p.id] !== 'done') return false;
+      if (terms.length) {
+        const hay = (p.title + ' ' + p.summary + ' ' + (p.skills || '') + ' ' + (p.tech || []).join(' ')).toLowerCase();
+        if (!terms.every(t => hay.includes(t))) return false;
+      }
       return true;
     });
   }
@@ -4346,7 +4404,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     if (filtered.length === 0) {
       container.innerHTML = `<div class="empty-state">
         <h3>Nothing here yet.</h3>
-        <p>Try adjusting your filters or choose a different path.</p>
+        <p>${state.search.trim() ? 'No projects match your search. Try fewer or broader words.' : 'Try adjusting your filters or choose a different path.'}</p>
       </div>`;
       return;
     }
@@ -4482,6 +4540,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     }
     saveState();
     renderBench();
+    updateContinuePill();
   }
 
   // ===== MY BENCH (KANBAN) =====
@@ -4531,6 +4590,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     renderStats();
     renderProjects();
     renderBench();
+    updateContinuePill();
   }
 
   function benchCardHTML(p) {
@@ -5373,7 +5433,59 @@ ${tags} #BuildingInPublic #OpenToWork`;
     renderStats();
     refreshBackupButtons();
     updateViewVisibility();
+    updateContinuePill();
     if (state.view === 'bench') renderBench();
+  }
+  // "Continue where you left off" — surfaces the most recently touched in-progress
+  // project (a focused one wins) so returning visitors skip the re-finding step.
+  function updateContinuePill() {
+    const btn = document.getElementById('hero-continue');
+    if (!btn) return;
+    const started = PROJECTS.filter(p => state.progress[p.id] === 'started');
+    if (!started.length) { btn.hidden = true; return; }
+    const lastTouch = id => Math.max(0, ...(state.stepDates[id] || []).filter(t => typeof t === 'number'));
+    started.sort((a, b) => lastTouch(b.id) - lastTouch(a.id));
+    const pick = started.find(p => state.focus.includes(p.id)) || started[0];
+    const steps = state.stepProgress[pick.id] || [];
+    const done = steps.filter(Boolean).length;
+    btn.hidden = false;
+    btn.innerHTML = `<span class="cont-icon" aria-hidden="true">▶</span>Continue<span class="cont-title">${pick.title}</span><span class="cont-step">${done}/${steps.length}</span>`;
+    btn.title = `Pick up ${pick.title} at step ${done + 1} of ${steps.length}`;
+    btn.onclick = () => {
+      openModal(pick.id);
+      setTimeout(() => {
+        const roadmap = document.querySelector('.modal .build-steps') || document.querySelector('#modal .build-steps');
+        if (roadmap) roadmap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 150);
+    };
+  }
+
+  function wireSearch() {
+    const el = document.getElementById('project-search');
+    if (!el) return;
+    el.addEventListener('input', () => {
+      state.search = el.value;
+      state.view = 'grid';
+      renderAll();
+    });
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        el.value = '';
+        state.search = '';
+        renderAll();
+        el.blur();
+      }
+    });
+    // "/" focuses search from anywhere outside a field, like Linear/GitHub
+    document.addEventListener('keydown', e => {
+      if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey) return;
+      const t = e.target;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
+      if (document.body.classList.contains('modal-open')) return;
+      e.preventDefault();
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.focus({ preventScroll: true });
+    });
   }
   function wireFooterPaths() {
     document.querySelectorAll('[data-footer-path]').forEach(a => {
@@ -5391,15 +5503,28 @@ ${tags} #BuildingInPublic #OpenToWork`;
   wireBackupControls();
   renderAll();
   mountHero();
+  wireSearch();
   wireFooterPaths();
   // Deferred so the merge confirm() can't block first paint
   setTimeout(readSharedList, 0);
 
-  // Deep-link a single project's modal, e.g. /index.html#project=ai-1 (used by Career Match)
+  // Deep links: #project=<id> opens that project's modal (used by Career Match),
+  // #path=<id> pre-filters the catalog to one career path (match results, footer, shared URLs)
   function openProjectFromHash() {
-    const m = location.hash.match(/^#project=([\w-]+)$/);
-    if (!m) return;
-    if (PROJECTS.find(p => p.id === m[1])) openModal(m[1]);
+    let m = location.hash.match(/^#project=([\w-]+)$/);
+    if (m) {
+      if (PROJECTS.find(p => p.id === m[1])) openModal(m[1]);
+      else toast('That project is no longer in the catalog');
+      return;
+    }
+    m = location.hash.match(/^#path=([\w-]+)$/);
+    if (m && PATHS.find(p => p.id === m[1] && p.id !== 'all')) {
+      state.currentPath = m[1];
+      state.view = 'grid';
+      renderAll();
+      const controls = document.querySelector('.controls');
+      if (controls) controls.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
   openProjectFromHash();
   window.addEventListener('hashchange', openProjectFromHash);

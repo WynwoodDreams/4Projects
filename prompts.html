@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>AI Prompt Library — BuildersBench</title>
 <meta name="description" content="A copy-paste library of AI prompts for building portfolio projects — plan, build, debug, document, and ship faster with AI coding assistants." />
-<meta name="theme-color" content="#0a0f0a" />
+<meta name="theme-color" content="#0C161B" />
 <link rel="canonical" href="https://4-projects.vercel.app/prompts.html" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='none' stroke='%2300e676' stroke-width='2'/%3E%3Cpath d='M8 12l3 3 5-6' fill='none' stroke='%2300e676' stroke-width='2'/%3E%3C/svg%3E" />
 <meta property="og:type" content="website" />
@@ -202,6 +202,9 @@
   }
   .stat-pill svg { color: var(--green); filter: drop-shadow(0 0 4px var(--green-glow)); }
   .stat-pill .num { color: var(--green); font-weight: 600; text-shadow: 0 0 8px var(--green-glow); }
+  .stat-pill:focus-visible, .filter-chip:focus-visible, .backup-btn:focus-visible, .ex-chip:focus-visible {
+    outline: 2px solid var(--green); outline-offset: 2px;
+  }
 
   /* ===== HERO ===== */
   .hero {
@@ -1853,7 +1856,7 @@
     right: 20px;
     width: 44px;
     height: 44px;
-    background: var(--surface-2);
+    background: var(--panel-2);
     border: 1px solid var(--green);
     border-radius: 50%;
     color: var(--green);
@@ -2248,8 +2251,9 @@
   /* Header nav links stay visible where stat-pills hide on mobile */
   .header-actions .nav-link { display: inline-flex; color: var(--green); border-color: var(--line-3); }
   .header-actions .nav-link svg { color: var(--green); }
-  /* Very narrow screens: compact the two nav pills to icon-only so they fit */
-  @media (max-width: 430px) {
+  /* Narrow screens: compact the nav pills to icon-only so all three fit */
+  @media (max-width: 560px) {
+    .header-actions { gap: 6px; }
     .header-actions .nav-link span { display: none; }
     .header-actions .nav-link { padding: 7px 9px; }
   }
@@ -2264,6 +2268,10 @@
     letter-spacing: 0.20em; text-transform: uppercase; color: var(--ink-muted); margin-right: 4px;
   }
 
+  /* Stage jumps land below the sticky header + filter bar instead of under them */
+  .path-group { scroll-margin-top: 130px; }
+  @media (max-width: 640px) { .path-group { scroll-margin-top: 16px; } } /* controls are static on mobile */
+
   /* Prompt cards reuse .project-card */
   .prompt-card { cursor: default; min-height: 0; }
   .prompt-card:hover { transform: none; }
@@ -2274,12 +2282,13 @@
       radial-gradient(ellipse at 100% 100%, rgba(0,194,168,0.07), transparent 65%);
     opacity: 0.52;
   }
+  /* Softer than the catalog's card glow: the card itself isn't clickable
+     (only the Copy button is), so hover highlights without promising a click. */
   .prompt-card:hover {
-    border-color: rgba(0,194,168,0.55);
+    border-color: rgba(0,194,168,0.35);
     box-shadow:
-      0 0 0 1px rgba(0,194,168,0.55),
-      0 0 24px -2px rgba(0,194,168,0.34),
-      0 0 60px -12px rgba(0,194,168,0.28),
+      0 0 0 1px rgba(0,194,168,0.35),
+      0 0 24px -2px rgba(0,194,168,0.17),
       0 24px 60px -22px rgba(0,0,0,0.65);
   }
   .prompt-kicker {
@@ -2349,6 +2358,10 @@
       </div>
     </a>
     <div class="header-actions">
+      <a class="stat-pill nav-link" href="/match.html" title="Paste a job, get your plan">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <span>Match</span>
+      </a>
       <a class="stat-pill nav-link" href="/certifications.html" title="Free AI certifications">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg>
         <span>Certs</span>
@@ -2393,7 +2406,7 @@
 </section>
 
 <!-- TOAST -->
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <!-- FOOTER -->
 <footer>
@@ -2551,7 +2564,7 @@
     const bar = document.getElementById('prompt-filters');
     const chips = [{ id: 'all', name: 'All' }].concat(STAGES.map(s => ({ id: s.id, name: s.name })));
     bar.innerHTML = '<span class="filter-label">Jump to stage</span>' + chips.map(c =>
-      `<button class="filter-chip ${currentStage === c.id ? 'active' : ''}" data-stage="${c.id}">${esc(c.name)}</button>`
+      `<button class="filter-chip ${currentStage === c.id ? 'active' : ''}" data-stage="${c.id}" aria-pressed="${currentStage === c.id}">${esc(c.name)}</button>`
     ).join('');
     bar.querySelectorAll('.filter-chip').forEach(btn => {
       btn.onclick = () => {

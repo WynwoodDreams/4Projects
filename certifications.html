@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Free AI Certifications — BuildersBench</title>
 <meta name="description" content="A curated directory of free, official AI certifications from Anthropic, LangChain, Google, Microsoft, IBM, AWS, and NVIDIA — what each covers, why it matters, and where to enroll." />
-<meta name="theme-color" content="#0a0f0a" />
+<meta name="theme-color" content="#0C161B" />
 <link rel="canonical" href="https://4-projects.vercel.app/certifications.html" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='none' stroke='%2300e676' stroke-width='2'/%3E%3Cpath d='M8 12l3 3 5-6' fill='none' stroke='%2300e676' stroke-width='2'/%3E%3C/svg%3E" />
 <meta property="og:type" content="website" />
@@ -202,6 +202,9 @@
   }
   .stat-pill svg { color: var(--green); filter: drop-shadow(0 0 4px var(--green-glow)); }
   .stat-pill .num { color: var(--green); font-weight: 600; text-shadow: 0 0 8px var(--green-glow); }
+  .stat-pill:focus-visible, .filter-chip:focus-visible, .backup-btn:focus-visible, .ex-chip:focus-visible {
+    outline: 2px solid var(--green); outline-offset: 2px;
+  }
 
   /* ===== HERO ===== */
   .hero {
@@ -1853,7 +1856,7 @@
     right: 20px;
     width: 44px;
     height: 44px;
-    background: var(--surface-2);
+    background: var(--panel-2);
     border: 1px solid var(--green);
     border-radius: 50%;
     color: var(--green);
@@ -2249,6 +2252,12 @@
   /* Keep nav links visible even where stat-pills hide on mobile */
   .header-actions .nav-link { display: inline-flex; color: var(--green); border-color: var(--line-3); }
   .header-actions .nav-link svg { color: var(--green); }
+  /* Narrow screens: compact the nav pills to icon-only so all three fit */
+  @media (max-width: 560px) {
+    .header-actions { gap: 6px; }
+    .header-actions .nav-link span { display: none; }
+    .header-actions .nav-link { padding: 7px 9px; }
+  }
 
   /* ===== Provider cards (one card per provider) ===== */
   .provider-grid {
@@ -2268,12 +2277,13 @@
       radial-gradient(ellipse at 100% 100%, rgba(255,200,87,0.07), transparent 65%);
     opacity: 0.55;
   }
+  /* Softer than the catalog's card glow: the card itself isn't clickable,
+     so the hover treatment highlights without promising a click. */
   .provider-card:hover {
-    border-color: rgba(255,200,87,0.55);
+    border-color: rgba(255,200,87,0.35);
     box-shadow:
-      0 0 0 1px rgba(255,200,87,0.55),
-      0 0 24px -2px rgba(255,200,87,0.32),
-      0 0 60px -12px rgba(255,200,87,0.28),
+      0 0 0 1px rgba(255,200,87,0.35),
+      0 0 24px -2px rgba(255,200,87,0.16),
       0 24px 60px -22px rgba(0,0,0,0.65);
   }
   .provider-card .cost-badge { position: absolute; top: 18px; right: 18px; }
@@ -2330,6 +2340,13 @@
     padding: 5px 11px; border-radius: 999px; border: 1px solid var(--green);
     color: var(--green); background: rgba(0,255,133,0.08);
     text-shadow: 0 0 8px var(--green-glow); white-space: nowrap;
+  }
+  /* Providers with paid components (audit-only, paid exams) get the gold treatment
+     so the badge agrees with the per-row cost flags instead of contradicting them. */
+  .cost-badge.cost-badge-partial {
+    color: var(--gold); border-color: rgba(255,200,87,0.55);
+    background: rgba(255,200,87,0.07);
+    text-shadow: 0 0 8px rgba(255,200,87,0.35);
   }
   .cert-format {
     font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
@@ -2402,6 +2419,14 @@
       </div>
     </a>
     <div class="header-actions">
+      <a class="stat-pill nav-link" href="/match.html" title="Paste a job, get your plan">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <span>Match</span>
+      </a>
+      <a class="stat-pill nav-link" href="/prompts.html" title="AI prompt library for building projects">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        <span>Prompts</span>
+      </a>
       <a class="stat-pill nav-link" href="/index.html" title="Back to projects">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
         <span>Projects</span>
@@ -2562,6 +2587,13 @@
   function providerCardHTML(prov) {
     const items = CERTS[prov.id] || [];
     const n = items.length;
+    const partial = items.filter(c => c.cost === 'partial');
+    const allFree = partial.length === 0;
+    const badgeLabel = allFree
+      ? 'Free'
+      : (partial.length === n ? (partial[0].costLabel || 'Free to start') : 'Free to start');
+    const badge = `<span class="cost-badge${allFree ? '' : ' cost-badge-partial'}">${esc(badgeLabel)}</span>`;
+    const footerLabel = allFree ? 'Official · Free' : 'Official · Free to start';
     const rows = items.map(c => {
       const lvl = `<span class="cert-level level-${c.level}">${esc(c.levelLabel)}</span>`;
       const flag = c.cost === 'partial' ? `<span class="cert-flag">${esc(c.costLabel || 'Paid option')}</span>` : '';
@@ -2573,7 +2605,7 @@
     const ctaLabel = n === 1 ? 'Browse course →' : `Browse ${n} courses →`;
     return `
       <article class="project-card provider-card">
-        <span class="cost-badge">Free</span>
+        ${badge}
         <div class="provider-card-head">
           <span class="provider-icon">${prov.icon}</span>
           <div class="provider-head-text">
@@ -2584,7 +2616,7 @@
         <p class="summary">${esc(prov.blurb)}</p>
         <ul class="cert-list">${rows}</ul>
         <div class="card-footer">
-          <span class="cert-format">Official · Free to start</span>
+          <span class="cert-format">${footerLabel}</span>
           <a class="view-more provider-cta" href="${esc(prov.url)}" target="_blank" rel="noopener noreferrer">${ctaLabel}</a>
         </div>
       </article>`;

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Job → Plan — BuildersBench Career Match</title>
 <meta name="description" content="Paste a job title or description and get a personalized plan: the career path, the portfolio projects to build, and the free certs to earn." />
-<meta name="theme-color" content="#0a0f0a" />
+<meta name="theme-color" content="#0C161B" />
 <link rel="canonical" href="https://4-projects.vercel.app/match.html" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='none' stroke='%2300e676' stroke-width='2'/%3E%3Cpath d='M8 12l3 3 5-6' fill='none' stroke='%2300e676' stroke-width='2'/%3E%3C/svg%3E" />
 <meta property="og:type" content="website" />
@@ -202,6 +202,9 @@
   }
   .stat-pill svg { color: var(--green); filter: drop-shadow(0 0 4px var(--green-glow)); }
   .stat-pill .num { color: var(--green); font-weight: 600; text-shadow: 0 0 8px var(--green-glow); }
+  .stat-pill:focus-visible, .filter-chip:focus-visible, .backup-btn:focus-visible, .ex-chip:focus-visible {
+    outline: 2px solid var(--green); outline-offset: 2px;
+  }
 
   /* ===== HERO ===== */
   .hero {
@@ -1853,7 +1856,7 @@
     right: 20px;
     width: 44px;
     height: 44px;
-    background: var(--surface-2);
+    background: var(--panel-2);
     border: 1px solid var(--green);
     border-radius: 50%;
     color: var(--green);
@@ -2236,6 +2239,12 @@
 
   .header-actions .nav-link { display: inline-flex; color: var(--green); border-color: var(--line-3); }
   .header-actions .nav-link svg { color: var(--green); }
+  /* Narrow screens: compact the nav pills to icon-only so all three fit */
+  @media (max-width: 560px) {
+    .header-actions { gap: 6px; }
+    .header-actions .nav-link span { display: none; }
+    .header-actions .nav-link { padding: 7px 9px; }
+  }
 
   /* Input */
   .match-box { margin-top: 26px; max-width: 760px; }
@@ -2314,9 +2323,26 @@
     font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.06em;
     padding: 4px 9px; border-radius: 5px; background: rgba(0,255,133,0.08);
     color: var(--green); border: 1px solid rgba(0,255,133,0.28);
+    cursor: pointer; transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
+  .matched-chip:hover, .matched-chip:focus-visible { border-color: var(--green); box-shadow: 0 0 0 1px rgba(0,255,133,0.45); }
   .alt-path { font-size: 12.5px; color: var(--ink-muted); margin-top: 12px; }
-  .alt-path a { color: var(--green); text-decoration: none; border-bottom: 1px solid var(--line-3); cursor: pointer; }
+  .alt-path button {
+    appearance: none; background: none; border: none; padding: 0; font: inherit;
+    color: var(--green); border-bottom: 1px solid var(--line-3); cursor: pointer;
+  }
+  .alt-path button:hover, .alt-path button:focus-visible { border-bottom-color: var(--green); }
+  #match-output:focus { outline: none; }
+  .match-kbd {
+    display: inline-flex; align-items: center; gap: 4px; margin-left: auto;
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; color: var(--dim);
+  }
+  .match-kbd kbd {
+    font: inherit; color: var(--ink-muted); border: 1px solid var(--line); border-bottom-width: 2px;
+    border-radius: 5px; padding: 2px 6px; background: rgba(0,0,0,0.35);
+  }
+  /* Soft-keyboard users have no hardware shortcut to learn about */
+  @media (max-width: 560px) { .match-kbd { display: none; } }
 
   /* Section dividers — each plan section gets its own accent rule */
   .result-section-title {
@@ -2334,6 +2360,7 @@
   .sec-prompts .sec-rule { background: linear-gradient(90deg, rgba(0,194,168,0.55), rgba(0,194,168,0.12) 30%, transparent 70%); box-shadow: 0 0 12px rgba(0,194,168,0.3); }
   .sec-link { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.12em; color: var(--ink-muted); text-decoration: none; white-space: nowrap; }
   .sec-link:hover { color: var(--teal); }
+  .sec-link-certs:hover { color: var(--gold); }
   @media (max-width: 560px) {
     /* keep the label + rule on the first line; drop the link beneath it */
     .result-section-title { flex-wrap: wrap; row-gap: 7px; }
@@ -2393,6 +2420,13 @@
     text-transform: uppercase; font-weight: 700; padding: 5px 11px; border-radius: 999px;
     border: 1px solid var(--green); color: var(--green); background: rgba(0,255,133,0.08);
     text-shadow: 0 0 8px var(--green-glow); white-space: nowrap;
+  }
+  /* Certs with paid components (audit-only, paid exams) get the gold treatment
+     so the badge tells the truth instead of stamping everything "Free". */
+  .cert-rec-card .cost-badge.cost-badge-partial {
+    color: var(--gold); border-color: rgba(255,200,87,0.55);
+    background: rgba(255,200,87,0.07);
+    text-shadow: 0 0 8px rgba(255,200,87,0.35);
   }
   .cert-rec-card .summary { flex: 0 0 auto; margin-bottom: 12px; }
   .cert-rec-card .card-footer { margin-top: auto; }
@@ -2478,6 +2512,14 @@
       </div>
     </a>
     <div class="header-actions">
+      <a class="stat-pill nav-link" href="/certifications.html" title="Free AI certifications">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg>
+        <span>Certs</span>
+      </a>
+      <a class="stat-pill nav-link" href="/prompts.html" title="AI prompt library for building projects">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        <span>Prompts</span>
+      </a>
       <a class="stat-pill nav-link" href="/index.html" title="Back to projects">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
         <span>Projects</span>
@@ -2499,6 +2541,7 @@
         <textarea id="match-input" placeholder="e.g. Junior Data Analyst — SQL, Tableau, Excel, building dashboards and reporting for the marketing team…" aria-label="Job title or description"></textarea>
         <div class="match-row">
           <span class="match-hint">Paste a title or the whole posting — more detail = a sharper match.</span>
+          <span class="match-kbd" aria-hidden="true"><kbd id="match-kbd-mod">Ctrl</kbd><kbd>Enter</kbd></span>
           <button class="match-go" id="match-go" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
             Find my plan
@@ -2520,11 +2563,11 @@
 
 <!-- RESULTS -->
 <section class="match-results">
-  <div class="container" id="match-output"></div>
+  <div class="container" id="match-output" aria-live="polite" tabindex="-1"></div>
 </section>
 
 <!-- TOAST -->
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <!-- FOOTER -->
 <footer>
@@ -2617,11 +2660,11 @@
     { provider: 'Anthropic Academy', name: 'Introduction to Model Context Protocol', level: 'Advanced', url: 'https://www.anthropic.com/learn', paths: ['ai','swe'], tags: ['mcp','agents','python'], note: 'Give AI agents standardized access to tools and data with MCP.' },
     { provider: 'Anthropic Academy', name: 'AI Fluency Series', level: 'Foundational', url: 'https://www.anthropic.com/learn', paths: ['ai','data','helpdesk','tech-it','cs','swe','cloud','cyber'], tags: ['ai fluency','ethics'], note: 'Effective, ethical, hands-on AI collaboration for any role.' },
     { provider: 'LangChain Academy', name: 'Introduction to LangGraph', level: 'Advanced', url: 'https://academy.langchain.com/', paths: ['ai'], tags: ['agents','langchain'], note: 'Build stateful, multi-agent AI applications with LangGraph.' },
-    { provider: 'Google AI', name: 'Google AI Essentials', level: 'Foundational', url: 'https://grow.google/ai/', paths: ['data','helpdesk','tech-it','cs','swe','cloud','cyber','ai'], tags: ['ai fluency','productivity'], note: 'Core AI skills and tools you can put to work on day one.' },
+    { provider: 'Google AI', name: 'Google AI Essentials', level: 'Foundational', url: 'https://grow.google/ai/', paths: ['data','helpdesk','tech-it','cs','swe','cloud','cyber','ai'], tags: ['ai fluency','productivity'], note: 'Core AI skills and tools you can put to work on day one.', costLabel: 'Free to audit' },
     { provider: 'Microsoft', name: 'Applied Skills in AI', level: 'Intermediate', url: 'https://learn.microsoft.com/credentials/applied-skills/', paths: ['cloud','ai','data'], tags: ['azure','ml','gen ai'], note: 'Lab-validated Azure AI, ML, and generative-AI skills.' },
     { provider: 'IBM SkillsBuild', name: 'AI Fundamentals', level: 'Foundational', url: 'https://skillsbuild.org/', paths: ['data','ai','swe','helpdesk','tech-it','cs'], tags: ['ml','nlp','fundamentals'], note: 'ML, NLP, and computer-vision basics — earns a digital badge.' },
-    { provider: 'IBM', name: 'IBM AI Developer Professional Certificate', level: 'Intermediate', url: 'https://www.coursera.org/professional-certificates/applied-artifical-intelligence-ibm-watson-ai', paths: ['ai','swe','data'], tags: ['gen ai','career'], note: 'Job-ready AI and generative-AI developer skills.' },
-    { provider: 'AWS', name: 'AWS Certified AI Practitioner', level: 'Foundational', url: 'https://aws.amazon.com/certification/certified-ai-practitioner/', paths: ['cloud','ai','cyber'], tags: ['aws','cloud','ml'], note: 'Foundational AI/ML knowledge inside the AWS cloud.' },
+    { provider: 'IBM', name: 'IBM AI Developer Professional Certificate', level: 'Intermediate', url: 'https://www.coursera.org/professional-certificates/applied-artifical-intelligence-ibm-watson-ai', paths: ['ai','swe','data'], tags: ['gen ai','career'], note: 'Job-ready AI and generative-AI developer skills.', costLabel: 'Free to audit' },
+    { provider: 'AWS', name: 'AWS Certified AI Practitioner', level: 'Foundational', url: 'https://aws.amazon.com/certification/certified-ai-practitioner/', paths: ['cloud','ai','cyber'], tags: ['aws','cloud','ml'], note: 'Foundational AI/ML knowledge inside the AWS cloud.', costLabel: 'Free prep · paid exam' },
     { provider: 'NVIDIA', name: 'DLI Self-Paced AI Courses', level: 'Intermediate', url: 'https://learn.nvidia.com/', paths: ['ai','cs'], tags: ['deep learning','gpu'], note: 'Hands-on deep learning and GPU-accelerated computing.' }
   ];
 
@@ -2715,7 +2758,7 @@
       <a class="project-card cert-rec-card" href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">
         <div class="card-top">
           <span class="level-badge level-${certLevelClass(c.level)}">${esc(c.level)}</span>
-          <span class="cost-badge">Free</span>
+          <span class="cost-badge${c.costLabel ? ' cost-badge-partial' : ''}">${esc(c.costLabel || 'Free')}</span>
         </div>
         <h3>${esc(c.name)}</h3>
         <p class="summary">${esc(c.note || '')}</p>
@@ -2778,7 +2821,7 @@
           <div class="result-path-name">Tell me a bit more</div>
           <p class="result-why">I couldn't spot a clear career path in that. Add a few skills or tools (e.g. "SQL", "AWS", "React", "SOC"), or pick a path to explore:</p>
           <div class="matched-chips">
-            ${Object.keys(PATHS).map(pid => `<span class="matched-chip" data-pick="${pid}" style="cursor:pointer">${esc(PATHS[pid].name)}</span>`).join('')}
+            ${Object.keys(PATHS).map(pid => `<button type="button" class="matched-chip" data-pick="${pid}">${esc(PATHS[pid].name)}</button>`).join('')}
           </div>
         </div>`;
       out.querySelectorAll('[data-pick]').forEach(el => el.onclick = () => {
@@ -2816,13 +2859,13 @@
             ${skills.map(s => `<span class="skill-chip ${s.have ? 'is-have' : ''}">${esc(s.skill)}</span>`).join('')}
           </div>
         </div>
-        ${hasAlt ? `<div class="alt-path">Also a fit: <a data-pick2="${second}">${esc(PATHS[second].name)} →</a></div>` : ''}
+        ${hasAlt ? `<div class="alt-path">Also a fit: <button type="button" data-pick2="${second}">${esc(PATHS[second].name)} →</button></div>` : ''}
       </div>
 
       <div class="result-section-title sec-projects"><span class="num">01</span><span>Build these projects</span><span class="sec-rule"></span></div>
       <div class="rec-grid">${projects.map(projectCardHTML).join('')}</div>
 
-      <div class="result-section-title sec-certs"><span class="num">02</span><span>Earn these certs</span><span class="sec-rule"></span></div>
+      <div class="result-section-title sec-certs"><span class="num">02</span><span>Earn these certs</span><span class="sec-rule"></span><a class="sec-link sec-link-certs" href="/certifications.html">All free certifications →</a></div>
       <div class="rec-grid">${certs.map(certCardHTML).join('')}</div>
 
       <div class="result-section-title sec-prompts"><span class="num">03</span><span>Build with these prompts</span><span class="sec-rule"></span><a class="sec-link" href="/prompts.html">All 18 prompts →</a></div>
@@ -2891,8 +2934,13 @@
     render(text);
     if ((text || '').trim()) {
       document.querySelector('.match-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('match-output').focus({ preventScroll: true });
     }
   }
+
+  // Show the platform's actual modifier in the shortcut hint
+  const kbdMod = document.getElementById('match-kbd-mod');
+  if (kbdMod && /Mac|iP(hone|ad|od)/.test(navigator.platform)) kbdMod.textContent = '⌘';
 
   // ===== WIRE =====
   document.getElementById('match-go').onclick = run;

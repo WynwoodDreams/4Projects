@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>BuildersBench — Portfolio Project Guide</title>
 <meta name="description" content="35 portfolio projects across 8 tech career paths — AI, cloud, cybersecurity, data, and more. Each ships with a build roadmap, starter AI prompt, resume bullets, and interview pitch." />
-<meta name="theme-color" content="#0a0f0a" />
+<meta name="theme-color" content="#0C161B" />
 <link rel="canonical" href="https://4-projects.vercel.app/" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='none' stroke='%2300e676' stroke-width='2'/%3E%3Cpath d='M8 12l3 3 5-6' fill='none' stroke='%2300e676' stroke-width='2'/%3E%3C/svg%3E" />
 <meta property="og:type" content="website" />
@@ -202,6 +202,9 @@
   }
   .stat-pill svg { color: var(--green); filter: drop-shadow(0 0 4px var(--green-glow)); }
   .stat-pill .num { color: var(--green); font-weight: 600; text-shadow: 0 0 8px var(--green-glow); }
+  .stat-pill:focus-visible, .filter-chip:focus-visible, .backup-btn:focus-visible, .ex-chip:focus-visible {
+    outline: 2px solid var(--green); outline-offset: 2px;
+  }
   .stat-pill.active {
     border-color: var(--green);
     color: var(--green);
@@ -259,6 +262,13 @@
   .hero-cta-primary:hover { transform: translateY(-2px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), 0 0 0 1px rgba(0,255,133,0.85), 0 16px 36px -10px rgba(0,255,133,0.8); }
   .hero-cta-ghost { background: rgba(0,255,133,0.06); color: var(--green); border: 1px solid var(--line-3); }
   .hero-cta-ghost:hover { transform: translateY(-2px); border-color: var(--green); box-shadow: 0 0 0 1px var(--green), 0 14px 30px -16px rgba(0,255,133,0.4); }
+  .hero-continue { cursor: pointer; }
+  .hero-continue .cont-icon { font-size: 9px; filter: drop-shadow(0 0 6px var(--green-glow)); }
+  .hero-continue .cont-title {
+    max-width: 24ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    text-transform: none; letter-spacing: 0.02em; color: var(--ink);
+  }
+  .hero-continue .cont-step { color: var(--ink-soft); font-weight: 500; }
 
   /* ===== "More from BuildersBench" promo band ===== */
   .promo-section { padding: 4px 0 64px; }
@@ -860,6 +870,29 @@
     font-weight: 500;
     margin-right: 4px;
   }
+  .search-field {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 12px; border-radius: 999px;
+    background: rgba(0,0,0,0.40); border: 1px solid var(--line);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .search-field:focus-within { border-color: var(--line-3); box-shadow: 0 0 0 1px var(--line-3); }
+  .search-prefix {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
+    color: var(--green); text-shadow: 0 0 8px var(--green-glow);
+  }
+  #project-search {
+    width: 180px; background: none; border: none; outline: none;
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+  #project-search::placeholder { color: var(--ink-muted); }
+  #project-search::-webkit-search-cancel-button { -webkit-appearance: none; }
+  .search-kbd {
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--ink-muted);
+    border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px;
+  }
+  .search-field:focus-within .search-kbd { visibility: hidden; }
   .filter-chip {
     padding: 8px 15px;
     border: 1px solid rgba(255,255,255,0.18);
@@ -2262,7 +2295,7 @@
     right: 20px;
     width: 44px;
     height: 44px;
-    background: var(--surface-2);
+    background: var(--panel-2);
     border: 1px solid var(--green);
     border-radius: 50%;
     color: var(--green);
@@ -2520,8 +2553,15 @@
     .hero h1 { font-size: clamp(34px, 10vw, 46px); }
     .feed-window { height: 190px; }
     .controls { top: 54px; }
-    .header-actions .stat-pill { display: none; }
-    /* Header nav pills hide on mobile — the hero CTAs cover Certs + Prompts. */
+    /* Nav pills hide on mobile — the hero CTAs directly below cover Match/Certs/Prompts.
+       Bench + saved/done stay as compact icon pills; hiding them left My Bench
+       and the counters with no mobile entry point at all. */
+    .header-actions { gap: 6px; }
+    .header-actions .nav-link, .header-actions .nav-link2 { display: none; }
+    .header-actions .stat-pill { padding: 7px 9px; gap: 5px; }
+    .header-actions .stat-pill > span:not(:has(.num)) { display: none; }
+    .header-actions .stat-pill > span { font-size: 0; letter-spacing: 0; }
+    .header-actions .stat-pill > span .num { font-size: 10px; }
     .brand-mark { font-size: 11px; letter-spacing: 0.12em; }
 
     /* Mobile: only the brand header sticks; controls scroll away */
@@ -2565,6 +2605,9 @@
       align-items: stretch;
       gap: 14px;
     }
+    .search-field { width: 100%; }
+    #project-search { flex: 1; width: auto; }
+    .search-kbd { display: none; }  /* no hardware keyboard to advertise */
     .filter-group {
       width: 100%;
       flex-wrap: wrap;
@@ -2747,6 +2790,8 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
             Prompt Library
           </a>
+          <!-- Shown only when a project is in progress — resumes it at its roadmap -->
+          <button class="hero-cta hero-cta-ghost hero-continue" id="hero-continue" hidden></button>
         </div>
       </div>
       <aside class="hero-side hero-quiz" aria-label="Find your starting path quiz">
@@ -2765,6 +2810,11 @@
   <div class="container">
     <div class="path-tabs" id="path-tabs"></div>
     <div class="filter-row">
+      <div class="search-field">
+        <span class="search-prefix" aria-hidden="true">&gt;</span>
+        <input type="search" id="project-search" placeholder="search projects…" aria-label="Search projects" autocomplete="off" spellcheck="false" />
+        <kbd class="search-kbd" aria-hidden="true" title="Press / to search">/</kbd>
+      </div>
       <div class="filter-group">
         <span class="filter-label">Filter by status</span>
         <button class="filter-chip active" data-status="all">All</button>
@@ -2815,7 +2865,7 @@
 <button id="modal-top" title="Back to top" aria-label="Back to top">↑</button>
 
 <!-- TOAST -->
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <!-- MORE FROM BUILDERSBENCH -->
 <section class="promo-section" id="more-resources">
@@ -2927,14 +2977,14 @@
       <div class="footer-col">
         <h5>Paths</h5>
         <ul class="footer-paths">
-          <li><a href="#path-tabs" data-footer-path="ai">AI Engineer</a></li>
-          <li><a href="#path-tabs" data-footer-path="cloud">Cloud Computing</a></li>
-          <li><a href="#path-tabs" data-footer-path="cs">Computer Science</a></li>
-          <li><a href="#path-tabs" data-footer-path="cyber">Cybersecurity</a></li>
-          <li><a href="#path-tabs" data-footer-path="data">Data Analyst</a></li>
-          <li><a href="#path-tabs" data-footer-path="helpdesk">Help Desk</a></li>
-          <li><a href="#path-tabs" data-footer-path="swe">Software Engineer</a></li>
-          <li><a href="#path-tabs" data-footer-path="tech-it">Tech / IT Support</a></li>
+          <li><a href="#path=ai" data-footer-path="ai">AI Engineer</a></li>
+          <li><a href="#path=cloud" data-footer-path="cloud">Cloud Computing</a></li>
+          <li><a href="#path=cs" data-footer-path="cs">Computer Science</a></li>
+          <li><a href="#path=cyber" data-footer-path="cyber">Cybersecurity</a></li>
+          <li><a href="#path=data" data-footer-path="data">Data Analyst</a></li>
+          <li><a href="#path=helpdesk" data-footer-path="helpdesk">Help Desk</a></li>
+          <li><a href="#path=swe" data-footer-path="swe">Software Engineer</a></li>
+          <li><a href="#path=tech-it" data-footer-path="tech-it">Tech / IT Support</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -3963,6 +4013,8 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
   let state = {
     currentPath: 'all',
     currentStatus: 'all',
+    search: '', // free-text filter over title/summary/skills/tech — never persisted
+
     view: 'grid', // 'grid' | 'bench' — bench is not persisted, always starts on the grid
     bookmarks: [],
     progress: {}, // { projectId: 'started' | 'done' } — derived from stepProgress, kept for backward compatibility
@@ -4084,6 +4136,7 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
     renderStats();
     renderProjects();
     renderBench();
+    updateContinuePill();
     if (status === 'done') toast('All steps complete — nice work');
   }
 
@@ -4097,6 +4150,7 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
     renderStats();
     renderProjects();
     renderBench();
+    updateContinuePill();
     toast(value ? 'Marked all steps complete' : 'Progress reset');
   }
 
@@ -4213,13 +4267,29 @@ ${tags} #BuildingInPublic #OpenToWork`;
     };
   }
 
-  const INTERVIEW_QUESTIONS = [
+  // Two questions are generated per project (stack + career path); these three apply to any build.
+  const INTERVIEW_QUESTIONS_COMMON = [
     { q: 'What problem does this project solve?', hint: 'Lead with the use case, not the tech.' },
-    { q: 'Why did you pick this tech stack?', hint: 'Mention one alternative you considered and why you rejected it.' },
     { q: 'What was the hardest part?', hint: "Be specific. 'Debugging API rate limits' beats 'it was challenging.'" },
-    { q: "What would you do differently?", hint: 'Interviewers love self-awareness. Pick one real trade-off.' },
-    { q: 'How does this scale?', hint: 'Know your bottleneck — database, API calls, memory, or cost.' }
+    { q: 'What would you do differently?', hint: 'Interviewers love self-awareness. Pick one real trade-off.' }
   ];
+  const PATH_QUESTIONS = {
+    ai:        { q: "How do you know the AI's output is any good?", hint: 'Talk about the failure cases you found and how you tested against them.' },
+    cloud:     { q: 'What would this cost to run at real scale?', hint: 'Know which resource bills first — and how you stayed inside the free tier.' },
+    cs:        { q: 'Walk me through the core algorithm or data structure.', hint: 'Know its complexity and why a simpler approach fell short.' },
+    cyber:     { q: 'What is the attack surface of your own tool?', hint: 'Auditing your own build shows the security mindset they’re hiring for.' },
+    data:      { q: 'How did you validate the data before trusting your results?', hint: 'Mention one dirty-data problem you caught and how you caught it.' },
+    helpdesk:  { q: 'How would you hand this to a non-technical user?', hint: 'Support roles live on documentation — point at your README or runbook.' },
+    swe:       { q: 'How is this tested?', hint: 'Name the layer you tested (unit, integration, manual) and a bug a test caught.' },
+    'tech-it': { q: 'What breaks first if this runs unattended for a month?', hint: 'Logs, monitoring, restarts — show you think past the demo.' }
+  };
+  function interviewQuestions(p) {
+    const tech = (p.tech && p.tech[0]) || 'this stack';
+    return [
+      { q: `Why ${tech} — what else did you consider?`, hint: 'Have one concrete alternative ready and the trade-off that decided it.' },
+      PATH_QUESTIONS[p.path] || { q: 'How does this scale?', hint: 'Know your bottleneck — database, API calls, memory, or cost.' }
+    ].concat(INTERVIEW_QUESTIONS_COMMON);
+  }
 
   function deployChecklist(p) {
     const stack = p.tech.join(' ').toLowerCase();
@@ -4274,6 +4344,11 @@ ${tags} #BuildingInPublic #OpenToWork`;
       btn.addEventListener('click', () => {
         state.currentPath = btn.dataset.path;
         state.view = 'grid';
+        // Keep the URL shareable: #path=<id> mirrors the active tab (replaceState avoids
+        // history spam and doesn't re-trigger the hashchange handler)
+        history.replaceState(null, '', state.currentPath === 'all'
+          ? location.pathname + location.search
+          : '#path=' + state.currentPath);
         renderAll();
       });
     });
@@ -4288,24 +4363,35 @@ ${tags} #BuildingInPublic #OpenToWork`;
   // ===== RENDER FILTERS =====
   function renderFilters() {
     document.querySelectorAll('.filter-chip[data-status]').forEach(b => {
-      b.classList.toggle('active', b.dataset.status === state.currentStatus);
+      const active = b.dataset.status === state.currentStatus;
+      b.classList.toggle('active', active);
+      b.setAttribute('aria-pressed', active);
       b.onclick = () => { state.currentStatus = b.dataset.status; state.view = 'grid'; renderAll(); };
     });
     document.getElementById('reset-btn').onclick = () => {
       state.currentPath = 'all';
       state.currentStatus = 'all';
+      state.search = '';
+      const searchEl = document.getElementById('project-search');
+      if (searchEl) searchEl.value = '';
       state.view = 'grid';
+      history.replaceState(null, '', location.pathname + location.search);
       renderAll();
     };
   }
 
   // ===== FILTERING =====
   function getFilteredProjects() {
+    const terms = state.search.trim().toLowerCase().split(/\s+/).filter(Boolean);
     return PROJECTS.filter(p => {
       if (state.currentPath !== 'all' && p.path !== state.currentPath) return false;
       if (state.currentStatus === 'bookmarked' && !state.bookmarks.includes(p.id)) return false;
       if (state.currentStatus === 'started' && state.progress[p.id] !== 'started') return false;
       if (state.currentStatus === 'done' && state.progress[p.id] !== 'done') return false;
+      if (terms.length) {
+        const hay = (p.title + ' ' + p.summary + ' ' + (p.skills || '') + ' ' + (p.tech || []).join(' ')).toLowerCase();
+        if (!terms.every(t => hay.includes(t))) return false;
+      }
       return true;
     });
   }
@@ -4318,7 +4404,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     if (filtered.length === 0) {
       container.innerHTML = `<div class="empty-state">
         <h3>Nothing here yet.</h3>
-        <p>Try adjusting your filters or choose a different path.</p>
+        <p>${state.search.trim() ? 'No projects match your search. Try fewer or broader words.' : 'Try adjusting your filters or choose a different path.'}</p>
       </div>`;
       return;
     }
@@ -4454,6 +4540,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     }
     saveState();
     renderBench();
+    updateContinuePill();
   }
 
   // ===== MY BENCH (KANBAN) =====
@@ -4503,6 +4590,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     renderStats();
     renderProjects();
     renderBench();
+    updateContinuePill();
   }
 
   function benchCardHTML(p) {
@@ -4933,7 +5021,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     `;
 
     // ===== Follow-up questions =====
-    document.getElementById('tpl-questions').innerHTML = INTERVIEW_QUESTIONS.map(item =>
+    document.getElementById('tpl-questions').innerHTML = interviewQuestions(p).map(item =>
       `<li><strong>${item.q}</strong><span>${item.hint}</span></li>`
     ).join('');
 
@@ -5345,7 +5433,59 @@ ${tags} #BuildingInPublic #OpenToWork`;
     renderStats();
     refreshBackupButtons();
     updateViewVisibility();
+    updateContinuePill();
     if (state.view === 'bench') renderBench();
+  }
+  // "Continue where you left off" — surfaces the most recently touched in-progress
+  // project (a focused one wins) so returning visitors skip the re-finding step.
+  function updateContinuePill() {
+    const btn = document.getElementById('hero-continue');
+    if (!btn) return;
+    const started = PROJECTS.filter(p => state.progress[p.id] === 'started');
+    if (!started.length) { btn.hidden = true; return; }
+    const lastTouch = id => Math.max(0, ...(state.stepDates[id] || []).filter(t => typeof t === 'number'));
+    started.sort((a, b) => lastTouch(b.id) - lastTouch(a.id));
+    const pick = started.find(p => state.focus.includes(p.id)) || started[0];
+    const steps = state.stepProgress[pick.id] || [];
+    const done = steps.filter(Boolean).length;
+    btn.hidden = false;
+    btn.innerHTML = `<span class="cont-icon" aria-hidden="true">▶</span>Continue<span class="cont-title">${pick.title}</span><span class="cont-step">${done}/${steps.length}</span>`;
+    btn.title = `Pick up ${pick.title} at step ${done + 1} of ${steps.length}`;
+    btn.onclick = () => {
+      openModal(pick.id);
+      setTimeout(() => {
+        const roadmap = document.querySelector('.modal .build-steps') || document.querySelector('#modal .build-steps');
+        if (roadmap) roadmap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 150);
+    };
+  }
+
+  function wireSearch() {
+    const el = document.getElementById('project-search');
+    if (!el) return;
+    el.addEventListener('input', () => {
+      state.search = el.value;
+      state.view = 'grid';
+      renderAll();
+    });
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        el.value = '';
+        state.search = '';
+        renderAll();
+        el.blur();
+      }
+    });
+    // "/" focuses search from anywhere outside a field, like Linear/GitHub
+    document.addEventListener('keydown', e => {
+      if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey) return;
+      const t = e.target;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
+      if (document.body.classList.contains('modal-open')) return;
+      e.preventDefault();
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.focus({ preventScroll: true });
+    });
   }
   function wireFooterPaths() {
     document.querySelectorAll('[data-footer-path]').forEach(a => {
@@ -5363,15 +5503,28 @@ ${tags} #BuildingInPublic #OpenToWork`;
   wireBackupControls();
   renderAll();
   mountHero();
+  wireSearch();
   wireFooterPaths();
   // Deferred so the merge confirm() can't block first paint
   setTimeout(readSharedList, 0);
 
-  // Deep-link a single project's modal, e.g. /index.html#project=ai-1 (used by Career Match)
+  // Deep links: #project=<id> opens that project's modal (used by Career Match),
+  // #path=<id> pre-filters the catalog to one career path (match results, footer, shared URLs)
   function openProjectFromHash() {
-    const m = location.hash.match(/^#project=([\w-]+)$/);
-    if (!m) return;
-    if (PROJECTS.find(p => p.id === m[1])) openModal(m[1]);
+    let m = location.hash.match(/^#project=([\w-]+)$/);
+    if (m) {
+      if (PROJECTS.find(p => p.id === m[1])) openModal(m[1]);
+      else toast('That project is no longer in the catalog');
+      return;
+    }
+    m = location.hash.match(/^#path=([\w-]+)$/);
+    if (m && PATHS.find(p => p.id === m[1] && p.id !== 'all')) {
+      state.currentPath = m[1];
+      state.view = 'grid';
+      renderAll();
+      const controls = document.querySelector('.controls');
+      if (controls) controls.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
   openProjectFromHash();
   window.addEventListener('hashchange', openProjectFromHash);

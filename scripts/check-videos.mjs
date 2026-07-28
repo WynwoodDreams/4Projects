@@ -10,8 +10,27 @@
 
 import { readIndexProjects } from './projects.mjs';
 
-const oembed = id =>
-  `https://www.youtube.com/oembed?url=${encodeURIComponent(`https://www.youtube.com/watch?v=${id}`)}&format=json`;
+const oembed = (id, isPlaylist) => {
+  const target = isPlaylist
+    ? `https://www.youtube.com/playlist?list=${id}`
+    : `https://www.youtube.com/watch?v=${id}`;
+  return `https://www.youtube.com/oembed?url=${encodeURIComponent(target)}&format=json`;
+};
+
+// Playlist cards use ytThumb for their still image, so a dead ytThumb leaves a
+// blank card even when the playlist itself is fine.
+async function checkThumb(p, failures) {
+  if (!p.ytThumb) return;
+  try {
+    const res = await fetch(oembed(p.ytThumb, false));
+    if (!res.ok) {
+      failures.push(`${p.id}: ytThumb ${p.ytThumb} returned HTTP ${res.status}; card will render without an image.`);
+      console.log(`      ⚠ ytThumb ${p.ytThumb} is dead (HTTP ${res.status})`);
+    }
+  } catch (err) {
+    failures.push(`${p.id}: network error checking ytThumb ${p.ytThumb} (${err.message})`);
+  }
+}
 
 const projects = readIndexProjects();
 const failures = [];
@@ -19,37 +38,34 @@ const failures = [];
 console.log(`Checking ${projects.length} videos...\n`);
 
 for (const p of projects) {
-  // Playlists use a different endpoint shape and are not checkable this way.
-  if (p.ytPlaylist) {
-    console.log(`SKIP  ${p.id} — playlist (${p.youtube})`);
-    continue;
-  }
-
   let res;
   try {
-    res = await fetch(oembed(p.youtube));
+    res = await fetch(oembed(p.youtube, p.ytPlaylist));
   } catch (err) {
     failures.push(`${p.id}: network error checking ${p.youtube} (${err.message})`);
     console.log(`ERROR ${p.id} — ${err.message}`);
     continue;
   }
 
+  const kind = p.ytPlaylist ? 'playlist' : 'video';
+
   if (res.status === 401 || res.status === 403) {
     // oEmbed refuses videos whose owner disabled embedding.
-    failures.push(`${p.id}: video ${p.youtube} exists but embedding is disabled.`);
+    failures.push(`${p.id}: ${kind} ${p.youtube} exists but embedding is disabled.`);
     console.log(`FAIL  ${p.id} — embedding disabled (${p.youtube})`);
   } else if (res.status === 404) {
-    failures.push(`${p.id}: video ${p.youtube} not found (deleted or private).`);
+    failures.push(`${p.id}: ${kind} ${p.youtube} not found (deleted or private).`);
     console.log(`FAIL  ${p.id} — not found (${p.youtube})`);
   } else if (!res.ok) {
     failures.push(`${p.id}: unexpected status ${res.status} for ${p.youtube}.`);
     console.log(`FAIL  ${p.id} — HTTP ${res.status} (${p.youtube})`);
   } else {
     const { title } = await res.json();
-    // A drifting title usually means the stored ytTitle no longer matches what
-    // viewers actually see on the card.
-    const drift = title.trim() !== (p.ytTitle || '').trim();
-    console.log(`OK    ${p.id} — ${title}${drift ? `\n      ⚠ stored title differs: "${p.ytTitle}"` : ''}`);
+    // Stored titles are editorial for playlists (the real ones are often long
+    // and channel-branded), so only flag drift on single videos.
+    const drift = !p.ytPlaylist && title.trim() !== (p.ytTitle || '').trim();
+    console.log(`OK    ${p.id} — [${kind}] ${title}${drift ? `\n      ⚠ stored title differs: "${p.ytTitle}"` : ''}`);
+    await checkThumb(p, failures);
   }
 }
 

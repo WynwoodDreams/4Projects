@@ -1935,6 +1935,27 @@
     background: linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0.1));
   }
   .video-thumb:hover { transform: scale(1.02); }
+  /* Playlists have no thumbnail endpoint — fall back to the house gradient. */
+  .video-thumb--noimg {
+    background:
+      radial-gradient(120% 90% at 50% 0%, rgba(0,255,133,0.16), transparent 60%),
+      linear-gradient(160deg, #06231A 0%, #04140F 60%, #020A07 100%);
+  }
+  .video-badge {
+    position: absolute;
+    top: 14px;
+    left: 18px;
+    z-index: 2;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(0,255,133,0.35);
+    background: rgba(2,17,10,0.72);
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
   .play-btn {
     position: relative;
     z-index: 2;

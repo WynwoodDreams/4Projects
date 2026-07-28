@@ -51,6 +51,32 @@ export function validateProjects() {
     if (!p.youtube) errors.push(`${where} has no youtube id.`);
     if (!p.ytTitle) errors.push(`${where} has no ytTitle.`);
 
+    // Playlist and video ids are not interchangeable: they use different embed
+    // urls, and only video ids have a thumbnail endpoint. Mixing them up
+    // produces a card that looks fine in source and breaks in the browser.
+    // Video ids are always exactly 11 characters; playlist ids carry a known
+    // prefix and are longer. Length has to be checked first, because plenty of
+    // valid video ids happen to start with a playlist prefix (e.g. "OLXkGB7krGo").
+    if (p.youtube) {
+      const isVideoId = p.youtube.length === 11;
+      const isPlaylistId = p.youtube.length > 11 && /^(PL|UU|OL|FL|RD)/.test(p.youtube);
+      if (p.ytPlaylist && !isPlaylistId) {
+        errors.push(`${where} is marked ytPlaylist but "${p.youtube}" is not a playlist id.`);
+      }
+      if (!p.ytPlaylist && !isVideoId) {
+        errors.push(`${where} has a malformed video id: "${p.youtube}".` +
+          (isPlaylistId ? ' It looks like a playlist id — add ytPlaylist: true.' : ''));
+      }
+    }
+    // Optional, but if present it must be a video id — it is used as the
+    // playlist card's thumbnail.
+    if (p.ytThumb && p.ytThumb.length !== 11) {
+      errors.push(`${where} has a malformed ytThumb: "${p.ytThumb}".`);
+    }
+    if (p.ytThumb && !p.ytPlaylist) {
+      errors.push(`${where} sets ytThumb but is not a playlist; the video id is used directly.`);
+    }
+
     if (!p.path) errors.push(`${where} has no path.`);
     if (!p.level) errors.push(`${where} has no level.`);
     if (!Array.isArray(p.steps) || p.steps.length === 0) {

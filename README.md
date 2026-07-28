@@ -8,7 +8,7 @@ A curated portfolio project guide for students chasing internships, first roles,
 
 ## What's inside
 
-- **41 projects** across 8 career paths — AI Engineer, Cloud, Computer Science, Cybersecurity, Data Analyst, Help Desk, Software Engineer, IT Support
+- **43 projects** across 8 career paths — AI Engineer, Cloud, Computer Science, Cybersecurity, Data Analyst, Help Desk, Software Engineer, IT Support
 - Each project ships with:
   - A 6-step build roadmap
   - A starter AI prompt for vibe-coding
@@ -42,6 +42,17 @@ Vite serves the site at the printed local URL.
 Every card ships with a video — that's a product requirement, not a nice-to-have. Source the video first, then write the card around it.
 
 Projects live in the `PROJECTS` array in `index.html`, with a trimmed mirror in `match.html` that the job matcher reads. **Both must be updated.** `npm run build` fails if they drift apart, or if any project is missing `youtube` / `ytTitle`.
+
+Where no single tutorial covers a topic, a card can point at a playlist instead:
+
+```js
+youtube: 'PLuAoMvvRllpQJUJ2Fn-zwd2zIK9pWjite',
+ytPlaylist: true,
+ytTitle: 'Jira Service Management Tutorial — Complete Course',
+ytThumb: 'dQw4w9WgXcQ',  // optional: a video from the playlist, used as the still image
+```
+
+YouTube only serves thumbnails for video ids, so a playlist card without `ytThumb` renders a gradient placeholder instead of a broken image. Both are fine; `ytThumb` just looks better.
 
 To check that every video still resolves and allows embedding (they get deleted and privated over time):
 

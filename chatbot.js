@@ -208,7 +208,8 @@ const CSS = `
   font-family: 'JetBrains Mono', monospace; font-size: 11px;
   letter-spacing: 0.16em; text-transform: uppercase; color: var(--green, #00ff85);
 }
-.bb-chat-head .bb-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green, #00ff85); box-shadow: 0 0 8px rgba(0,255,133,0.8); }
+.bb-chat-head .bb-head-icon { display: inline-flex; width: 18px; height: 18px; filter: drop-shadow(0 0 6px rgba(0,255,133,0.6)); }
+.bb-chat-head .bb-head-icon svg { width: 100%; height: 100%; }
 .bb-chat-close {
   margin-left: auto; background: none; border: none; cursor: pointer;
   color: rgba(230,241,243,0.6); font-size: 18px; line-height: 1; padding: 4px;
@@ -250,6 +251,14 @@ const CSS = `
 }
 `;
 
+// Robot head in the site's Lucide-style line art: antenna, rounded head,
+// vertical-stroke eyes, smile.
+const BOT_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+  + '<circle cx="12" cy="3.2" r="1"/><path d="M12 4.6V7"/>'
+  + '<rect x="4.5" y="7" width="15" height="13" rx="4.5"/>'
+  + '<path d="M9 11.5v1.6M15 11.5v1.6"/>'
+  + '<path d="M9 16.2c.8.9 1.9 1.3 3 1.3s2.2-.4 3-1.3"/></svg>';
+
 function el(tag, cls, text) {
   const n = document.createElement(tag);
   if (cls) n.className = cls;
@@ -264,14 +273,14 @@ function initUI() {
 
   const launcher = el('button', 'bb-chat-launcher');
   launcher.setAttribute('aria-label', 'Open the BuildersBench guide chat');
-  launcher.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>';
+  launcher.innerHTML = BOT_ICON;
 
   const panel = el('div', 'bb-chat-panel');
   panel.hidden = true;
   panel.setAttribute('role', 'dialog');
   panel.setAttribute('aria-label', 'BuildersBench guide chat');
   panel.innerHTML = `
-    <div class="bb-chat-head"><span class="bb-dot"></span>Guide · scripted, on-device
+    <div class="bb-chat-head"><span class="bb-head-icon">${BOT_ICON}</span>Guide · scripted, on-device
       <button class="bb-chat-close" aria-label="Close chat">×</button></div>
     <div class="bb-chat-log" aria-live="polite"></div>
     <div class="bb-chat-chips"></div>

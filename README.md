@@ -72,6 +72,18 @@ npm run test:match
 
 Each case asserts the path a posting routes to and a project that must appear. Add a case when you add a project that targets a distinct kind of role.
 
+### Guide chatbot
+
+`chatbot.js` is a floating chat widget on all four pages. It is deliberately **not** an LLM: intent matching over a hand-written knowledge base, fully client-side, nothing typed into it leaves the browser (which the bot itself tells the user). It injects its own markup and styles, so there is exactly one copy of everything.
+
+```
+npm run test:chat
+```
+
+asserts that common phrasings hit the right answer and that out-of-scope questions fall through to the fallback instead of getting a confidently wrong one. When you add or reword an intent in `INTENTS`, add a test case.
+
+`respond()` is async and returns `{ text, links, chips }` — a real model behind a serverless endpoint can replace the lookup later without touching the UI.
+
 ### Styles
 
 `index.html` does **not** load `styles.css` — it has its own inline `<style id="glass-terminal-style">` block. `styles.css` serves `match.html`, `certifications.html`, and `prompts.html`.

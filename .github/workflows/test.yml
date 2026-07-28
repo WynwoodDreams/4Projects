@@ -18,3 +18,4 @@ jobs:
       # Catalog and stylesheet consistency checks run as part of the build.
       - run: npm run build
       - run: npm run test:match
+      - run: npm run test:chat

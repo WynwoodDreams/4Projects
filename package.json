@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "check:videos": "node scripts/check-videos.mjs",
     "test:match": "node scripts/match-test.mjs",
+    "test:chat": "node scripts/chat-test.mjs",
     "lint": "echo 'No linter configured for static HTML'"
   },
   "keywords": [],

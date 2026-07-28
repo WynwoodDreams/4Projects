@@ -1,0 +1,26 @@
+name: Check videos
+
+# Every project card ships with a video, so a deleted, privated, or
+# embedding-disabled video is a broken card. This runs where YouTube is
+# reachable, which local sandboxes and the Vercel build often are not.
+on:
+  schedule:
+    # Mondays at 13:00 UTC — early enough in the week to fix before traffic.
+    - cron: '0 13 * * 1'
+  pull_request:
+    # Only when the catalog itself changes; no point re-checking 43 videos
+    # because a stylesheet moved.
+    paths:
+      - 'index.html'
+      - 'scripts/**'
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm run check:videos

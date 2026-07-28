@@ -1,16 +1,18 @@
 import { defineConfig } from 'vite';
 import { fileURLToPath, URL } from 'node:url';
 import { validateProjects } from './scripts/projects.mjs';
+import { validateStyles } from './scripts/styles.mjs';
 
-// Fails the build when a project is missing its video, or when the catalog in
-// index.html and the mirror in match.html have drifted apart. Both are easy to
-// get wrong by hand and neither shows up until someone opens the affected card.
-const projectCatalogCheck = () => ({
-  name: 'project-catalog-check',
+// This project keeps two things duplicated by hand — the project catalog
+// (index.html + match.html) and the stylesheet (an inline block in index.html +
+// styles.css). Both fail silently when only one copy is edited, so both are
+// checked at build time.
+const consistencyCheck = () => ({
+  name: 'consistency-check',
   buildStart() {
-    const errors = validateProjects();
+    const errors = [...validateProjects(), ...validateStyles()];
     if (errors.length) {
-      this.error(`Project catalog validation failed:\n  - ${errors.join('\n  - ')}`);
+      this.error(`Consistency check failed:\n  - ${errors.join('\n  - ')}`);
     }
   },
 });
@@ -18,7 +20,7 @@ const projectCatalogCheck = () => ({
 // Multi-page build: every standalone HTML entry must be listed here, otherwise
 // `vite build` only emits index.html and the other pages 404 in production.
 export default defineConfig({
-  plugins: [projectCatalogCheck()],
+  plugins: [consistencyCheck()],
   build: {
     rollupOptions: {
       input: {

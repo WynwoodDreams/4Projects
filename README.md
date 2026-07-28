@@ -60,6 +60,14 @@ To check that every video still resolves and allows embedding (they get deleted 
 npm run check:videos
 ```
 
+This also runs weekly in CI and on any pull request that touches the catalog, since it needs network access to YouTube that a local sandbox may not have.
+
+### Styles
+
+`index.html` does **not** load `styles.css` — it has its own inline `<style id="glass-terminal-style">` block. `styles.css` serves `match.html`, `certifications.html`, and `prompts.html`.
+
+Shared component styles therefore exist twice, and editing the wrong copy changes nothing with no error. `npm run build` compares the two and fails when a shared selector's declarations diverge. Genuine per-page differences go in `INTENTIONAL_OVERRIDES` in `scripts/styles.mjs` with a reason.
+
 ## Security & privacy
 
 - HTTP security headers configured in `vercel.json` (X-Frame-Options, Permissions-Policy, HSTS, etc.)

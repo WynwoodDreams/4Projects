@@ -2387,6 +2387,27 @@
     background: linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0.1));
   }
   .video-thumb:hover { transform: scale(1.02); }
+  /* Playlists have no thumbnail endpoint — fall back to the house gradient. */
+  .video-thumb--noimg {
+    background:
+      radial-gradient(120% 90% at 50% 0%, rgba(0,255,133,0.16), transparent 60%),
+      linear-gradient(160deg, #06231A 0%, #04140F 60%, #020A07 100%);
+  }
+  .video-badge {
+    position: absolute;
+    top: 14px;
+    left: 18px;
+    z-index: 2;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(0,255,133,0.35);
+    background: rgba(2,17,10,0.72);
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
   .play-btn {
     position: relative;
     z-index: 2;
@@ -4005,6 +4026,223 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         { title: 'Add an Enrollment Status Page', desc: 'Configure ESP to block sign-in until apps + policies are applied. Pin Microsoft 365 apps + a default browser to deploy on first run.' },
         { title: 'Reset and demo', desc: 'Wipe the test device. Power on, connect to Wi-Fi, sign in. Watch it self-configure end to end. Record this — that\'s your portfolio asset.' }
       ]
+    },
+    // ===== BLUE TEAM / DETECTION =====
+    {
+      id: 'cy-5', path: 'cyber', level: 'intermediate',
+      title: 'SIEM Home Lab with Detection Engineering',
+      summary: 'A working Wazuh SIEM ingesting Windows and Linux logs, with custom detection rules mapped to MITRE ATT&CK — and a simulated attack that proves they fire.',
+      tech: ['Wazuh', 'Sysmon', 'Sigma', 'MITRE ATT&CK', 'VirtualBox'],
+      skills: 'Detection Engineering, Log Analysis, MITRE ATT&CK Mapping, Blue Team Operations',
+      why: 'Nearly every entry-level security job is a blue-team job, but most portfolios are all offense — scanners, pentest scripts, CTF writeups. A SIEM lab with detections you wrote yourself proves you can do the work a SOC actually hires for: turn raw logs into alerts that catch real behavior.',
+      useCase: 'A SOC team onboards a new log source and needs custom rules to detect credential dumping and persistence techniques that the vendor default ruleset misses entirely.',
+      bonus: 'Add an active-response rule that automatically isolates a host when a high-severity detection fires, then document the false-positive rate over a week of normal use.',
+      aiAssist: 'Use Claude or ChatGPT to translate a MITRE technique description into a working Sigma rule, then to explain why a rule is not matching against a specific log sample.',
+      prompt: 'Act as a detection engineer. I have Sysmon Event ID 1 (process creation) logs flowing into Wazuh. Write a detection rule for MITRE ATT&CK T1003.001 (LSASS memory dumping). Explain each field you match on, then tell me what legitimate admin activity could trigger a false positive and how to tune it out.',
+      showcase: {
+        github: 'Repo with your custom rule files, a MITRE coverage matrix showing which techniques you detect, and screenshots of alerts firing during the attack simulation.',
+        linkedin: 'Post the before/after — an attack technique running undetected, then the same technique lighting up your dashboard after you wrote the rule.',
+        resume: 'Focus on "Detection engineering", "MITRE ATT&CK mapping", and "SIEM administration".'
+      },
+      youtube: 'bltbJ2TUQWU', ytTitle: 'Setup Your Own FREE SIEM at Home! - Wazuh',
+      steps: [
+        { title: 'Stand up the lab', desc: 'Create two VMs in VirtualBox — a Wazuh server (Ubuntu) and a Windows 10/11 victim. Get them on the same host-only network so nothing touches your real LAN.' },
+        { title: 'Install Wazuh and onboard agents', desc: 'Deploy the Wazuh manager, then install agents on both machines. Confirm logs are arriving in the dashboard before you write a single rule.' },
+        { title: 'Add Sysmon for real telemetry', desc: 'Install Sysmon on the Windows host with a well-known config (SwiftOnSecurity is the standard starting point). This is what turns thin Windows logs into detection-grade data.' },
+        { title: 'Write your first detections', desc: 'Pick 3–5 MITRE techniques and write a rule for each. Start with process creation and persistence — they are the easiest to trigger safely. Use the AI prompt below.' },
+        { title: 'Simulate the attacks', desc: 'Use Atomic Red Team to run the exact techniques you wrote rules for. Confirm each alert fires. Document any that did not, and fix them — this iteration is the actual skill.' },
+        { title: 'Build the coverage report', desc: 'Map your rules to an ATT&CK Navigator layer showing what you cover and what you do not. Honest gaps read as maturity, not weakness. Screen-record one detection end to end.' }
+      ]
+    },
+    // ===== NETWORKING FUNDAMENTALS =====
+    {
+      id: 'it-6', path: 'tech-it', level: 'beginner',
+      title: 'Segmented Home Lab Network with VLANs and DNS Filtering',
+      summary: 'A real segmented network — separate VLANs for trusted devices, IoT, and guests, with firewall rules between them, Pi-hole DNS filtering, and packet captures that prove the isolation works.',
+      tech: ['pfSense', 'VLANs', 'Pi-hole', 'Wireshark', 'VirtualBox'],
+      skills: 'Network Segmentation, Firewall Rules, DNS, Packet Analysis, Troubleshooting',
+      why: 'Interviewers for IT support and networking roles ask about VLANs, DNS, and subnetting constantly — and almost every candidate answers from a textbook. Having built a segmented network and captured the traffic to prove it lets you answer from experience, which is immediately obvious to the person asking.',
+      useCase: 'A small business needs its point-of-sale terminals isolated from guest Wi-Fi and staff laptops so a compromised phone on the guest network cannot reach payment systems.',
+      bonus: 'Add a site-to-site WireGuard tunnel to a cloud VPS and document the routing, so remote devices land in the correct VLAN as if they were on-site.',
+      aiAssist: 'Use ChatGPT to sanity-check your subnet plan before you build it, and to interpret Wireshark output when traffic is not flowing the way you expect.',
+      prompt: 'I am designing a segmented home network in pfSense with three VLANs: trusted (10), IoT (20), and guest (30). Give me the subnet plan, then the exact firewall rules — in order — so that trusted can reach everything, IoT can reach only the internet and a single MQTT broker on trusted, and guest can reach only the internet. Explain why rule order matters here.',
+      showcase: {
+        github: 'README with a network diagram, your subnet table, the firewall ruleset, and Wireshark screenshots showing blocked cross-VLAN traffic.',
+        linkedin: 'Post the network diagram and one packet capture proving an IoT device cannot reach your laptop — visual, concrete, and instantly understandable.',
+        resume: 'Highlight "Network segmentation (VLANs)", "Firewall administration", and "Packet analysis".'
+      },
+      youtube: 'YMHN6Tnah1w', ytTitle: 'Home Lab Network Security! - vlans, firewall, micro-segmentation',
+      steps: [
+        { title: 'Plan the subnets on paper first', desc: 'Decide your VLAN IDs and address ranges before touching a console. Write down which segment should reach which. Ten minutes here saves hours of confused debugging.' },
+        { title: 'Install pfSense', desc: 'Run it in VirtualBox with two adapters, or on a spare mini PC if you have one. Complete the initial WAN/LAN setup and reach the web UI.' },
+        { title: 'Create the VLANs and interfaces', desc: 'Define VLANs 10, 20, and 30, assign each an interface, and enable DHCP on each with the ranges from your plan. Confirm a client on each VLAN pulls the right address.' },
+        { title: 'Write the firewall rules', desc: 'Implement the isolation rules using the AI prompt below. Remember rules evaluate top-down and the default is deny — test after each rule instead of writing them all at once.' },
+        { title: 'Add Pi-hole for DNS filtering', desc: 'Deploy Pi-hole and point every VLAN at it for DNS. Watch the query log to see exactly what your devices talk to — this is usually the moment the project gets interesting.' },
+        { title: 'Prove it with Wireshark', desc: 'Capture traffic while attempting to ping from IoT to trusted. Show the blocked attempt. Save the capture — a screenshot of a dropped packet is your evidence the segmentation is real.' }
+      ]
+    },
+    // ===== CLOUD ON-RAMP =====
+    {
+      id: 'cl-4', path: 'cloud', level: 'beginner',
+      title: 'Static Site on S3 + CloudFront with a Custom Domain',
+      summary: 'Your first real cloud deployment — a site served from S3 through a CloudFront CDN, on a domain you own, with HTTPS and automatic cache invalidation on every deploy.',
+      tech: ['AWS S3', 'CloudFront', 'Route 53', 'AWS Certificate Manager', 'AWS CLI'],
+      skills: 'Cloud Storage, CDN Configuration, DNS, TLS Certificates, Deployment Automation',
+      why: 'Every cloud role assumes you understand the pieces underneath — object storage, DNS records, certificates, cache behavior. This is the smallest project that makes you touch all of them for real, and it gives you a live URL you can put at the top of your resume.',
+      useCase: 'A startup needs its marketing site served fast worldwide at near-zero cost, without running or patching a single web server.',
+      bonus: 'Add a GitHub Actions workflow that syncs to S3 and issues a CloudFront invalidation on every push to main, so deploying is just merging a pull request.',
+      aiAssist: 'Use ChatGPT to decode S3 bucket policy JSON and to debug the "why is CloudFront still serving my old file" problem, which every beginner hits at least once.',
+      prompt: 'I have a static site in an S3 bucket served through CloudFront with a custom domain. Walk me through locking this down properly: block all public access on the bucket, serve it only through CloudFront using Origin Access Control, and redirect HTTP to HTTPS. Give me the bucket policy JSON and explain what each statement does.',
+      showcase: {
+        github: 'Repo with the site source, your deploy script, and a README explaining the request path from browser to CloudFront to S3.',
+        linkedin: 'Share the live URL alongside a screenshot of your CDN cache-hit ratio — a concrete performance number reads far better than "I deployed a website".',
+        resume: 'List the live URL directly. Focus on "AWS S3/CloudFront", "DNS and TLS configuration", and "Automated deployment".'
+      },
+      youtube: '1XEryydXP3E', ytTitle: 'Static website hosting using S3',
+      steps: [
+        { title: 'Create the S3 bucket', desc: 'Make a bucket and upload a simple index.html. Leave public access blocked — you will serve it through CloudFront instead, which is the correct pattern.' },
+        { title: 'Get a domain and a certificate', desc: 'Register a domain (Route 53 or any registrar) and request a free certificate in AWS Certificate Manager. It must be in us-east-1 for CloudFront to accept it — this trips up almost everyone.' },
+        { title: 'Set up the CloudFront distribution', desc: 'Point it at your bucket using Origin Access Control, attach your certificate, set your domain as an alternate name, and redirect HTTP to HTTPS.' },
+        { title: 'Wire up DNS', desc: 'Create an alias record pointing your domain at the distribution. Wait for propagation, then load your site over HTTPS and confirm the padlock.' },
+        { title: 'Automate the deploy', desc: 'Write a script using the AWS CLI that syncs your local folder to S3 and invalidates the CloudFront cache. Now shipping a change is one command.' },
+        { title: 'Measure and document', desc: 'Check your cache-hit ratio in the CloudFront console and test load time from a few regions. Put those numbers in your README — measured results are what separate this from a tutorial follow-along.' }
+      ]
+    },
+    // ===== DATA ENGINEERING =====
+    {
+      id: 'da-5', path: 'data', level: 'intermediate',
+      title: 'End-to-End ELT Pipeline with dbt and Airflow',
+      summary: 'A scheduled pipeline that extracts from an API, loads to a warehouse, transforms with tested dbt models, and orchestrates the whole thing in Airflow — with data quality tests that fail loudly.',
+      tech: ['Apache Airflow', 'dbt', 'Snowflake/Postgres', 'Python', 'Docker'],
+      skills: 'Data Modeling, Pipeline Orchestration, Data Quality Testing, SQL, ELT Architecture',
+      why: 'Analyst portfolios are saturated with dashboards, which means dashboards no longer differentiate you. The scarce skill is building the pipeline that feeds them — and dbt plus Airflow is the stack that most data teams actually run, so this maps directly onto a data engineering job description.',
+      useCase: 'A company pulling sales data from three sources needs it cleaned, joined, and refreshed nightly so that every dashboard in the business reads from one trusted set of tables.',
+      bonus: 'Add dbt snapshots to track slowly changing dimensions, so you can answer "what did this customer record look like last quarter" — a question dashboards alone cannot handle.',
+      aiAssist: 'Use Claude to convert a messy analytics query into properly layered dbt models, and to generate the schema.yml tests for each column once your models exist.',
+      prompt: 'Act as an analytics engineer. I have raw orders, customers, and products tables loaded into my warehouse. Design a dbt project using staging, intermediate, and mart layers. Give me the model structure with file names, explain what belongs in each layer and why, and write the schema.yml tests for the staging models.',
+      showcase: {
+        github: 'Repo with your dbt project, Airflow DAG, a dbt docs lineage graph screenshot, and a README explaining the layered model design.',
+        linkedin: 'Post the lineage graph — it makes the sophistication of the work visible at a glance in a way SQL screenshots never do.',
+        resume: 'Focus on "ELT pipeline development", "dbt data modeling", and "Airflow orchestration".'
+      },
+      youtube: 'OLXkGB7krGo', ytTitle: 'Code along - build an ELT Pipeline in 1 Hour (dbt, Snowflake, Airflow)',
+      steps: [
+        { title: 'Set up the warehouse', desc: 'Get a Snowflake trial or run Postgres locally in Docker. Create the database and schema your pipeline will write into.' },
+        { title: 'Write the extract and load', desc: 'Pick a free public API and write a Python script that pulls the data and lands it raw in the warehouse. Do not clean anything yet — raw stays raw in ELT.' },
+        { title: 'Build the dbt project', desc: 'Initialize dbt and build your staging, intermediate, and mart layers. Use the AI prompt below to get the structure right before writing SQL.' },
+        { title: 'Add data quality tests', desc: 'Write schema tests for uniqueness, not-null, and accepted values. Deliberately break your data and watch a test fail — then screenshot that. It proves the tests do something.' },
+        { title: 'Orchestrate with Airflow', desc: 'Build a DAG that runs extract, then load, then dbt run, then dbt test — with the dependencies wired so a failed test stops the pipeline instead of publishing bad data.' },
+        { title: 'Document and schedule', desc: 'Generate dbt docs to get the lineage graph. Schedule the DAG nightly and let it run for a few days so you have real run history to show.' }
+      ]
+    },
+    // ===== ENDPOINT ENGINEERING =====
+    {
+      id: 'it-7', path: 'tech-it', level: 'advanced',
+      title: 'Enterprise Endpoint Fleet Automation with Intune and Graph API',
+      summary: 'A PowerShell automation layer over Microsoft Graph that manages policy assignment, compliance reporting, and remediation across a simulated device fleet — no console clicking.',
+      tech: ['Microsoft Graph API', 'PowerShell', 'Microsoft Intune', 'Entra ID', 'Azure Automation'],
+      skills: 'Endpoint Management at Scale, Graph API Automation, PowerShell Scripting, Compliance Reporting',
+      why: 'The gap between help-desk work and endpoint engineering is scale — anyone can configure one laptop in a console, but managing hundreds requires automation. This project is the clearest demonstration that you have crossed that line, and it is the natural capstone above the Autopilot project.',
+      useCase: 'An IT team managing 800 devices needs a nightly compliance report and automatic remediation for machines that drift out of policy, without an engineer manually reviewing the Intune console every morning.',
+      bonus: 'Deploy the scripts as a scheduled Azure Automation runbook that emails a formatted compliance digest, so the automation runs without your laptop being on.',
+      aiAssist: 'Use Claude to find the correct Graph endpoint and permission scope for a given task — Graph documentation is vast, and knowing which scope a call needs is most of the battle.',
+      prompt: 'Act as an endpoint engineer. Using Microsoft Graph PowerShell, write a script that pulls every Intune-managed device, identifies any that are non-compliant or have not checked in for 30 days, and exports a CSV grouped by failure reason. Tell me exactly which Graph permission scopes this needs and why each one is required.',
+      showcase: {
+        github: 'Repo with your scripts, a sample compliance report, and a README documenting the required Graph scopes and how to authenticate.',
+        linkedin: 'Post the time comparison — manual console review across a fleet versus one scheduled script, with the actual numbers.',
+        resume: 'Focus on "Microsoft Graph API automation", "Endpoint management at scale", and "Compliance reporting".'
+      },
+      youtube: '5t6oYg8rNqk', ytTitle: 'Automating Intune with PowerShell and Graph API',
+      steps: [
+        { title: 'Set up the tenant and app registration', desc: 'Use an M365 Developer tenant. Register an app in Entra ID, grant it the Graph scopes you need, and authenticate from PowerShell with the Microsoft.Graph module.' },
+        { title: 'Populate a simulated fleet', desc: 'Enroll several VMs, or script the creation of test device records, so your automation has meaningful data to operate on. A fleet of one proves nothing.' },
+        { title: 'Build the compliance reporter', desc: 'Write the script from the AI prompt below. Get it exporting a clean CSV of non-compliant and stale devices grouped by reason.' },
+        { title: 'Automate policy assignment', desc: 'Script the assignment of configuration profiles to dynamic groups, so a device landing in a group receives the right policy with no manual step.' },
+        { title: 'Add remediation', desc: 'Write a proactive remediation script pair — detection plus fix — for a common drift case like BitLocker being disabled. Deploy it and watch it correct a device.' },
+        { title: 'Schedule it in the cloud', desc: 'Move the reporting script into an Azure Automation runbook on a nightly schedule. Capture a week of reports so you can show the fleet trending toward compliance.' }
+      ]
+    },
+    // ===== FRONTEND =====
+    {
+      id: 'sw-5', path: 'swe', level: 'intermediate',
+      title: 'Accessible Component Library with Automated a11y Testing',
+      summary: 'A typed React component library documented in Storybook, with automated accessibility checks and visual regression tests that block a pull request when a component breaks.',
+      tech: ['React', 'TypeScript', 'Storybook', 'axe-core', 'Playwright', 'GitHub Actions'],
+      skills: 'Component Architecture, Accessibility (WCAG), Visual Regression Testing, TypeScript, CI/CD',
+      why: 'Frontend portfolios are usually a pile of finished apps, which say nothing about how you build. A component library says the opposite — it shows API design, typing discipline, and accessibility as a tested requirement rather than an afterthought. Accessibility is also a legal requirement at most companies, so proving you can automate it is directly valuable.',
+      useCase: 'A product team standardizing on a design system needs shared components that stay accessible and visually consistent as a dozen engineers modify them every week.',
+      bonus: 'Publish the library to npm and consume it in a separate demo app, so you have proven the full authoring-to-distribution loop rather than just a local Storybook.',
+      aiAssist: 'Use Claude to generate the ARIA attributes and keyboard interaction model for a complex component, then to explain each axe violation it reports and how to fix it properly.',
+      prompt: 'Act as a senior frontend engineer specializing in accessibility. Help me build an accessible Modal component in React and TypeScript. It needs focus trapping, restoring focus on close, Escape to dismiss, and correct ARIA roles. Give me the typed component, then list the specific WCAG criteria it satisfies and how I would test each one automatically.',
+      showcase: {
+        github: 'Repo with the components, a published Storybook (free on Chromatic or GitHub Pages), and CI runs visibly passing accessibility checks.',
+        linkedin: 'Post a recording of navigating your components with keyboard only, plus a CI run catching an accessibility regression before merge.',
+        resume: 'Focus on "Accessible component architecture (WCAG 2.1)", "Automated a11y and visual regression testing", and "TypeScript".'
+      },
+      youtube: '63nQ9qC3Tck', ytTitle: 'Accessibility Testing in Storybook with Axe and Playwright',
+      steps: [
+        { title: 'Scaffold the library', desc: 'Set up React with TypeScript and Vite in library mode, then add Storybook. Get one trivial component rendering in Storybook before adding anything else.' },
+        { title: 'Build 5–6 real components', desc: 'Button, Input, Modal, Tabs, Toast. Choose components with genuine interaction complexity — a div with styling teaches nothing and proves nothing.' },
+        { title: 'Get the accessibility right', desc: 'Add the Storybook a11y addon and fix every violation. Use the AI prompt below for the hard ones. Test each component with keyboard only and a screen reader.' },
+        { title: 'Automate the a11y checks', desc: 'Wire axe-core into Playwright so your stories are scanned automatically. A component with a violation should fail the test run, not just show a warning.' },
+        { title: 'Add visual regression testing', desc: 'Set up Chromatic or Playwright snapshots to catch unintended visual changes. Deliberately break a style and watch the diff get flagged.' },
+        { title: 'Gate it in CI', desc: 'Run both suites in GitHub Actions on every pull request. Open a PR that introduces a violation and screenshot CI blocking it — that screenshot is the whole project in one image.' }
+      ]
+    },
+    // ===== SERVICE DESK OPERATIONS (playlist-backed) =====
+    {
+      id: 'hd-6', path: 'helpdesk', level: 'intermediate',
+      title: 'Tiered Service Desk with SLA Policies and Automation',
+      summary: 'A working Jira Service Management desk — request types, tiered queues, SLA policies that escalate before they breach, and automation rules that handle the routine tickets without a human.',
+      tech: ['Jira Service Management', 'Automation Rules', 'Confluence', 'SLA Configuration'],
+      skills: 'ITSM Configuration, SLA Design, Queue Management, Service Desk Automation, Knowledge Base',
+      why: 'Every help desk posting lists a ticketing platform, and almost every candidate has only used one as an end user. Having configured one — request types, SLA clocks, escalation, automation — puts you on the administrator side of the tool, which is the difference between a Tier 1 seat and a Tier 2 one.',
+      useCase: 'A 200-person company replacing a shared support inbox needs a real desk with priorities, response-time commitments, and routing so nothing quietly sits unanswered for three days.',
+      bonus: 'Add a Confluence knowledge base wired into the portal so common requests surface an article before the ticket is ever submitted, then measure how many submissions it prevents.',
+      aiAssist: 'Use ChatGPT to draft the JQL behind your queue filters and to translate a plain-English escalation policy into the right automation rule conditions.',
+      prompt: 'Act as an ITSM administrator. I am configuring Jira Service Management for a 200-person company. Design the SLA policies for four priority levels — give me the response and resolution targets for each, the JQL that scopes each SLA, and the calendar considerations for business hours vs 24/7. Then explain what should happen at 75% of the SLA clock versus at breach.',
+      showcase: {
+        github: 'A documentation repo — your request type catalog, SLA matrix, automation rule inventory, and screenshots of the configured portal and queues.',
+        linkedin: 'Post the SLA matrix and one automation rule with its measured effect, e.g. how many tickets auto-route without a human touching them.',
+        resume: 'Focus on "Service desk administration", "SLA policy design", and "Workflow automation".'
+      },
+      youtube: 'PLuAoMvvRllpQJUJ2Fn-zwd2zIK9pWjite', ytPlaylist: true,
+      ytTitle: 'Jira Service Management Tutorial — Complete Course',
+      steps: [
+        { title: 'Get a free JSM site', desc: 'Atlassian Cloud is free for up to three agents. Create a site and a service project — this is your lab for everything that follows.' },
+        { title: 'Build the request catalog', desc: 'Define 6–8 request types a real desk would field: password reset, hardware request, access request, software install, incident report. Give each the fields it actually needs and no more.' },
+        { title: 'Design the tiered queues', desc: 'Create queues for Tier 1, Tier 2, and escalations, scoped with JQL. Someone opening the desk should see only the tickets that are theirs to work.' },
+        { title: 'Configure the SLA policies', desc: 'Set response and resolution targets per priority using the AI prompt below. Pay attention to business-hours calendars — a 4-hour clock means something different at 5pm Friday.' },
+        { title: 'Automate the routine work', desc: 'Write rules that auto-assign by request type, escalate at 75% of the SLA clock, and auto-close resolved tickets after a set period with a satisfaction survey.' },
+        { title: 'Run tickets through it and report', desc: 'Submit 20–30 varied tickets and work them. Export the SLA report showing met vs breached, and write up what you would change. The analysis is what makes this intermediate.' }
+      ]
+    },
+    {
+      id: 'hd-7', path: 'helpdesk', level: 'advanced',
+      title: 'ServiceNow ITSM Build: Catalog, Workflows, and Reporting',
+      summary: 'A configured ServiceNow instance with a service catalog, flow-designer approval workflows, a CMDB populated with real relationships, and dashboards that report on service health.',
+      tech: ['ServiceNow', 'Flow Designer', 'Service Catalog', 'CMDB', 'Performance Analytics'],
+      skills: 'Enterprise ITSM, Workflow Design, CMDB Modeling, Service Catalog Development, Reporting',
+      why: 'ServiceNow runs the service desk at a large share of enterprises, and administrators are scarce enough that the platform skill alone moves you up a tier in pay. A free personal developer instance means you can build the exact thing employers screen for without a corporate license.',
+      useCase: 'An enterprise consolidating IT requests onto one platform needs a catalog with multi-stage approvals, an accurate CMDB, and reporting leadership will actually read.',
+      bonus: 'Add a Virtual Agent conversation that resolves a common request end to end — password reset or software request — without ever creating a ticket a human has to touch.',
+      aiAssist: 'Use Claude to explain ServiceNow table relationships and to draft the business-rule or client-script logic for catalog item variables, which is where most beginners get stuck.',
+      prompt: 'Act as a ServiceNow administrator. I am building a laptop request catalog item that needs manager approval, then IT approval if the cost exceeds $2000. Walk me through the Flow Designer configuration step by step, explain how approval conditions evaluate, and tell me which tables the request, request item, and catalog task each live in and how they relate.',
+      showcase: {
+        github: 'An update set export plus documentation — catalog item design, flow diagrams, CMDB schema, and dashboard screenshots.',
+        linkedin: 'Record the full journey of one request: submitted in the portal, routed for approval, fulfilled, and reflected on the dashboard.',
+        resume: 'Focus on "ServiceNow administration", "Flow Designer workflow development", and "CMDB management".'
+      },
+      youtube: 'PLWMzEPW90q1Yuz76o_esD-gbuUvtuvYRy', ytPlaylist: true,
+      ytTitle: 'ServiceNow System Administrator Training — Full Course',
+      steps: [
+        { title: 'Claim a developer instance', desc: 'ServiceNow gives away free personal developer instances. Request one and complete the initial setup — it is a full platform, not a limited trial.' },
+        { title: 'Learn the data model', desc: 'Before building anything, understand how task, incident, request, and CMDB tables relate. Everything you build later depends on getting this right.' },
+        { title: 'Build the service catalog', desc: 'Create 4–5 catalog items with variables, variable sets, and sensible UI policies. Make them look like things a real employee would order.' },
+        { title: 'Design the approval workflows', desc: 'Use Flow Designer to build multi-stage approvals with conditional branching. Use the AI prompt below for the cost-threshold logic.' },
+        { title: 'Populate the CMDB', desc: 'Load configuration items and, more importantly, map the relationships between them. Then show impact analysis for an outage on one server.' },
+        { title: 'Build the reporting layer', desc: 'Create dashboards for ticket volume, SLA attainment, and catalog usage. Present it as though to an IT director — the reporting is what makes this an advanced project.' }
+      ]
     }
   ];
 
@@ -4818,19 +5056,29 @@ ${tags} #BuildingInPublic #OpenToWork`;
         <p>${p.why}</p>
       </div>
 
-      ${p.youtube ? `
+      ${p.youtube ? (() => {
+        // Thumbnails are only served for video ids, so a playlist card falls back
+        // to ytThumb (a representative video from the series) and, failing that,
+        // to a plain gradient rather than a broken image.
+        const thumbId = p.ytPlaylist ? p.ytThumb : p.youtube;
+        const thumbStyle = thumbId
+          ? ` style="background-image: url('https://img.youtube.com/vi/${thumbId}/maxresdefault.jpg'), url('https://img.youtube.com/vi/${thumbId}/hqdefault.jpg');"`
+          : '';
+        return `
       <div class="modal-section">
-        <h4>Watch & Learn</h4>
+        <h4>Watch &amp; Learn</h4>
         <div class="video-wrap" id="video-wrap">
-          <div class="video-thumb" id="video-thumb" role="button" tabindex="0" aria-label="Play video: ${p.ytTitle}" style="background-image: url('https://img.youtube.com/vi/${p.youtube}/maxresdefault.jpg'), url('https://img.youtube.com/vi/${p.youtube}/hqdefault.jpg');">
+          <div class="video-thumb${thumbId ? '' : ' video-thumb--noimg'}" id="video-thumb" role="button" tabindex="0" aria-label="${p.ytPlaylist ? 'Play playlist' : 'Play video'}: ${p.ytTitle}"${thumbStyle}>
             <div class="play-btn">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             </div>
+            ${p.ytPlaylist ? '<div class="video-badge">Playlist</div>' : ''}
             <div class="video-label">▸ ${p.ytTitle}</div>
           </div>
         </div>
       </div>
-      ` : ''}
+      `;
+      })() : ''}
 
       ${p.steps ? `
       <div class="modal-section">

@@ -62,6 +62,16 @@ npm run check:videos
 
 This also runs weekly in CI and on any pull request that touches the catalog, since it needs network access to YouTube that a local sandbox may not have.
 
+### Job matcher
+
+`match.html` maps a pasted job description to a career path, then ranks projects and certs against it. Ranking quality is easy to break without noticing, so it has a regression suite:
+
+```
+npm run test:match
+```
+
+Each case asserts the path a posting routes to and a project that must appear. Add a case when you add a project that targets a distinct kind of role.
+
 ### Styles
 
 `index.html` does **not** load `styles.css` — it has its own inline `<style id="glass-terminal-style">` block. `styles.css` serves `match.html`, `certifications.html`, and `prompts.html`.

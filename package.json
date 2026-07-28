@@ -8,6 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "check:videos": "node scripts/check-videos.mjs",
+    "test:match": "node scripts/match-test.mjs",
     "lint": "echo 'No linter configured for static HTML'"
   },
   "keywords": [],

@@ -253,6 +253,9 @@
     text-decoration: none;
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   }
+  /* display:inline-flex above outranks the UA stylesheet's [hidden]{display:none},
+     so the empty Continue pill stays visible without this. */
+  .hero-cta[hidden] { display: none; }
   .hero-cta svg { width: 15px; height: 15px; }
   .hero-cta-primary {
     background: linear-gradient(180deg, var(--green) 0%, var(--green-2) 100%);

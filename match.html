@@ -200,6 +200,7 @@
   .rec-card .summary { margin-bottom: 12px; }
   .rec-match { font-size: 12px; color: var(--ink-muted); margin-bottom: 12px; }
   .rec-match strong { color: var(--green); font-weight: 600; }
+  .rec-match-weak { font-style: italic; opacity: 0.75; }
 
   .cert-rec-card .cost-badge {
     font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em;
@@ -489,19 +490,67 @@
     return { scores, matched };
   }
 
+  // Words too generic to signal anything when they appear in a title or summary.
+  const PROSE_STOPWORDS = new Set([
+    'that', 'this', 'with', 'from', 'your', 'their', 'them', 'they', 'what', 'when',
+    'into', 'onto', 'over', 'under', 'about', 'every', 'each', 'more', 'most', 'than',
+    'then', 'also', 'just', 'only', 'real', 'like', 'make', 'made', 'build', 'built',
+    'building', 'system', 'systems', 'tool', 'tools', 'project', 'projects', 'using',
+    'uses', 'used', 'work', 'works', 'first', 'through', 'across', 'without', 'while',
+    'where', 'which', 'have', 'been', 'does', 'both', 'same', 'other', 'once', 'ever',
+  ]);
+
+  // Significant words from free prose, used as a weaker matching signal than the
+  // structured skills/tech fields.
+  function proseTerms(str) {
+    return [...new Set(norm(str).split(' ').filter(w => w.length >= 4 && !PROSE_STOPWORDS.has(w)))];
+  }
+
+  // Postings pluralise freely ("build dashboards", "manage clusters") while the
+  // catalog is written in the singular, so a literal match misses constantly.
+  function variants(term) {
+    const out = [term];
+    if (term.endsWith('s')) out.push(term.slice(0, -1));
+    else out.push(term + 's');
+    return out;
+  }
+  function hasTerm(t, term) { return variants(term).some(v => t.includes(v)); }
+  function hasWord(t, word) { return variants(word).some(v => t.includes(` ${v} `)); }
+
   function rankProjects(pathId, text, n) {
     const t = norm(text);
     const inPath = PROJECTS.filter(p => p.path === pathId);
     const scored = inPath.map(p => {
-      const terms = [
-        ...p.skills.split(',').map(s => s.trim().toLowerCase()),
-        ...p.tech.map(s => s.toLowerCase())
-      ].filter(s => s.length > 2);
-      const hits = [...new Set(terms.filter(term => {
-        const base = term.split('(')[0].split('/')[0].trim();
-        return base.length > 2 && t.includes(base);
-      }))];
-      return { p, hits, score: hits.length };
+      const hits = [];
+      const seen = new Set();
+      let score = 0;
+
+      // Skills and tech are the strongest signal. Both sides go through norm()
+      // so punctuation is stripped consistently — otherwise a term like
+      // "MITRE ATT&CK" can never match a posting, because norm() turns the
+      // posting's copy into "mitre att ck" while the term keeps its ampersand.
+      const strong = [...p.skills.split(','), ...p.tech];
+      strong.forEach(raw => {
+        const base = norm(raw.split('(')[0].split('/')[0]).trim();
+        if (base.length > 2 && !seen.has(base) && hasTerm(t, base)) {
+          seen.add(base);
+          hits.push(raw.trim());
+          score += 2;
+        }
+      });
+
+      // Title and summary catch what the structured fields miss — a posting
+      // asking for "SIEM" should surface a project titled "SIEM Home Lab" even
+      // though its tech list says Wazuh and Sysmon. Capped so prose cannot
+      // outweigh a real skills match.
+      let proseScore = 0;
+      proseTerms(`${p.title} ${p.summary}`).forEach(w => {
+        if (proseScore >= 3 || seen.has(w)) return;
+        if (hasWord(t, w)) { seen.add(w); hits.push(w); proseScore += 1; }
+      });
+      score += proseScore;
+
+      return { p, hits, score };
     });
     scored.sort((a, b) => (b.score - a.score) || (LEVEL_RANK[a.p.level] - LEVEL_RANK[b.p.level]));
     return scored.slice(0, n);
@@ -567,9 +616,12 @@
 
   function projectCardHTML(item) {
     const p = item.p;
+    // A project with no matched terms is a sensible starting point for the path,
+    // not something the posting actually asked for. Say so, rather than letting
+    // it sit alongside real matches with the difference invisible.
     const matchLine = item.hits.length
       ? `<p class="rec-match">Matches: <strong>${esc(item.hits.slice(0, 5).join(', '))}</strong></p>`
-      : '';
+      : `<p class="rec-match rec-match-weak">Popular starting point for this path</p>`;
     return `
       <a class="project-card rec-card" href="/index.html#project=${encodeURIComponent(p.id)}">
         <div class="card-top">

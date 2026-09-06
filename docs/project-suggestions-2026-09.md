@@ -1,6 +1,6 @@
 # Project Suggestions — September 2026
 
-Twenty-two candidate cards for the BuildersBench catalog, chosen to fill the thinnest path/level cells and to track what 2026 job postings and hiring guides actually ask for: agents and MCP, evals and observability, passkeys and passwordless, platform engineering, the lakehouse stack, Copilot agents in Microsoft 365, and systems fundamentals compiled to WebAssembly.
+Twenty-four candidate cards for the BuildersBench catalog, chosen to fill the thinnest path/level cells and to track what 2026 job postings and hiring guides actually ask for: agents and MCP, evals and observability, passkeys and passwordless, platform engineering, the lakehouse stack, Copilot agents in Microsoft 365, and systems fundamentals compiled to WebAssembly.
 
 Every card needs a video. The video IDs below came from search results and **have not been verified** from this sandbox (YouTube is blocked). Run `npm run check:videos` in GitHub Actions before merging any of them.
 

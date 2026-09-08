@@ -4,17 +4,17 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>BuildersBench — Portfolio Project Guide</title>
-<meta name="description" content="35 portfolio projects across 8 tech career paths — AI, cloud, cybersecurity, data, and more. Each ships with a build roadmap, starter AI prompt, resume bullets, and interview pitch." />
+<meta name="description" content="67 portfolio projects across 8 tech career paths — AI, cloud, cybersecurity, data, and more. Each ships with a build roadmap, starter AI prompt, resume bullets, and interview pitch." />
 <meta name="theme-color" content="#0C161B" />
 <link rel="canonical" href="https://4-projects.vercel.app/" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='none' stroke='%2300e676' stroke-width='2'/%3E%3Cpath d='M8 12l3 3 5-6' fill='none' stroke='%2300e676' stroke-width='2'/%3E%3C/svg%3E" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="BuildersBench — Portfolio Project Guide" />
-<meta property="og:description" content="35 portfolio projects across 8 tech career paths, each with a build roadmap, starter AI prompt, resume bullets, and interview pitch." />
+<meta property="og:description" content="67 portfolio projects across 8 tech career paths, each with a build roadmap, starter AI prompt, resume bullets, and interview pitch." />
 <meta property="og:url" content="https://4-projects.vercel.app/" />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="BuildersBench — Portfolio Project Guide" />
-<meta name="twitter:description" content="35 portfolio projects across 8 tech career paths, each with a build roadmap, starter AI prompt, resume bullets, and interview pitch." />
+<meta name="twitter:description" content="67 portfolio projects across 8 tech career paths, each with a build roadmap, starter AI prompt, resume bullets, and interview pitch." />
 <style id="self-hosted-fonts">
 @font-face { font-family: 'Inter'; font-style: normal; font-weight: 300; font-display: swap; src: url('/fonts/inter-300.woff2') format('woff2'); }
 @font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/inter-400.woff2') format('woff2'); }
@@ -4245,6 +4245,654 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         { title: 'Design the approval workflows', desc: 'Use Flow Designer to build multi-stage approvals with conditional branching. Use the AI prompt below for the cost-threshold logic.' },
         { title: 'Populate the CMDB', desc: 'Load configuration items and, more importantly, map the relationships between them. Then show impact analysis for an outage on one server.' },
         { title: 'Build the reporting layer', desc: 'Create dashboards for ticket volume, SLA attainment, and catalog usage. Present it as though to an IT director — the reporting is what makes this an advanced project.' }
+      ]
+    },
+    {
+      id: 'ai-5', path: 'ai', level: 'beginner',
+      title: 'Build an MCP Server for Your Own Data',
+      summary: 'A Model Context Protocol server that exposes your own data — a SQLite database, a folder of notes, a small API — as tools that Claude Desktop and Claude Code can call directly. Your first real bridge between an LLM and a live system.',
+      tech: ['Python', 'MCP Python SDK', 'FastMCP', 'SQLite', 'Claude Desktop / Claude Code'],
+      skills: 'Tool Design, MCP Protocol, JSON Schemas, Python Packaging, LLM Integration',
+      why: 'MCP is now the shared tool layer across every major agent framework, so a server you built proves you can wire an AI to real systems in a way that ports anywhere. It is small enough to finish in a weekend and specific enough that interviewers ask to see it run.',
+      useCase: 'A small team wants Claude to answer questions about their internal inventory spreadsheet and log new items, without anyone pasting data into a chat window.',
+      bonus: 'Add a second transport (Streamable HTTP) with OAuth so the same server works remotely from claude.ai, not just locally over stdio.',
+      aiAssist: 'Use Claude to draft the tool descriptions and input schemas, then ask it to critique them from the perspective of a model deciding which tool to call — vague descriptions are the number one reason tools go unused.',
+      prompt: 'I am building an MCP server in Python with FastMCP that exposes a SQLite inventory database. Design three tools: search items by name, get item details by id, and add a new item. For each, write the function signature, a one-paragraph description written for an LLM deciding when to call it, and the input schema. Then show me the Claude Desktop config JSON to register the server over stdio.',
+      showcase: {
+        github: 'The server package, a README with the Claude Desktop config snippet, and a short GIF of Claude calling each tool.',
+        linkedin: 'Record a 45-second clip: ask Claude a question it cannot answer alone, watch it call your tool, and get the right answer back.',
+        resume: 'Lead with "MCP server development", "LLM tool integration", and "schema design for AI tool calling".'
+      },
+      youtube: 'vzGkSn59rDU',
+      ytTitle: 'Build an MCP Server in 20 Minutes (with Python)',
+      steps: [
+        { title: 'Pick a small data source', desc: 'Create a SQLite database with one or two tables — inventory, contacts, tasks. Seed it with 20–30 rows so tool calls return something interesting.' },
+        { title: 'Scaffold the server with FastMCP', desc: 'Install the MCP Python SDK, create a server, and register one read-only tool. Run it over stdio and confirm it starts without errors.' },
+        { title: 'Register it in Claude Desktop', desc: 'Add the server to the Claude Desktop config file, restart, and confirm the tool appears. Ask a question that forces Claude to call it.' },
+        { title: 'Add write and detail tools', desc: 'Add an add-item tool and a get-by-id tool. Write the descriptions for the model, not for humans — say exactly when each tool should and should not be used.' },
+        { title: 'Handle errors like a product', desc: 'Return clear error messages for missing ids and bad input. Watch how Claude recovers when a call fails — that behavior depends entirely on your error text.' },
+        { title: 'Document and package it', desc: 'Write a README with install steps and the config snippet, add a pyproject file, and record a short demo. This is what you link in applications.' }
+      ]
+    },
+    {
+      id: 'ai-6', path: 'ai', level: 'intermediate',
+      title: 'Cost-Aware LLM Model Router',
+      summary: 'A gateway that classifies every incoming request by difficulty and sends the easy ones to a cheap, fast model and the hard ones to a frontier model — then proves the savings with a dashboard built from a real query log.',
+      tech: ['Python', 'FastAPI', 'LiteLLM', 'Claude Haiku + Claude Opus', 'PostgreSQL', 'Streamlit'],
+      skills: 'LLM Cost Optimization, Request Classification, API Gateway Design, Evaluation, Observability',
+      why: 'Every team shipping AI features is under pressure to cut model spend without hurting quality, and routing is the first lever they reach for. Measuring the trade-off on a real log, instead of guessing, is exactly the judgment a senior AI engineer is paid for.',
+      useCase: 'A customer-support product handles 50,000 chats a month. Most are simple lookups; a few need careful reasoning. Routing cuts the bill by more than half with no measurable drop in satisfaction.',
+      bonus: 'Add a feedback loop — when the cheap model’s answer is rated poorly, automatically re-run the request on the frontier model and use the pair to retrain the classifier.',
+      aiAssist: 'Use Claude to generate a labeled dataset of 300 requests spanning easy, medium, and hard, and to write the rubric an LLM judge uses to score both models’ answers consistently.',
+      prompt: 'I am building an LLM router in Python. Design a lightweight difficulty classifier that decides between a cheap model and a frontier model. Compare three approaches: heuristic rules on length and keywords, a small embedding classifier, and asking the cheap model itself to rate difficulty. For each, give the implementation sketch, expected latency, and the failure mode. Then write the SQL for a table that logs model, tokens, cost, latency, and a quality score per request.',
+      showcase: {
+        github: 'The gateway service, the classifier, the eval script, and a dashboard screenshot showing cost per day before and after routing.',
+        linkedin: 'Post the one chart that matters: total cost with and without routing, with the quality score line flat across both.',
+        resume: 'Quantify it: "Reduced LLM inference cost by X% across N requests while holding answer quality within 2 points."'
+      },
+      youtube: 'cmetUBIdmvM',
+      ytTitle: 'Stop Wasting Money on LLMs: Smart Routing Changes Everything',
+      steps: [
+        { title: 'Build the pass-through gateway', desc: 'Stand up a FastAPI endpoint that forwards chat requests to one model through LiteLLM and logs tokens, latency, and cost to Postgres. No routing yet — just measurement.' },
+        { title: 'Create a labeled request set', desc: 'Generate or collect 300 requests across difficulty levels. Label them. This is your test set for every decision that follows.' },
+        { title: 'Implement the classifier', desc: 'Start with the simplest approach that works — often a small embedding model plus logistic regression. Log the predicted difficulty for every request.' },
+        { title: 'Route and compare', desc: 'Send easy requests to the cheap model and hard ones to the frontier model. Run the full test set through both the router and a frontier-only baseline.' },
+        { title: 'Score quality with an LLM judge', desc: 'Use a rubric-driven judge to score every answer 1–5. Confirm the router’s scores match the baseline within your tolerance; if not, tune the threshold.' },
+        { title: 'Ship the dashboard', desc: 'Build a Streamlit page showing cost, latency, and quality over time, split by model. This chart is the project — make it clean.' }
+      ]
+    },
+    {
+      id: 'ai-7', path: 'ai', level: 'advanced',
+      title: 'Agent Evals and Trace Observability Harness',
+      summary: 'A regression-testing and tracing system for an AI agent — every run captured as a trace with tool calls and reasoning steps, scored against a golden dataset, and gated in CI so a prompt change that breaks behavior fails the pull request.',
+      tech: ['Python', 'LangSmith or Langfuse', 'DeepEval', 'OpenTelemetry', 'pytest', 'GitHub Actions'],
+      skills: 'LLM Evaluation, Agent Tracing, Test Design, CI/CD Gating, Observability Engineering',
+      why: 'Lack of trace-level visibility and quality measurement is the most cited reason agent rollouts stall in production. Teams that can see what an agent did and prove a change did not regress it are the ones that get to ship — and that skill is scarce.',
+      useCase: 'A company runs a support agent that can issue refunds. Before any prompt or tool change reaches production, the harness replays 200 real conversations and blocks the deploy if refund accuracy drops.',
+      bonus: 'Add trajectory-level assertions — not just "was the final answer right" but "did the agent call the lookup tool before the refund tool" — and alert when the tool-call order drifts.',
+      aiAssist: 'Use Claude to turn a handful of real agent transcripts into a structured golden dataset with expected outcomes, and to draft the judge prompts for correctness, tone, and policy compliance.',
+      prompt: 'I have a LangGraph agent with four tools and want a proper eval harness. Design: (1) a golden dataset schema with inputs, expected final answers, and expected tool-call sequences; (2) three evaluators — exact match, LLM-as-judge with a rubric, and a trajectory checker; (3) a pytest layout that runs them and reports pass rates; (4) a GitHub Actions job that fails below a threshold. Include how to capture OpenTelemetry spans for each tool call so traces are inspectable after a failure.',
+      showcase: {
+        github: 'The agent, the eval suite, the golden dataset, and a CI badge. Include a failing-run screenshot so reviewers see the gate actually works.',
+        linkedin: 'Show a trace waterfall of one agent run with a tool call highlighted, next to the eval summary that scored it.',
+        resume: 'Frame it as reliability engineering: "Built an agent evaluation and tracing harness gating deploys on a 200-case golden set."'
+      },
+      youtube: 'oSjAbx67f0k',
+      ytTitle: 'How to Debug, Evaluate, and Ship Reliable AI Agents with LangSmith',
+      steps: [
+        { title: 'Instrument the agent', desc: 'Take an existing agent (or the one from cs-5) and add tracing. Every model call and tool call must appear as a span with inputs and outputs.' },
+        { title: 'Build the golden dataset', desc: 'Collect 50–200 cases with expected outcomes. Include adversarial and out-of-scope inputs. Store it as versioned JSONL in the repo.' },
+        { title: 'Write the evaluators', desc: 'Implement exact-match, LLM-judge, and trajectory evaluators. Calibrate the judge on 20 hand-scored cases before trusting it.' },
+        { title: 'Run and baseline', desc: 'Run the suite against the current agent and record pass rates per evaluator. This baseline is what every future change is compared to.' },
+        { title: 'Gate CI', desc: 'Add a GitHub Actions job that runs the suite on every PR and fails if any pass rate drops more than a set margin. Intentionally break a prompt to prove the gate fires.' },
+        { title: 'Add the observability layer', desc: 'Export traces to LangSmith or Langfuse and build a view that links a failed eval case straight to its trace. Write up one bug you found this way.' }
+      ]
+    },
+    {
+      id: 'cl-5', path: 'cloud', level: 'intermediate',
+      title: 'Keyless Container Deploys: ECS Fargate with Terraform and GitHub OIDC',
+      summary: 'A containerized web service deployed to AWS ECS Fargate entirely from code — Terraform builds the infrastructure, GitHub Actions builds and ships the image, and the pipeline authenticates with short-lived OIDC tokens instead of stored cloud keys.',
+      tech: ['Terraform', 'AWS ECS Fargate', 'Amazon ECR', 'GitHub Actions OIDC', 'Application Load Balancer', 'Docker'],
+      skills: 'Infrastructure as Code, CI/CD Pipelines, Container Orchestration, IAM Trust Policies, Cloud Networking',
+      why: 'Long-lived cloud keys in CI are the root cause of a steady stream of breaches, and "no static credentials" is now an explicit requirement in cloud and DevOps job descriptions. Showing a full pipeline that never stores a secret is a concrete answer to a question every hiring manager asks.',
+      useCase: 'A startup needs to deploy its API on every merge to main, with reviewers able to see exactly what infrastructure changed and no AWS keys sitting in GitHub secrets.',
+      bonus: 'Add a preview environment per pull request — a separate ECS service and ALB listener rule created on PR open and destroyed on close.',
+      aiAssist: 'Use Claude to explain the IAM trust policy for GitHub’s OIDC provider line by line, and to review your Terraform for over-permissive roles before you apply it.',
+      prompt: 'I am deploying a Docker container to AWS ECS Fargate with Terraform and GitHub Actions. Write the IAM OIDC trust policy that only allows my repository’s main branch to assume the deploy role, explain each condition key, then give me the minimum IAM permissions the role needs to push to ECR and update an ECS service. Finally, sketch the Terraform module layout for VPC, ALB, ECS cluster, and service.',
+      showcase: {
+        github: 'Terraform modules, the workflow file, an architecture diagram, and a link to the live endpoint behind the load balancer.',
+        linkedin: 'Show the GitHub Actions run succeeding with zero secrets configured in the repo settings — that screenshot tells the whole story.',
+        resume: 'Use the language of the job posts: "Provisioned ECS Fargate infrastructure with Terraform and built a keyless OIDC-authenticated CI/CD pipeline."'
+      },
+      youtube: 'xeWcdZ_bNBE',
+      ytTitle: 'CI/CD Pipeline for AWS ECS Fargate with GitHub Actions and Terraform IaC',
+      steps: [
+        { title: 'Containerize a small service', desc: 'Write a tiny HTTP API with a health endpoint, Dockerize it, and run it locally. Keep the app boring — the infrastructure is the project.' },
+        { title: 'Write the Terraform', desc: 'Define a VPC with public and private subnets, an ECR repository, an ECS cluster, a Fargate task definition, a service, and an ALB. Apply it from your laptop first.' },
+        { title: 'Set up GitHub OIDC', desc: 'Create the OIDC identity provider in IAM and a deploy role whose trust policy is scoped to your repo and branch. Use the AI prompt to get the conditions exactly right.' },
+        { title: 'Build the pipeline', desc: 'Write a workflow that assumes the role, builds the image, pushes to ECR, and forces a new ECS deployment. Confirm the repo has no AWS secrets at all.' },
+        { title: 'Add a Terraform plan step', desc: 'On pull requests, run terraform plan and post the output as a PR comment so infrastructure changes are reviewed like code.' },
+        { title: 'Prove it and document it', desc: 'Merge a change, watch it roll out with zero downtime behind the ALB, and write a README with the architecture diagram and the security rationale.' }
+      ]
+    },
+    {
+      id: 'cl-6', path: 'cloud', level: 'intermediate',
+      title: 'Full Observability Stack with OpenTelemetry and Grafana LGTM',
+      summary: 'A sample application instrumented with OpenTelemetry sending logs, metrics, and traces through a Collector into Loki, Prometheus, and Tempo — with Grafana dashboards where you can click from a slow request to its trace to its logs.',
+      tech: ['OpenTelemetry SDK + Collector', 'Grafana', 'Loki', 'Tempo', 'Prometheus', 'Docker Compose'],
+      skills: 'Observability Engineering, Distributed Tracing, Metrics and Alerting, Log Aggregation, Telemetry Pipelines',
+      why: 'OpenTelemetry is the second-fastest-growing project in the CNCF after Kubernetes and has become the vendor-neutral standard for instrumentation. SRE, platform, and cloud postings list it by name, and a working three-signal stack is rare among junior candidates.',
+      useCase: 'An e-commerce team gets a "checkout is slow" complaint. With correlated telemetry they jump from the latency spike on a dashboard to the exact trace to the database log line in under a minute.',
+      bonus: 'Add exemplars so Prometheus histogram points link directly to Tempo traces, and define an SLO with a burn-rate alert in Grafana.',
+      aiAssist: 'Use Claude to write the OpenTelemetry Collector pipeline config and to explain the difference between resource attributes, span attributes, and log attributes when your correlations do not line up.',
+      prompt: 'I am building an observability stack with Docker Compose: an instrumented Python API, the OpenTelemetry Collector, Loki, Tempo, Prometheus, and Grafana. Write the Collector config with OTLP receivers and exporters for all three signals, explain which processors I should add and why, and show how to configure Grafana data source correlations so a trace ID in a log line links to Tempo and a span links back to Loki.',
+      showcase: {
+        github: 'The Compose file, Collector config, instrumented app, and provisioned Grafana dashboards as JSON so anyone can clone and run it in one command.',
+        linkedin: 'Record the click-through: dashboard spike, to trace waterfall, to the log line that explains it. That 30 seconds is the pitch.',
+        resume: 'Lead with "OpenTelemetry instrumentation" and "Grafana LGTM stack", then name the three signals explicitly.'
+      },
+      youtube: 'WeWgBQVxLus',
+      ytTitle: 'Grafana LGTM with Docker Compose, OpenTelemetry and a Crypto Currency API',
+      steps: [
+        { title: 'Stand up the backends', desc: 'Docker Compose with Loki, Tempo, Prometheus, and Grafana. Confirm each is healthy and added as a Grafana data source before writing any app code.' },
+        { title: 'Instrument a small service', desc: 'Build a two-endpoint API that calls a database and an external API. Add OpenTelemetry auto-instrumentation and confirm spans reach Tempo.' },
+        { title: 'Route everything through the Collector', desc: 'Send OTLP from the app to the Collector, and from the Collector to the three backends. Add batch and resource processors.' },
+        { title: 'Correlate the signals', desc: 'Inject trace IDs into logs and configure Grafana derived fields so logs link to traces and traces link to logs. Test the round trip.' },
+        { title: 'Build the dashboards', desc: 'Create a RED dashboard (rate, errors, duration) per endpoint and a service map. Provision them from JSON files in the repo.' },
+        { title: 'Break it on purpose', desc: 'Add a slow path and an error path, generate load, and write a short incident walkthrough showing how you found each using only the stack.' }
+      ]
+    },
+    {
+      id: 'cl-7', path: 'cloud', level: 'advanced',
+      title: 'Internal Developer Platform with Backstage, Crossplane, and Kyverno',
+      summary: 'A self-service platform on Kubernetes — developers pick a template in Backstage, Crossplane provisions the cloud resources declaratively, ArgoCD keeps it in sync, and Kyverno policies block anything that violates the rules. The platform-engineering stack, end to end.',
+      tech: ['Backstage', 'Crossplane', 'ArgoCD', 'Kyverno', 'Kubernetes (kind or vCluster)', 'Helm'],
+      skills: 'Platform Engineering, GitOps, Policy as Code, Kubernetes Operators and CRDs, Developer Experience Design',
+      why: 'Platform engineering is the highest-paid track in cloud, and the role has shifted toward building a developer-facing product rather than running pipelines. A working self-service portal with guardrails is the canonical portfolio piece for it, and almost no one at entry level has one.',
+      useCase: 'A 40-engineer company wants any developer to get a new service with a database, a namespace, and CI in ten minutes, without a ticket to the infra team and without being able to skip security policy.',
+      bonus: 'Add a Backstage scorecard plugin that shows each service’s policy compliance, ownership, and deployment health on one page.',
+      aiAssist: 'Use Claude to design the Crossplane Composition for a "database plus namespace plus secrets" claim and to write Kyverno policies from plain-English rules like "every pod must set resource limits and come from our registry."',
+      prompt: 'I am building an internal developer platform on a local Kubernetes cluster. Design a Backstage software template that creates a new Go service repo and registers it in the catalog. Then write a Crossplane XRD and Composition for a claim called "AppEnvironment" that provisions a namespace, a Postgres instance, and a Kubernetes secret. Finally, write three Kyverno ClusterPolicies: require resource limits, disallow latest tags, and require an owner label. Explain how ArgoCD ties them together.',
+      showcase: {
+        github: 'The platform repo with Backstage config, templates, Crossplane compositions, Kyverno policies, and an ArgoCD app-of-apps. Include an architecture diagram.',
+        linkedin: 'Record the golden path: click "create service" in Backstage, watch the repo appear, the resources provision, and a policy violation get rejected.',
+        resume: 'Use the discipline’s vocabulary: "Built an internal developer platform with self-service templates, declarative provisioning, GitOps sync, and policy-as-code guardrails."'
+      },
+      youtube: 'ptxnxoe1Jbs',
+      ytTitle: 'Build an Internal Developer Platform with K8s, Backstage and ArgoCD (2026)',
+      steps: [
+        { title: 'Bootstrap the cluster and GitOps', desc: 'Create a kind cluster, install ArgoCD, and set up an app-of-apps pattern so everything else in the project is deployed from Git.' },
+        { title: 'Install Backstage', desc: 'Deploy Backstage with the GitHub integration and register one existing service in the catalog. Get the portal loading before adding templates.' },
+        { title: 'Write a software template', desc: 'Create a scaffolder template that generates a service repo from a skeleton, opens it in GitHub, and registers it in the catalog automatically.' },
+        { title: 'Add Crossplane compositions', desc: 'Install Crossplane with a provider, define an XRD for an application environment, and write the Composition. Claim one from a template and watch it provision.' },
+        { title: 'Enforce policy with Kyverno', desc: 'Install Kyverno and add policies for resource limits, image tags, and required labels. Deploy something non-compliant and confirm it is rejected with a clear message.' },
+        { title: 'Document the golden path', desc: 'Write the developer-facing docs in Backstage TechDocs: how to create a service, what you get, and what the guardrails are. Present it as a product.' }
+      ]
+    },
+    {
+      id: 'cs-6', path: 'cs', level: 'beginner',
+      title: 'Key-Value Store from Scratch with a Write-Ahead Log',
+      summary: 'A persistent key-value database written from nothing — an in-memory index, a write-ahead log so data survives a crash, and a compaction step that keeps the file from growing forever. The foundations every real database is built on.',
+      tech: ['Python or Go', 'Write-Ahead Log', 'Binary File Formats', 'pytest', 'Crash Tests'],
+      skills: 'Storage Engine Internals, Durability and Crash Safety, File I/O, Data Structures, Test Design',
+      why: 'Storage-engine fundamentals are the most common systems interview topic, and building one makes you the person who can explain why a database is slow instead of guessing. It is a weekend project that reads as far deeper than a CRUD app.',
+      useCase: 'An embedded device needs to store settings and counters reliably across power loss without the weight of SQLite. Your engine is the answer, and you can explain every byte on disk.',
+      bonus: 'Replace the hash index with a sorted structure and add range queries, which puts you on the road to an LSM tree.',
+      aiAssist: 'Use Claude to design the on-disk record format and to write adversarial crash tests — kill the process mid-write, restart, and check that every acknowledged write is still there.',
+      prompt: 'I am writing a key-value store from scratch in Python. Design a write-ahead log record format with a length prefix, CRC checksum, key, and value. Explain exactly how recovery replays the log on startup and how to detect a torn write at the tail. Then design a compaction routine that rewrites the log with only live keys without losing data if compaction itself crashes.',
+      showcase: {
+        github: 'The engine, a small CLI, the crash-test suite, and a README with a diagram of the file format and the recovery sequence.',
+        linkedin: 'Show the crash test: write a thousand keys, kill the process mid-batch, restart, and every acknowledged key comes back.',
+        resume: 'Describe the internals: "Implemented a persistent key-value store with write-ahead logging, checksummed records, crash recovery, and log compaction."'
+      },
+      youtube: 'tb12omFYE5g',
+      ytTitle: 'Build Your Own NoSQL Key Value Store Database in Python',
+      steps: [
+        { title: 'Start in memory', desc: 'Implement get, set, and delete on a dictionary with a small CLI. Write the tests first — they will run unchanged against every later version.' },
+        { title: 'Add the write-ahead log', desc: 'Append every write to a file with a length prefix and checksum before updating memory. Flush and sync so the data is really on disk.' },
+        { title: 'Implement recovery', desc: 'On startup, replay the log to rebuild the index. Handle a truncated last record without crashing — that is the torn-write case.' },
+        { title: 'Write crash tests', desc: 'Spawn the store in a subprocess, kill it during a batch of writes, restart, and verify. Run it a hundred times. This step is what makes the project credible.' },
+        { title: 'Add compaction', desc: 'Rewrite the log with only live keys into a new file and atomically swap it in. Make sure a crash during compaction leaves the old log intact.' },
+        { title: 'Benchmark and write it up', desc: 'Measure writes per second and recovery time at 10k, 100k, and 1M keys. Document the format, the guarantees, and the trade-offs you chose.' }
+      ]
+    },
+    {
+      id: 'cs-7', path: 'cs', level: 'intermediate',
+      title: 'Compile a Tiny Language to WebAssembly',
+      summary: 'A compiler for a small expression language — lexer, parser, type checker, and a code generator that emits real WebAssembly binaries that run in the browser and in Node. You will understand what happens between source code and the machine.',
+      tech: ['TypeScript or Rust', 'Hand-written Lexer and Parser', 'WebAssembly Binary Format', 'WABT Tools', 'Browser Runtime'],
+      skills: 'Compiler Construction, Parsing and ASTs, Type Checking, Code Generation, WebAssembly',
+      why: 'WebAssembly is production-ready in 2026 across browsers, serverless runtimes, and plugin systems, and a compiler that targets it proves you understand language design, runtimes, and binary formats in one artifact. It is the project that makes interviewers stop and ask questions.',
+      useCase: 'A product wants users to write safe custom formulas that run at native speed in the browser. Your language compiles to Wasm and runs in a sandbox with no eval and no server round trip.',
+      bonus: 'Add functions and recursion, then a small standard library, then compile a recursive Fibonacci and benchmark it against JavaScript.',
+      aiAssist: 'Use Claude to design the grammar in EBNF, to walk through the WebAssembly binary section layout, and to debug validation errors from the Wasm engine — those messages are notoriously terse.',
+      prompt: 'I am writing a compiler in TypeScript for a small language with integers, floats, variables, arithmetic, comparisons, if/else, and while loops, targeting WebAssembly. Give me the EBNF grammar, a recursive-descent parser structure, and a type checker that rejects mixing ints and floats. Then explain how to emit a valid Wasm binary by hand — magic number, type section, function section, code section — with the local variable and control-flow instructions I will need.',
+      showcase: {
+        github: 'The compiler, a test suite of source programs with expected outputs, and a web playground where you type code and see the Wasm run.',
+        linkedin: 'Show the playground: type a loop, hit compile, watch it run in the browser at native speed. Keep it under 30 seconds.',
+        resume: 'Be specific: "Built a compiler from a custom language to WebAssembly with a hand-written parser, static type checking, and direct binary emission."'
+      },
+      youtube: 'b_PWItoHsr0',
+      ytTitle: 'Build your own JS compiler in WebAssembly',
+      steps: [
+        { title: 'Define the language', desc: 'Write the grammar for expressions, variables, if/else, and while. Keep it small. Write ten example programs with expected outputs before writing any code.' },
+        { title: 'Build the lexer and parser', desc: 'Hand-write a tokenizer and a recursive-descent parser producing an AST. Test each grammar rule with a tiny program.' },
+        { title: 'Add a type checker', desc: 'Walk the AST and assign types. Reject programs that mix types or use undeclared variables, with line numbers in the error.' },
+        { title: 'Emit WebAssembly text first', desc: 'Generate WAT (the text format) from the AST and assemble it with WABT. Run it in Node. This proves your codegen logic before the binary work.' },
+        { title: 'Emit the binary directly', desc: 'Replace the WAT step with your own binary encoder — sections, LEB128 integers, opcodes. Validate with wasm-validate until it passes.' },
+        { title: 'Build the playground', desc: 'A single web page with an editor, a compile button, and output. Deploy it and link it from the README next to a diagram of the pipeline.' }
+      ]
+    },
+    {
+      id: 'cs-8', path: 'cs', level: 'advanced',
+      title: 'Raft Consensus Key-Value Cluster with Chaos Tests',
+      summary: 'A replicated key-value store where three to five nodes agree on every write using the Raft consensus algorithm — leader election, log replication, and safety under partitions — with a chaos suite that kills nodes and splits the network to prove it never loses a committed write.',
+      tech: ['Go', 'gRPC', 'Raft (leader election + log replication)', 'Docker Compose', 'Fault-injection Test Harness'],
+      skills: 'Distributed Consensus, Fault Tolerance, Concurrency, Network Programming, Systems Testing',
+      why: 'Distributed consensus is the gold-standard advanced systems project — the same algorithm runs inside etcd, Consul, and CockroachDB. Adding chaos tests turns it from a course exercise into an SRE story about proving correctness under failure.',
+      useCase: 'A configuration service must stay available and consistent when one datacenter drops. Clients keep writing, a new leader is elected in under a second, and nothing that was acknowledged is ever lost.',
+      bonus: 'Add log compaction with snapshots and dynamic membership changes, the two features that separate a textbook Raft from a production one.',
+      aiAssist: 'Use Claude to walk through the Raft paper’s Figure 2 rules one at a time and to design the chaos scenarios — which partitions, which timings — that most often expose bugs in student implementations.',
+      prompt: 'I am implementing Raft in Go for a replicated key-value store. Walk me through the state each node keeps, the RequestVote and AppendEntries RPCs with every field, and the exact conditions for granting a vote and committing an entry. Then design a chaos test harness that can partition the network between any subset of nodes, delay messages, and crash-restart nodes, and list five scenarios that should each verify a specific safety property.',
+      showcase: {
+        github: 'The implementation, the chaos harness, and a results table showing every scenario passing, plus a diagram of a leader election under partition.',
+        linkedin: 'Record a terminal split: kill the leader on the left, watch the election and continued writes on the right.',
+        resume: 'Name the properties: "Implemented Raft consensus with leader election and log replication, verified against partitions and crashes with a fault-injection suite."'
+      },
+      youtube: 'y3UsyQTMeyI',
+      ytTitle: 'Implementing Raft Consensus in Golang',
+      steps: [
+        { title: 'Read the paper and build the skeleton', desc: 'Read the Raft paper, then set up nodes that talk over gRPC with persistent state on disk. No consensus yet — just RPC plumbing and a node lifecycle.' },
+        { title: 'Implement leader election', desc: 'Randomized timeouts, RequestVote, term handling. Start three nodes and confirm exactly one leader emerges and re-elects when killed.' },
+        { title: 'Implement log replication', desc: 'AppendEntries with consistency checks, commit index advancement, and applying entries to the key-value state machine. Verify all nodes converge.' },
+        { title: 'Build the chaos harness', desc: 'A test controller that can partition, delay, and crash nodes on demand. Wire it so the whole cluster runs in one Docker Compose file.' },
+        { title: 'Run the safety scenarios', desc: 'Partition the leader, write to both sides, heal, and verify only one history survives. Repeat with crash-restarts mid-replication. Fix what breaks.' },
+        { title: 'Measure and document', desc: 'Record election time and write throughput under load, then write a README explaining the guarantees, the scenarios, and one bug the harness caught.' }
+      ]
+    },
+    {
+      id: 'cy-6', path: 'cyber', level: 'beginner',
+      title: 'Phishing-Resistant Login with Passkeys (WebAuthn)',
+      summary: 'A working web app where users register and sign in with a passkey — a fingerprint, face, or security key — instead of a password. You build the relying party end to end and can explain why a phishing site cannot steal the credential.',
+      tech: ['Node.js', 'SimpleWebAuthn', 'React', 'SQLite', 'WebAuthn / FIDO2'],
+      skills: 'Authentication Protocols, Public-Key Cryptography Basics, Identity and Access Management, Web Security, API Design',
+      why: 'Passkeys are replacing passwords across Apple, Google, and Microsoft platforms, and identity is the top security spending category in 2026. A candidate who has implemented a relying party understands challenge-response, origin binding, and credential storage better than most working developers.',
+      useCase: 'A small SaaS keeps losing accounts to credential-stuffing attacks. Moving login to passkeys ends password reuse and phishing in one change, with a faster sign-in for users.',
+      bonus: 'Add conditional UI (autofill passkeys), cross-device sign-in with a QR code, and a recovery flow that does not fall back to a weak password.',
+      aiAssist: 'Use Claude to explain the registration and authentication ceremonies step by step, and to review your server code for the classic mistakes — not checking the origin, not verifying the challenge, not tracking the signature counter.',
+      prompt: 'I am adding passkey login to a Node.js and React app with SimpleWebAuthn. Explain the registration ceremony and the authentication ceremony as sequence diagrams between browser, authenticator, and server. Then list every check the server must perform on the responses, and explain what attack each check prevents. Finally, design the database tables for users and credentials, including what to store from the attestation.',
+      showcase: {
+        github: 'The app, a README with the two sequence diagrams, and a section titled "why phishing fails against this" written in plain language.',
+        linkedin: 'Record registering a passkey and signing in with a fingerprint on a phone in under 15 seconds. The speed is the message.',
+        resume: 'Lead with "WebAuthn / FIDO2 passkey authentication" and "phishing-resistant identity", then mention the relying-party implementation.'
+      },
+      youtube: 'helyWKUGxJU',
+      ytTitle: 'Add Passkey (WebAuthn) Login to Your Web App with ReactJS + NodeJS',
+      steps: [
+        { title: 'Build the shell app', desc: 'A React front end with register and login pages and a Node API with a users table. Serve it over HTTPS locally — WebAuthn requires a secure context.' },
+        { title: 'Implement registration', desc: 'Generate registration options on the server, call the browser API, verify the response, and store the public key and credential id. Test it with your laptop’s built-in authenticator.' },
+        { title: 'Implement authentication', desc: 'Generate a challenge, call the browser API, verify the signature against the stored public key, and issue a session. Confirm the signature counter is tracked.' },
+        { title: 'Handle multiple credentials', desc: 'Let a user register a second passkey (phone plus laptop) and manage them from a settings page. Deleting the last one should require confirmation.' },
+        { title: 'Try to break it', desc: 'Change the origin, replay an old response, tamper with the challenge. Each should fail with a clear server error. Document what you tried.' },
+        { title: 'Write the explainer', desc: 'A README section that explains, without jargon, why a fake login page cannot capture a passkey. This is what you will say in the interview.' }
+      ]
+    },
+    {
+      id: 'cy-7', path: 'cyber', level: 'intermediate',
+      title: 'LLM Red-Team Lab with Garak, PyRIT, and Promptfoo',
+      summary: 'A safe, local lab where you run automated adversarial testing tools against a model you host yourself — jailbreaks, prompt injection, data leakage, toxic output — and produce a findings report with severity ratings and mitigations, the way an AI security engineer would.',
+      tech: ['Ollama (local model)', 'Garak', 'PyRIT', 'Promptfoo', 'Python', 'Markdown Report'],
+      skills: 'AI Red Teaming, Adversarial Prompting, Vulnerability Assessment, Security Reporting, LLM Safety Controls',
+      why: 'Almost two thirds of cybersecurity postings now ask for AI skills, and AI red teamer is one of the fastest-growing new titles. Testing a model you host is legal, free, and produces the exact artifact hiring managers ask for: a real findings report.',
+      useCase: 'A company is about to ship a customer-facing chatbot. Before launch, the security team runs a structured red-team against it and hands engineering a prioritized list of what to fix.',
+      bonus: 'Add a system prompt with guardrails, re-run the full suite, and quantify how much the attack success rate dropped — then try to bypass your own guardrails.',
+      aiAssist: 'Use Claude to help classify findings against the OWASP Top 10 for LLM Applications, to draft the executive summary, and to suggest mitigations for each vulnerability class you found.',
+      prompt: 'I am running a red-team assessment against a locally hosted open-weight chat model using Garak, PyRIT, and Promptfoo. Design the test plan: which probe categories to run, how to configure each tool against an Ollama endpoint, and how to score results. Then give me a findings-report template with severity definitions, an OWASP LLM Top 10 mapping column, and a mitigations section aimed at the engineering team.',
+      showcase: {
+        github: 'The lab setup scripts, tool configs, raw results, and the polished findings report as a PDF. Redact nothing — it is your own model.',
+        linkedin: 'Post the summary table: probe categories, attack success rate before and after guardrails. That before/after is the story.',
+        resume: 'Use the industry vocabulary: "Conducted structured LLM red-team assessments using Garak, PyRIT, and Promptfoo, mapped findings to OWASP LLM Top 10."'
+      },
+      youtube: 'A6BhGdttz9k',
+      ytTitle: 'Red Teaming with Garak, PyRIT, and Promptfoo',
+      steps: [
+        { title: 'Host a target model', desc: 'Install Ollama and pull a small open-weight chat model. Confirm you can query it over its local API. Everything you attack from here on is yours.' },
+        { title: 'Run Garak probes', desc: 'Point Garak at the Ollama endpoint and run its prompt injection, jailbreak, and leakage probe sets. Save the raw output.' },
+        { title: 'Run PyRIT attack strategies', desc: 'Set up PyRIT with a target and a scorer, and run multi-turn attack strategies. Note which succeed and after how many turns.' },
+        { title: 'Build a Promptfoo eval suite', desc: 'Write your own red-team test cases in Promptfoo for the app’s specific use case — the scenarios a generic tool would miss.' },
+        { title: 'Add guardrails and re-test', desc: 'Write a system prompt with safety instructions, add an input filter, and re-run everything. Record the change in success rates per category.' },
+        { title: 'Write the findings report', desc: 'Executive summary, methodology, findings with severity and OWASP mapping, mitigations, and before/after metrics. Export to PDF.' }
+      ]
+    },
+    {
+      id: 'cy-8', path: 'cyber', level: 'advanced',
+      title: 'Software Supply-Chain Guard: SBOM, Signing, and Provenance in CI',
+      summary: 'A CI pipeline that produces a signed container image with a software bill of materials, SLSA provenance attestation, and a vulnerability scan on every build — and a deployment gate that refuses any image without a valid signature. The defenses against the attack class behind the biggest incidents of recent years.',
+      tech: ['GitHub Actions', 'Syft', 'Trivy', 'Cosign / Sigstore', 'SLSA Provenance', 'Kyverno or OPA'],
+      skills: 'Supply-Chain Security, Artifact Signing and Verification, SBOM Generation, Policy Enforcement, DevSecOps Pipelines',
+      why: 'Supply-chain compromise — poisoned dependencies, tampered build artifacts — drove the most damaging breaches of the last two years, and regulators now require SBOMs for software sold to government. DevSecOps roles want someone who has actually wired signing and verification end to end.',
+      useCase: 'A company ships containers to customers who must prove what is inside them. Every release carries a signed SBOM and provenance, and the cluster rejects any image that was not built by the official pipeline.',
+      bonus: 'Add a policy that also rejects images whose SBOM contains a package with a critical CVE, so the gate enforces both authenticity and vulnerability posture.',
+      aiAssist: 'Use Claude to explain keyless signing with Sigstore’s OIDC flow and transparency log, and to translate your verification rules into a Kyverno image-verification policy.',
+      prompt: 'I am building a secure software supply chain in GitHub Actions for a Docker image. Design the pipeline: build, generate an SBOM with Syft, scan with Trivy, sign the image keylessly with Cosign using the workflow’s OIDC identity, attach the SBOM and SLSA provenance as attestations. Then write a Kyverno ClusterPolicy that only admits images signed by that exact workflow identity, and explain how to verify the attestations from the command line.',
+      showcase: {
+        github: 'The workflow, the policy, and a README showing the verification commands succeeding on your image and failing on an unsigned one.',
+        linkedin: 'Show the rejection: deploy an unsigned image and watch the admission controller block it with the policy message.',
+        resume: 'Name the standards: "Implemented SLSA provenance, Sigstore keyless signing, and SBOM attestation with admission-time verification."'
+      },
+      youtube: 'nF15vzo5Gts',
+      ytTitle: 'Creating an SBOM Attestation with Trivy and Cosign from Sigstore',
+      steps: [
+        { title: 'Build and scan', desc: 'A workflow that builds a container image, pushes it to a registry, and runs Trivy. Fail the build on critical vulnerabilities to set the baseline.' },
+        { title: 'Generate the SBOM', desc: 'Add Syft to produce an SPDX or CycloneDX SBOM and upload it as a build artifact. Open it and understand what is inside your image.' },
+        { title: 'Sign keylessly with Cosign', desc: 'Use the workflow’s OIDC token to sign the image with Sigstore. Verify the signature locally and find your entry in the transparency log.' },
+        { title: 'Attach attestations', desc: 'Attach the SBOM and a SLSA provenance attestation to the image. Verify both with Cosign and inspect the provenance to see the builder identity.' },
+        { title: 'Gate the cluster', desc: 'Install Kyverno on a kind cluster and write an image-verification policy pinned to your workflow identity. Deploy a signed image (allowed) and an unsigned one (rejected).' },
+        { title: 'Document the chain', desc: 'A README with a diagram from source to running pod, the verification commands, and a plain-language explanation of which attack each control stops.' }
+      ]
+    },
+    {
+      id: 'cy-9', path: 'cyber', level: 'advanced',
+      title: 'Detection Engineering for AI Agent Telemetry',
+      summary: 'A security analytics pipeline for AI systems — synthetic logs of prompts, model responses, retrievals, and tool calls streamed into OpenSearch, with Sigma-style detection rules that fire on jailbreak loops, credentials pasted into prompts, and abnormal retrieval volume. Blue-team skills applied to a brand-new attack surface.',
+      tech: ['OpenSearch Security Analytics', 'Sigma Rules', 'Python (log generator)', 'Docker Compose', 'MITRE ATLAS'],
+      skills: 'Detection Engineering, Log Pipeline Design, AI Threat Modeling, SIEM Operations, Rule Tuning',
+      why: 'Companies are deploying agents faster than their SOCs can monitor them, and almost no detection content exists for AI-specific abuse. Building it puts you in a category of one for AI security roles and shows you can apply classic blue-team method to a new domain.',
+      useCase: 'A company runs an internal agent that can query customer records. The SOC needs to know within minutes if someone is trying to jailbreak it, exfiltrate data through repeated retrievals, or leak an API key in a prompt.',
+      bonus: 'Add a correlation rule that links a jailbreak attempt to a subsequent spike in retrieval volume from the same session, and map every rule to MITRE ATLAS techniques.',
+      aiAssist: 'Use Claude to design the telemetry schema for agent events and to generate realistic synthetic logs, including the attack sequences your rules need to catch and the benign noise that should not trigger them.',
+      prompt: 'I am building detection rules for AI agent telemetry in OpenSearch Security Analytics. Design a log schema for agent events: prompt, response, tool call, retrieval, and identity, with the fields each needs. Then write five Sigma-style rules: repeated jailbreak phrasing from one session, credential patterns in prompts, retrieval volume three standard deviations above baseline, tool calls outside business hours, and a response containing PII markers. For each rule, give the false-positive risk and how to tune it.',
+      showcase: {
+        github: 'The log generator, the OpenSearch setup, the rules, and a runbook for each detection explaining what to do when it fires.',
+        linkedin: 'Show the dashboard lighting up as the generator replays an attack sequence, with the alert list on the side.',
+        resume: 'Position it as blue-team innovation: "Designed telemetry and detection rules for LLM agent abuse, mapped to MITRE ATLAS, deployed in OpenSearch."'
+      },
+      youtube: 'PBXWJqA5NL4',
+      ytTitle: 'Creating Custom Rules in OpenSearch Security Analytics',
+      steps: [
+        { title: 'Stand up OpenSearch', desc: 'Docker Compose with OpenSearch and Dashboards. Enable Security Analytics and confirm you can create a detector on a sample index.' },
+        { title: 'Design the event schema', desc: 'Define fields for each agent event type. Use the AI prompt to pressure-test it — what would you need to investigate an incident after the fact?' },
+        { title: 'Build the log generator', desc: 'A Python script that emits realistic benign traffic plus scripted attack sequences, with a flag to replay a specific scenario on demand.' },
+        { title: 'Write the detection rules', desc: 'Implement five rules as custom Security Analytics rules. Start with the credential-in-prompt rule — it is the easiest to get right and the most convincing.' },
+        { title: 'Tune against noise', desc: 'Run 24 hours of synthetic benign traffic and count false positives per rule. Adjust thresholds and document the trade-off for each.' },
+        { title: 'Write the runbooks', desc: 'For each detection: what it means, how to confirm it, what to do next. Map each to MITRE ATLAS. This is what a SOC lead will read first.' }
+      ]
+    },
+    {
+      id: 'da-6', path: 'data', level: 'beginner',
+      title: 'Laptop Lakehouse: DuckDB, Parquet, and a One-Page Dashboard',
+      summary: 'A complete analytics project that runs on your laptop for free — public data converted to Parquet, queried with SQL in DuckDB, modeled into clean metrics, and shipped as a one-page dashboard you can actually send to someone.',
+      tech: ['DuckDB', 'Python', 'Parquet', 'Streamlit or Evidence', 'SQL'],
+      skills: 'SQL Analytics, Columnar Data Formats, Data Modeling, Dashboard Design, Data Storytelling',
+      why: 'DuckDB plus Parquet has become the default starter stack for analytics in 2026 — it is what analysts use before a company buys a warehouse, and what analytics engineers use to prototype. Finishing a clean project end to end matters more to hiring managers than any single tool.',
+      useCase: 'A city open-data portal publishes millions of rows of service requests as CSV. You turn it into a fast, queryable dataset and a dashboard that shows response times by neighborhood.',
+      bonus: 'Publish the dataset as a set of Parquet files on a free static host and query them remotely from DuckDB over HTTP — a "serverless data lake" in one afternoon.',
+      aiAssist: 'Use Claude to write and explain the window-function SQL for rolling averages and rankings, and to critique your dashboard layout for what a first-time viewer would misread.',
+      prompt: 'I have a public dataset of 3 million city service requests as CSV. Show me how to load it into DuckDB, convert it to partitioned Parquet, and write SQL for: requests per month, median time to close by category, and the top 10 neighborhoods by open backlog with a 90-day rolling average. Then propose a one-page dashboard layout with exactly four visuals and explain the choice of each.',
+      showcase: {
+        github: 'The notebook or scripts, the SQL models, the dashboard app, and a README with two screenshots and one paragraph of findings.',
+        linkedin: 'Post the dashboard image with three sentences of insight. Analysts get hired for the insight, not the chart.',
+        resume: 'Frame it around outcomes: "Modeled 3M public records with DuckDB and Parquet and delivered a dashboard that surfaced a 40% backlog gap between districts."'
+      },
+      youtube: '3KZyUboRwM8',
+      ytTitle: 'Getting Started With DuckDB For Data Analytics In Python',
+      steps: [
+        { title: 'Pick a real dataset', desc: 'Choose a public dataset with at least a million rows and a date column — city service requests, transit ridership, weather. Download the raw files.' },
+        { title: 'Load and convert', desc: 'Read the CSV with DuckDB, fix types, and write partitioned Parquet. Compare file size and query speed before and after — note the numbers.' },
+        { title: 'Explore with SQL', desc: 'Answer ten questions with SQL: totals, trends, top-N, distributions. Save each query. Notice where the data is dirty and document it.' },
+        { title: 'Build clean metric tables', desc: 'Write SQL views for the three or four metrics the dashboard will show. Every number on the dashboard should trace to one view.' },
+        { title: 'Ship the dashboard', desc: 'One page, four visuals, one clear headline. Use Streamlit or Evidence. Deploy it free so the link works in an application.' },
+        { title: 'Write the findings', desc: 'A short README: what the data says, one surprising thing, and what you would look at next. This is the part a hiring manager reads.' }
+      ]
+    },
+    {
+      id: 'da-7', path: 'data', level: 'intermediate',
+      title: 'Semantic Layer and Data Contracts with dbt, Queried in Plain English',
+      summary: 'A dbt project where metrics are defined once in a semantic layer, protected by data contracts and tests, and exposed through a small natural-language interface that turns questions into governed SQL — so the AI and the dashboard always return the same number.',
+      tech: ['dbt Core', 'MetricFlow', 'dbt Contracts and Tests', 'DuckDB', 'Python', 'Claude API'],
+      skills: 'Analytics Engineering, Metric Definition, Data Governance, Data Contracts, Text-to-SQL Guardrails',
+      why: 'The analytics engineer of 2026 is judged on contracts, tests, and machine-readable metric definitions that AI tools can query consistently, not on individual models. This project is that job description in miniature, and the plain-English layer makes it demo well.',
+      useCase: 'Three teams report three different "monthly active users." A semantic layer makes one definition the source of truth, and the chat interface lets a manager ask for it without knowing which table to join.',
+      bonus: 'Add a CI check that fails a pull request if a contracted model’s schema changes, and a metrics changelog that is generated automatically from the semantic layer.',
+      aiAssist: 'Use Claude to help write the semantic model YAML for entities, dimensions, and measures, and to design the guardrails so the plain-English layer can only ever call defined metrics, never free-form SQL.',
+      prompt: 'I have a dbt project on DuckDB with orders, customers, and products. Design a semantic layer with MetricFlow: define the entities, dimensions, and three metrics — revenue, active customers, and average order value. Add a data contract to the orders model. Then design a Python function that takes a plain-English question, uses an LLM to map it to a metric plus dimensions plus a time grain, and compiles it through the semantic layer — with a strict rule that no raw SQL from the model is ever executed.',
+      showcase: {
+        github: 'The dbt project with semantic models, contracts, tests, the query interface, and a screenshot of the same metric matching in the dashboard and the chat.',
+        linkedin: 'Show the chat: ask "revenue by region last quarter", show the compiled SQL and the result, then show the dashboard tile with the identical number.',
+        resume: 'Speak the language of the role: "Built a dbt semantic layer with data contracts and a governed natural-language query interface."'
+      },
+      youtube: '3YXqY1lbTFI',
+      ytTitle: 'dbt Semantic Layer Workshop',
+      steps: [
+        { title: 'Model the data in dbt', desc: 'Staging and mart models for orders, customers, and products on DuckDB. Add schema tests for keys and not-null. Get a clean dbt build.' },
+        { title: 'Add data contracts', desc: 'Enforce a contract on the orders mart with explicit column types. Change a column and watch the build fail — that is the feature.' },
+        { title: 'Define the semantic layer', desc: 'Write semantic models and three metrics in MetricFlow. Query each from the command line and confirm the numbers match your mart queries.' },
+        { title: 'Build the plain-English layer', desc: 'A small Python app: question in, LLM maps it to metric, dimensions, and grain, the semantic layer compiles it, result out. Log every mapping.' },
+        { title: 'Add guardrails and tests', desc: 'Reject questions that do not map to a defined metric. Write twenty test questions with expected metric mappings and run them in CI.' },
+        { title: 'Prove consistency', desc: 'Build a tiny dashboard on the same metrics and show the chat and the dashboard agree. Document the governance story in the README.' }
+      ]
+    },
+    {
+      id: 'da-8', path: 'data', level: 'advanced',
+      title: 'Streaming Lakehouse: Redpanda to Iceberg to DuckDB',
+      summary: 'A real-time analytics pipeline — events produced into Redpanda, landed continuously into Apache Iceberg tables with schema evolution and time travel, and queried seconds later from DuckDB and a live dashboard. The open lakehouse architecture that data platforms are standardizing on.',
+      tech: ['Redpanda (Kafka API)', 'Apache Iceberg', 'DuckDB or Trino', 'Python Producer', 'MinIO (S3-compatible)', 'Grafana'],
+      skills: 'Stream Processing, Open Table Formats, Lakehouse Architecture, Schema Evolution, Real-Time Analytics',
+      why: 'Choosing an open table format is described as the architecture decision of the decade, and Iceberg has become the default. A working stream-to-Iceberg pipeline with time travel is a senior-level talking point that most analysts never get to build on the job.',
+      useCase: 'A retailer wants inventory dashboards that update within seconds of a sale, plus the ability to query "what did stock look like at 3 p.m. yesterday" without a separate snapshot process.',
+      bonus: 'Add a schema change mid-stream — a new column in the events — and show queries against old and new snapshots both succeeding, then add compaction to keep small files under control.',
+      aiAssist: 'Use Claude to explain Iceberg’s metadata layers (manifests, snapshots, partition specs) and to design a realistic event schema and producer that includes late-arriving and duplicate events for you to handle.',
+      prompt: 'I am building a streaming lakehouse locally: a Python producer sending order events to Redpanda, Redpanda’s Iceberg integration writing to tables in MinIO, and DuckDB querying them. Design the event schema, the Iceberg table with partitioning by day, and the configuration to land events continuously. Then write DuckDB queries for: current inventory per product, the same query against a snapshot from one hour ago, and a detection of duplicate events by idempotency key.',
+      showcase: {
+        github: 'Docker Compose for the whole stack, the producer, table definitions, queries, and a dashboard screenshot with a timestamp proving sub-minute freshness.',
+        linkedin: 'Record a split screen: producer emitting events on the left, dashboard number ticking up on the right, then a time-travel query showing the past.',
+        resume: 'Use the architecture terms: "Built a streaming lakehouse with Redpanda and Apache Iceberg supporting time travel and schema evolution, queried via DuckDB."'
+      },
+      youtube: 'MCIcgQs0pFo',
+      ytTitle: 'Getting started with Redpanda on Apache Iceberg',
+      steps: [
+        { title: 'Stand up the stack', desc: 'Docker Compose with Redpanda, MinIO, and a catalog. Produce one test message and read it back before touching Iceberg.' },
+        { title: 'Write the producer', desc: 'A Python producer emitting order events at a controllable rate, with idempotency keys and a small percentage of late and duplicate events.' },
+        { title: 'Land events into Iceberg', desc: 'Configure the Iceberg sink to write the topic into a partitioned table in MinIO. Confirm files and metadata appear and that DuckDB can read the table.' },
+        { title: 'Query in near real time', desc: 'Write the current-inventory query and measure the lag from produce to visible. Tune the commit interval and record the trade-off.' },
+        { title: 'Use time travel and evolve the schema', desc: 'Query a past snapshot. Add a column to the events, keep producing, and show both old and new snapshots query correctly.' },
+        { title: 'Ship the dashboard and write-up', desc: 'A Grafana panel on the live query, plus a README explaining the metadata layers, the freshness numbers, and how duplicates are handled.' }
+      ]
+    },
+    {
+      id: 'hd-8', path: 'helpdesk', level: 'intermediate',
+      title: 'IT Support Agent in Copilot Studio with SharePoint Knowledge and Ticket Creation',
+      summary: 'A Copilot Studio agent published into Microsoft Teams that answers IT questions from a SharePoint knowledge base, walks users through common fixes, and creates a ticket with Power Automate when it cannot resolve the issue — the modern front door to a service desk.',
+      tech: ['Microsoft Copilot Studio', 'SharePoint', 'Power Automate', 'Microsoft Teams', 'Entra ID'],
+      skills: 'AI Agent Configuration, Knowledge Base Design, Workflow Automation, Ticket Deflection, Microsoft 365 Administration',
+      why: 'Microsoft runs its own employee IT front door on a Copilot agent, and most Microsoft 365 shops are following. Help desk roles now ask for hands-on experience configuring these agents, and a working one in Teams is the most current thing a candidate can show.',
+      useCase: 'A 300-person company gets 80 tickets a week that are answered in the knowledge base already. The agent handles them in chat, and only the real problems reach a technician.',
+      bonus: 'Add authentication so the agent can look up the user’s own recent tickets and device compliance status from Intune and personalize its answers.',
+      aiAssist: 'Use Claude to rewrite your knowledge-base articles into the short, structured format that grounding works best on, and to generate 50 realistic user questions for testing coverage.',
+      prompt: 'I am building an IT support agent in Copilot Studio grounded on a SharePoint document library of knowledge articles. Design the agent: the instructions, the topics for password reset, VPN issues, and software requests, and the escalation topic that collects details and calls a Power Automate flow to create a ticket in a SharePoint list. Then give me a test plan of 30 questions across covered, partially covered, and out-of-scope, and what a good answer looks like for each category.',
+      showcase: {
+        github: 'The agent export, the flow, the knowledge articles, and a test results table showing deflection rate across your question set.',
+        linkedin: 'Record the Teams chat: a question answered from the KB, then an unresolvable one that becomes a ticket with a number in the reply.',
+        resume: 'Quantify deflection: "Configured a Copilot Studio support agent that resolved N% of test questions without a ticket."'
+      },
+      youtube: 'KqJ1rbaGGK4',
+      ytTitle: 'Create an AI Ticketing System with Copilot — SharePoint, Agents, Knowledge and Triggers',
+      steps: [
+        { title: 'Build the knowledge base', desc: 'Write 15–20 short, structured articles in a SharePoint library: VPN, password reset, MFA, printers, software requests. Consistent headings matter for grounding.' },
+        { title: 'Create the agent', desc: 'In Copilot Studio, create an agent, add the SharePoint library as knowledge, and write clear instructions about tone and scope. Test in the built-in chat.' },
+        { title: 'Add guided topics', desc: 'Build topics for the top three issues with step-by-step troubleshooting and a "did that fix it?" branch. Generative answers cover the rest.' },
+        { title: 'Wire ticket creation', desc: 'An escalation topic that collects the issue, device, and urgency, then calls a Power Automate flow to create an item in a tickets list and reply with the number.' },
+        { title: 'Publish to Teams', desc: 'Publish the agent to Teams, install it for yourself, and test from a phone. Fix anything that reads awkwardly in a narrow chat window.' },
+        { title: 'Measure and iterate', desc: 'Run your 30-question test plan, log answered versus escalated, improve the weakest articles, and re-run. Report the deflection rate.' }
+      ]
+    },
+    {
+      id: 'hd-9', path: 'helpdesk', level: 'advanced',
+      title: 'Employee Self-Service Portal on Power Pages and Dataverse',
+      summary: 'A secure employee portal where staff sign in with their work account, submit IT and facilities requests, track status, and read announcements — backed by Dataverse tables, Power Automate approvals, and role-based access that shows managers only their team’s requests.',
+      tech: ['Power Pages', 'Dataverse', 'Power Automate', 'Entra ID Authentication', 'Power BI'],
+      skills: 'Low-Code Application Development, Data Modeling, Role-Based Access Control, Approval Workflows, Service Catalog Design',
+      why: 'Enterprises hand junior admins exactly this kind of portal to maintain and extend, and Power Platform skills carry a premium in help desk and IT operations postings. Building one from scratch proves you understand data, security, and workflow together, not just ticket handling.',
+      useCase: 'A company replaces a shared inbox with a portal: requests get a category and owner automatically, managers approve equipment over a cost threshold in one click, and leadership sees volume and turnaround on a dashboard.',
+      bonus: 'Embed the Copilot Studio agent from hd-8 in the portal so users can ask a question before they open a request, and log which questions led to requests anyway.',
+      aiAssist: 'Use Claude to design the Dataverse table relationships and security roles, and to draft the approval flow logic including what happens when an approver is out of office.',
+      prompt: 'I am building an employee self-service portal in Power Pages with Dataverse. Design the tables for requests, categories, comments, and assets with their relationships. Define three web roles — employee, manager, IT agent — and the table permissions each needs so employees see only their own requests and managers see their team’s. Then design a Power Automate approval flow for equipment requests over $500 with a reminder after two days and reassignment if the approver is out of office.',
+      showcase: {
+        github: 'A solution export, the data model diagram, the security role matrix, and screenshots of the portal from each role’s point of view.',
+        linkedin: 'Walk through one request: employee submits, manager approves from email, IT closes it, employee sees the status change. Under a minute.',
+        resume: 'List the platform pieces: "Built an employee self-service portal on Power Pages and Dataverse with role-based access and automated approvals."'
+      },
+      youtube: '1RmI6tkaU4I',
+      ytTitle: 'Build a Customer Self-Service Portal in Microsoft Power Pages Step-by-Step',
+      steps: [
+        { title: 'Design the data model', desc: 'Create Dataverse tables for requests, categories, comments, and assets. Draw the relationships before creating anything — changing them later is painful.' },
+        { title: 'Build the portal', desc: 'Create a Power Pages site with a request form, a "my requests" list, and a request detail page with comments. Keep the design simple and mobile-friendly.' },
+        { title: 'Add authentication and roles', desc: 'Enable Entra ID sign-in, create the three web roles, and configure table permissions. Test each role in a private window and confirm the boundaries hold.' },
+        { title: 'Automate assignment and approvals', desc: 'Flows that assign an owner by category on create and route high-cost requests to the manager for approval, with reminders and escalation.' },
+        { title: 'Add the manager and agent views', desc: 'A team queue for managers and a work queue for IT agents with status updates that notify the requester. Announcements on the home page.' },
+        { title: 'Report and document', desc: 'A Power BI page on volume, turnaround, and approval times, embedded in the portal for leadership. Document the model, roles, and flows.' }
+      ]
+    },
+    {
+      id: 'sw-6', path: 'swe', level: 'beginner',
+      title: 'API-First Service with OpenAPI, a Generated SDK, and Contract Tests',
+      summary: 'A REST API designed spec-first — the OpenAPI document is written before the code, the server validates requests against it, a client SDK is generated from it, and contract tests fail the build if the implementation ever drifts from the contract.',
+      tech: ['OpenAPI 3.1', 'FastAPI or Express', 'OpenAPI Generator', 'Schemathesis', 'GitHub Actions', 'Docker'],
+      skills: 'API Design, Contract-First Development, SDK Generation, Contract and Property-Based Testing, CI Automation',
+      why: 'Design-first APIs with generated clients are how platform and product teams ship, and "the spec is the source of truth" is a phrase you will hear in every backend interview. Contract tests show you understand integration risk, which is what separates a junior who writes endpoints from one who ships them safely.',
+      useCase: 'A mobile team and a backend team work in parallel. The mobile team builds against the generated SDK from day one, and when the backend changes a field, CI catches it before anyone’s app breaks.',
+      bonus: 'Publish the SDK to a package registry with semantic versioning driven by the spec diff, and host the API docs from the same OpenAPI file.',
+      aiAssist: 'Use Claude to review your OpenAPI document for naming consistency, error response shapes, and pagination design, and to generate realistic example payloads for every schema.',
+      prompt: 'I am designing a task-management REST API spec-first with OpenAPI 3.1. Write the spec for tasks and projects with list, get, create, update, delete, pagination, filtering, and a consistent error schema. Then explain how to validate requests against it in FastAPI, how to generate a TypeScript SDK with OpenAPI Generator, and how to run Schemathesis in CI so the implementation is tested against every operation in the spec.',
+      showcase: {
+        github: 'The spec, the server, the generated SDK as a separate package, the contract tests, and hosted docs. A drift example in the README where CI catches a breaking change.',
+        linkedin: 'Show the diff: change a response field in the server, watch the contract test fail with the exact operation and schema mismatch.',
+        resume: 'Lead with "API-first design with OpenAPI" and "contract testing", then mention SDK generation.'
+      },
+      youtube: 'YJK03LdXwfQ',
+      ytTitle: 'Complete API Tutorial (from design to implementation with OpenAPI)',
+      steps: [
+        { title: 'Write the spec first', desc: 'Before any code, write the OpenAPI document for two resources with full schemas, examples, and error responses. Lint it. Review it with the AI prompt.' },
+        { title: 'Mock it', desc: 'Run a mock server from the spec and hit it with curl. This is what a front-end teammate would build against while you implement.' },
+        { title: 'Implement the server', desc: 'Build the endpoints with request and response validation wired to the spec. Every mismatch should be a 400 or a failing test, never a silent pass.' },
+        { title: 'Generate the SDK', desc: 'Generate a TypeScript client from the spec, write a ten-line script that uses it end to end, and commit it as its own package.' },
+        { title: 'Add contract tests', desc: 'Run Schemathesis against the live server in CI. Introduce a deliberate drift and confirm the build goes red with a useful message.' },
+        { title: 'Publish docs and write up', desc: 'Host interactive docs from the spec, add a README explaining the workflow, and include the drift example as proof that the contract is enforced.' }
+      ]
+    },
+    {
+      id: 'sw-7', path: 'swe', level: 'intermediate',
+      title: 'Local-First Collaborative Editor with CRDTs',
+      summary: 'A notes app that works fully offline, stores data in the browser, and syncs edits between users in real time without conflicts using a CRDT — two people typing in the same document on a flaky connection and always converging on the same text.',
+      tech: ['React', 'Yjs', 'y-webrtc or Hocuspocus', 'SQLite-Wasm with OPFS', 'IndexedDB', 'TypeScript'],
+      skills: 'Real-Time Collaboration, Conflict-Free Replicated Data Types, Offline-First Architecture, State Synchronization, Browser Storage APIs',
+      why: 'Local-first is the architecture trend of 2026, with SQLite compiled to WebAssembly giving the browser a real database. A collaborative editor built on CRDTs demonstrates concurrency and state-synchronization skill that most CRUD portfolios never touch.',
+      useCase: 'Field engineers fill out inspection reports on tablets with no signal, and their edits merge cleanly with the office’s changes when they reconnect — no "which version wins" dialogs.',
+      bonus: 'Add presence (cursors and names), an undo history that respects other users’ edits, and end-to-end encryption of the sync channel.',
+      aiAssist: 'Use Claude to explain how Yjs represents text internally and why concurrent inserts at the same position converge, and to design the offline test matrix — which sequences of disconnect, edit, and reconnect to verify.',
+      prompt: 'I am building a local-first collaborative notes app with React and Yjs. Explain how to structure the document as a Y.Text inside a Y.Doc, persist it locally with IndexedDB, and sync it between browsers with a WebRTC or WebSocket provider. Then design a test plan for offline behavior: two clients, one goes offline, both edit the same paragraph, reconnect. Show what the CRDT guarantees and what the UI still has to handle.',
+      showcase: {
+        github: 'The app, a hosted demo with a shareable room link, and a README with a diagram of the sync flow and the offline test results.',
+        linkedin: 'Record two browser windows side by side, disconnect one, type in both, reconnect, and watch them merge. That clip explains CRDTs better than any paragraph.',
+        resume: 'Use the architecture terms: "Built a local-first collaborative editor using CRDTs with offline persistence and real-time peer sync."'
+      },
+      youtube: 'KmuYkvcXp3k',
+      ytTitle: 'ReactJS Collaborative Text Editor like Google Docs with CRDTs',
+      steps: [
+        { title: 'Build the single-user editor', desc: 'A React text editor backed by a Yjs document. Persist it to IndexedDB so a refresh keeps your text. No networking yet.' },
+        { title: 'Add real-time sync', desc: 'Connect a sync provider and open the app in two windows. Type in both and watch edits appear instantly. Understand what the provider is actually sending.' },
+        { title: 'Go offline on purpose', desc: 'Disconnect one window, edit in both, reconnect. Confirm convergence. Then try the nasty cases: same position, deletions overlapping insertions.' },
+        { title: 'Add multiple documents and rooms', desc: 'A document list, shareable room links, and per-document persistence. Store the list itself in SQLite-Wasm with OPFS for a real local database.' },
+        { title: 'Add presence and awareness', desc: 'Show who is in the document and where their cursor is using the awareness protocol. Handle a user leaving without cleanup.' },
+        { title: 'Deploy and document', desc: 'Host the app and the sync server, write the sync-flow diagram and the offline test matrix results, and record the two-window demo.' }
+      ]
+    },
+    {
+      id: 'sw-8', path: 'swe', level: 'advanced',
+      title: 'Event-Driven Microservices with the Outbox Pattern and Distributed Tracing',
+      summary: 'Three services that communicate through Kafka — orders, inventory, notifications — where every database write and its event are committed atomically through a transactional outbox, and a single trace follows one order across every hop so you can see exactly where time goes.',
+      tech: ['Go or Java', 'Kafka (Redpanda)', 'PostgreSQL Outbox', 'Debezium', 'OpenTelemetry', 'Jaeger or Tempo'],
+      skills: 'Event-Driven Architecture, Transactional Consistency, Change Data Capture, Distributed Tracing, Idempotent Consumers',
+      why: 'The dual-write problem — a database commit succeeding while the event publish fails — is the backend interview question of the year, and the outbox pattern is the accepted answer. Tracing a single request across services is how senior engineers debug production, and doing both in one project reads as staff-level thinking.',
+      useCase: 'An order placed at checkout must reserve inventory and send a confirmation, reliably, even if Kafka is briefly down or a service crashes mid-request. Nothing is lost and nothing is duplicated.',
+      bonus: 'Add a saga for order cancellation with compensating events, and a dead-letter topic with a small admin page for replaying failed messages.',
+      aiAssist: 'Use Claude to explain the failure modes the outbox pattern solves versus the ones it does not, and to design the idempotency-key strategy for each consumer so a replayed event never double-charges or double-reserves.',
+      prompt: 'I am building three Go microservices — orders, inventory, notifications — with Kafka. Design the transactional outbox for the orders service: the table schema, how the write and the outbox insert share one transaction, and how Debezium or a poller relays rows to Kafka. Then explain how each consumer stays idempotent, and show how to propagate an OpenTelemetry trace context through Kafka headers so one order shows up as a single trace across all three services.',
+      showcase: {
+        github: 'Docker Compose for the whole system, the services, and a Jaeger screenshot of one order’s trace spanning three services with the Kafka hops visible.',
+        linkedin: 'Show the trace waterfall for one order, then kill the inventory service mid-flow, restart it, and show the order completing with no duplicate.',
+        resume: 'Name the patterns: "Designed event-driven services with a transactional outbox, idempotent consumers, and end-to-end OpenTelemetry tracing across Kafka."'
+      },
+      youtube: 'ujeFmq5trik',
+      ytTitle: 'Go Kafka: Transactional Outbox Pattern in Microservices',
+      steps: [
+        { title: 'Build the three services', desc: 'Orders, inventory, and notifications, each with its own Postgres database, wired to Redpanda in Docker Compose. Publish events naively first — you need to see the dual-write problem before you fix it.' },
+        { title: 'Reproduce the dual-write bug', desc: 'Kill Kafka between the database commit and the publish. Show the order that exists but was never announced. Screenshot it for the README.' },
+        { title: 'Implement the outbox', desc: 'Add an outbox table written in the same transaction as the order. Relay it to Kafka with Debezium or a poller. Repeat the kill test and show nothing is lost.' },
+        { title: 'Make consumers idempotent', desc: 'Store processed event ids per consumer and skip duplicates. Replay a topic from the beginning and confirm inventory counts stay correct.' },
+        { title: 'Add distributed tracing', desc: 'Instrument all three services with OpenTelemetry, propagate context through Kafka headers, and confirm a single order appears as one trace in Jaeger.' },
+        { title: 'Load, break, and document', desc: 'Run load, kill services mid-flow, and verify consistency. Write a README with the architecture diagram, the failure tests, and the trace screenshot.' }
+      ]
+    },
+    {
+      id: 'it-8', path: 'tech-it', level: 'intermediate',
+      title: 'Self-Healing Endpoints with Intune Remediation Scripts',
+      summary: 'A library of Intune remediation script pairs — detection scripts that find a problem on a device and remediation scripts that fix it automatically — deployed to a test fleet with reporting that shows how many issues were resolved before anyone opened a ticket.',
+      tech: ['Microsoft Intune Remediations', 'PowerShell', 'Endpoint Analytics', 'Entra ID', 'Windows 11 VMs'],
+      skills: 'Endpoint Management, PowerShell Scripting, Proactive Remediation, Fleet Reporting, Troubleshooting Automation',
+      why: 'Intune Suite capabilities moved into Microsoft 365 E3 and E5 in July 2026, so remediation skills now apply to far more employers than before. Turning recurring tickets into scripts that fix themselves is the single clearest way an IT support tech shows they think like an automation engineer.',
+      useCase: 'A company’s top five tickets are all the same: stale Teams cache, a missing VPN certificate, a service that stops, low disk space, and a wrong time zone. Each becomes a remediation that runs daily and reports what it fixed.',
+      bonus: 'Add an on-demand remediation a technician can trigger from a device page, and a Power BI report over Graph API data showing time saved per remediation.',
+      aiAssist: 'Use Claude to convert a plain-English ticket description into a detection and remediation script pair with the exact exit-code conventions Intune expects, and to review scripts for anything that could harm a device if run repeatedly.',
+      prompt: 'I am building Intune remediation scripts in PowerShell. For each of these issues, write a detection script and a remediation script following Intune’s exit-code rules: Teams cache over 1 GB, a required root certificate missing, the Windows Time service stopped, free disk space under 10 GB, and OneDrive not signed in. Explain how to make each safe to run daily, and what the output should say so the Intune report is useful.',
+      showcase: {
+        github: 'The script pairs with a README table of issue, detection logic, remediation action, and safety notes, plus screenshots of the Intune report.',
+        linkedin: 'Show the Intune remediation report: devices with issues detected, issues fixed, over a week. The numbers speak.',
+        resume: 'Quantify it: "Built and deployed N Intune remediations that automatically resolved recurring endpoint issues across a test fleet."'
+      },
+      youtube: '2nGe1-IMt34',
+      ytTitle: 'Getting Started with Microsoft Intune Proactive Remediations',
+      steps: [
+        { title: 'Build a test fleet', desc: 'Three Windows 11 VMs enrolled in a trial Intune tenant. Deliberately break each one in a different way so you have real problems to detect.' },
+        { title: 'Write the first pair', desc: 'A detection script that checks disk space and a remediation that clears temp files. Follow the exit-code convention exactly and test both locally first.' },
+        { title: 'Deploy and read the report', desc: 'Create the remediation in Intune, assign it, and force a sync. Read the report and understand each column before adding more scripts.' },
+        { title: 'Build the library', desc: 'Add four more pairs for the most common ticket types. Keep detection fast and remediation safe to repeat — idempotency matters on a daily schedule.' },
+        { title: 'Add on-demand runs', desc: 'Trigger a remediation on demand for one device from the admin center, then script the same action in bulk with Graph API.' },
+        { title: 'Report the impact', desc: 'Pull the results with Graph, build a simple report of detections and fixes per script per day, and write up the tickets each one would have prevented.' }
+      ]
+    },
+    {
+      id: 'it-9', path: 'tech-it', level: 'intermediate',
+      title: 'Homelab as Code: Proxmox, Terraform, Ansible, and CI',
+      summary: 'A homelab you can rebuild from a Git repository — Packer builds VM templates, Terraform creates the virtual machines on Proxmox, Ansible configures every service, and a CI pipeline runs the whole thing on push. Infrastructure the way modern operations teams actually run it.',
+      tech: ['Proxmox VE', 'Terraform', 'Packer', 'Ansible', 'cloud-init', 'GitHub Actions or GitLab CI'],
+      skills: 'Infrastructure as Code, Configuration Management, Virtualization, CI/CD for Infrastructure, Linux Administration',
+      why: 'The difference between a sysadmin and an automation engineer is whether the infrastructure lives in a repo. Terraform, Ansible, and Linux are in the top tier of entry-level infrastructure skills for 2026, and a rebuildable homelab proves all three with something you can demo in an interview.',
+      useCase: 'A small business runs a dozen internal services on one server. When it dies, the replacement is rebuilt from the repo in under an hour, identical to the original, with no one remembering how it was configured.',
+      bonus: 'Add drift detection — a nightly job that runs Terraform plan and Ansible in check mode and opens an issue when reality differs from the repo.',
+      aiAssist: 'Use Claude to write Ansible roles from a description of the desired state, to explain Terraform state management for a single-node lab, and to debug cloud-init when a VM boots without networking.',
+      prompt: 'I am automating a Proxmox homelab. Design the repo layout for Packer templates, Terraform VM definitions, and Ansible roles. Write a Packer template for an Ubuntu Server image with cloud-init, a Terraform configuration that creates three VMs from it with static IPs, and an Ansible playbook that installs Docker and deploys a monitoring stack on one of them. Explain how a CI pipeline should run these safely and where the state and secrets should live.',
+      showcase: {
+        github: 'The full repo, a README with the architecture diagram and the one-command rebuild instructions, and a CI badge.',
+        linkedin: 'Record a timelapse: delete the VMs, push to main, watch the pipeline rebuild everything and the services come back.',
+        resume: 'List the tools in the order job posts do: "Managed a Proxmox environment with Terraform, Packer, and Ansible through a CI pipeline."'
+      },
+      youtube: '4iQ1E3oazoc',
+      ytTitle: 'Automate Your Home Lab with Terraform, Packer, Ansible and GitLab CI/CD (2025)',
+      steps: [
+        { title: 'Install Proxmox and set up access', desc: 'Proxmox on a spare machine or nested in a VM. Create an API token for automation with the minimum permissions it needs.' },
+        { title: 'Build a template with Packer', desc: 'An Ubuntu Server template with cloud-init enabled. Boot a VM from it manually to confirm SSH and networking work before automating.' },
+        { title: 'Create VMs with Terraform', desc: 'Define three VMs from the template with static IPs and SSH keys. Apply, destroy, and apply again — the repeat is the point.' },
+        { title: 'Configure with Ansible', desc: 'Roles for a base hardening profile, Docker, and one real service such as a monitoring stack. Run the playbook twice and confirm the second run changes nothing.' },
+        { title: 'Wire the CI pipeline', desc: 'A pipeline that validates, plans on pull requests, and applies on main. Store the Terraform state and secrets outside the repo and document where.' },
+        { title: 'Do the full rebuild', desc: 'Destroy everything and rebuild from the repo. Time it. Write the README with the architecture diagram and the rebuild instructions.' }
+      ]
+    },
+    {
+      id: 'it-10', path: 'tech-it', level: 'advanced',
+      title: 'Passwordless Enterprise: Entra ID, Windows Hello for Business, and FIDO2',
+      summary: 'A Microsoft 365 tenant where no one types a password — Windows Hello for Business on managed devices, FIDO2 security keys and passkeys as the backup, Conditional Access policies that require phishing-resistant sign-in for sensitive apps, and a documented rollout plan with a break-glass procedure.',
+      tech: ['Microsoft Entra ID', 'Windows Hello for Business', 'FIDO2 Security Keys / Passkeys', 'Conditional Access', 'Microsoft Intune'],
+      skills: 'Identity and Access Management, Zero Trust Architecture, Authentication Policy Design, Endpoint Security, Change Management',
+      why: 'Zero-trust identity is the top security priority in job postings, and passwordless is the concrete deliverable behind it. A tenant you can demo, with policies you can explain, is a senior-level artifact for an IT role and answers the question every security-conscious employer asks first.',
+      useCase: 'A regulated company must eliminate phishable credentials for everyone with access to finance systems. Executives use Windows Hello, contractors get FIDO2 keys, and Conditional Access blocks any sign-in that falls back to a password.',
+      bonus: 'Add Temporary Access Pass for onboarding without a password, and a Privileged Identity Management workflow so admin roles are activated just in time with approval.',
+      aiAssist: 'Use Claude to design the Conditional Access policy set — including the ordering and exclusions that prevent locking yourself out — and to draft the user-facing rollout communications and the break-glass runbook.',
+      prompt: 'I am rolling out passwordless authentication in a Microsoft 365 test tenant. Design the end state: Windows Hello for Business with cloud Kerberos trust on Intune-managed devices, FIDO2 keys and passkeys enabled, and Conditional Access policies that require phishing-resistant MFA for admin and finance apps. Give me the policy list with conditions and grant controls, the safe deployment order with report-only mode first, the break-glass account design, and a phased rollout plan with success metrics.',
+      showcase: {
+        github: 'Policy exports as JSON, the Intune configuration profiles, an architecture diagram, the rollout plan, and the break-glass runbook.',
+        linkedin: 'Record a sign-in to a finance app with a fingerprint, then the same sign-in attempt with a password being blocked by Conditional Access.',
+        resume: 'Use the security vocabulary: "Designed and deployed passwordless authentication with Windows Hello for Business, FIDO2, and phishing-resistant Conditional Access."'
+      },
+      youtube: 'q1_3ECf9bJU',
+      ytTitle: 'Implementing Passwordless Authentication with Microsoft Entra ID for SMB — Part 1',
+      steps: [
+        { title: 'Prepare the tenant', desc: 'A Microsoft 365 developer or trial tenant with a few test users, Intune-enrolled Windows 11 VMs, and two break-glass accounts excluded from every policy you will create.' },
+        { title: 'Enable Windows Hello for Business', desc: 'Configure it through Intune with cloud Kerberos trust. Enroll a device, set up Hello, and confirm sign-in to Windows and Microsoft 365 with no password.' },
+        { title: 'Add FIDO2 keys and passkeys', desc: 'Enable the authentication methods, register a security key and a phone passkey for a test user, and sign in with each on a device that has no Hello configured.' },
+        { title: 'Build Conditional Access in report-only', desc: 'Policies requiring phishing-resistant MFA for admins and a finance app group. Run in report-only mode and read the sign-in logs to see who would be blocked.' },
+        { title: 'Enforce and test the edges', desc: 'Turn the policies on. Test a password-only sign-in, a legacy client, a new device, and the break-glass account. Document every result.' },
+        { title: 'Write the rollout plan', desc: 'Phases, communications, success metrics, and the break-glass runbook. Present it as the document you would hand a CIO before go-live.' }
       ]
     }
   ];

@@ -3432,12 +3432,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       },
       youtube: 'XgAZBRZ7yy0', ytTitle: 'Automate GitHub PR Reviews with AI (Claude & GitHub Actions)',
       steps: [
-        { title: 'Create the GitHub Action skeleton', desc: 'Make a new repo. Add .github/workflows/review.yml that triggers on pull_request.' },
-        { title: 'Fetch the PR diff', desc: 'Use the GitHub API (or actions/github-script) to get the changed files and their diff content.' },
-        { title: 'Send the diff to the LLM', desc: 'Write a Python script that chunks the diff and asks the model to review each chunk for bugs, style, and security issues.' },
-        { title: 'Format feedback as PR comments', desc: 'Parse the LLM response and post inline review comments on the specific lines using the GitHub API.' },
-        { title: 'Add static analysis', desc: 'Run SonarQube or CodeQL alongside the LLM review. Have the AI summarize and prioritize the combined findings.' },
-        { title: 'Test on a real repo', desc: "Install the action on one of your own projects. Show a PR with the bot's review comments in your portfolio screenshots." }
+        { title: 'Create the GitHub Action skeleton', desc: 'New repo with a workflow that triggers on pull_request. Have it print the PR number first so you know the trigger and permissions work before adding anything clever.' },
+        { title: 'Fetch the PR diff', desc: 'Use the GitHub API or actions/github-script to pull the changed files and their diff hunks. Save the raw diff as an artifact so you can inspect exactly what the model will see.' },
+        { title: 'Send the diff to the LLM', desc: 'A Python script that chunks the diff per file, asks the model for bugs, style, and security issues, and returns structured JSON with file, line, severity, and comment.' },
+        { title: 'Post inline review comments', desc: 'Map each finding to a line in the diff and post it through the review API. Validate first — a comment on an unchanged line is rejected, and the model gets lines wrong.' },
+        { title: 'Add static analysis', desc: 'Run SonarQube or CodeQL in the same workflow and feed the findings to the model to deduplicate and prioritize. The combined summary comment is what reviewers actually read.' },
+        { title: 'Test on a real repo', desc: 'Install the action on one of your own projects, open a PR with a deliberate bug, and confirm the bot catches it. Screenshot that review for your portfolio.' }
       ]
     },
     // DATA ANALYST
@@ -3459,12 +3459,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       },
       youtube: 'H3sZnfOXM88', ytTitle: 'Build an AI-Powered Data Dashboard with Python & Streamlit',
       steps: [
-        { title: 'Get the dataset', desc: "Download the UCI Online Retail II dataset — it's the classic for RFM analysis and has real-world messiness." },
-        { title: 'Clean the data', desc: 'Handle negative quantities (returns), missing customer IDs, and date parsing. Document every decision in your notebook.' },
-        { title: 'Calculate R, F, M scores', desc: 'For each customer: Recency (days since last purchase), Frequency (count of orders), Monetary (total spend). Score each on 1–5.' },
-        { title: 'Segment customers', desc: 'Combine scores into segments: Champions, Loyal, At-Risk, Lost, New. Validate with business logic.' },
-        { title: 'Build the Streamlit dashboard', desc: 'Two pages: a data overview with Plotly charts, and a segment drill-down with individual customer lists.' },
-        { title: 'Add the AI recommendation layer', desc: 'For each segment, have GPT generate tailored marketing copy and offer suggestions. Let users regenerate with a button.' }
+        { title: 'Get the dataset', desc: 'Download the UCI Online Retail II dataset — the classic for RFM, with real-world messiness. Load it into pandas and record row counts before and after every cleaning step.' },
+        { title: 'Clean the data', desc: 'Handle negative quantities (returns), missing customer IDs, and date parsing. Write down each decision and why; the interview question is always "what did you throw away?"' },
+        { title: 'Calculate R, F, M scores', desc: 'Per customer: Recency (days since last purchase), Frequency (order count), Monetary (total spend), each scored 1–5 by quintile. Sanity-check the top customers by hand.' },
+        { title: 'Segment customers', desc: 'Combine scores into named segments — Champions, Loyal, At-Risk, Lost, New — and check that segment sizes and spend make business sense before building anything on top.' },
+        { title: 'Build the Streamlit dashboard', desc: 'Two pages: an overview with Plotly charts of segment size and revenue, and a drill-down listing the customers in any segment. Deploy it so the link works in an application.' },
+        { title: 'Add the AI recommendation layer', desc: 'For each segment, have the model draft a tailored campaign idea and offer. Add a regenerate button, and show one example where you edited the output and explain why.' }
       ]
     },
     {
@@ -3511,12 +3511,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       },
       youtube: 'nIoHj7ei2to', ytTitle: 'Python Time Series Forecasting Tutorial with Meta Prophet',
       steps: [
-        { title: 'Get historical sales data', desc: 'Use a Kaggle retail dataset or generate synthetic data for 3 years with seasonality. Store in PostgreSQL.' },
-        { title: 'Explore seasonality patterns', desc: 'Use pandas + Plotly to plot daily, weekly, and yearly patterns. Identify holidays and anomalies.' },
-        { title: 'Build the Prophet model', desc: "Train Meta's Prophet on the time series with built-in holiday effects. Generate 90-day forecasts with confidence intervals." },
-        { title: 'Compare to other models', desc: 'Also train ARIMA and a simple LSTM. Evaluate with MAPE on a held-out test set. Document which won and why.' },
-        { title: 'Build the stock-out risk query', desc: 'Write SQL that joins inventory levels, lead times, and forecasted demand to flag high-risk SKUs.' },
-        { title: 'Build the Power BI report', desc: 'Create an interactive dashboard with forecast visualizations, risk heatmaps, and a What-If scenario panel.' }
+        { title: 'Get historical sales data', desc: 'Use a Kaggle retail dataset or generate three years of daily sales with weekly and holiday seasonality. Load it into PostgreSQL with a proper date dimension.' },
+        { title: 'Explore seasonality patterns', desc: 'Plot daily, weekly, and yearly views with pandas and Plotly. Mark holidays and anomalies — a forecast is only as good as what you understood about the past.' },
+        { title: 'Build the Prophet model', desc: 'Train Prophet with holiday effects and produce 90-day forecasts with confidence intervals. Hold out the last 90 days so you can measure accuracy instead of guessing.' },
+        { title: 'Compare to other models', desc: 'Train ARIMA and a simple LSTM on the same split, score all three with MAPE, and write one paragraph on which won and why. That paragraph is the portfolio.' },
+        { title: 'Build the stock-out risk query', desc: 'SQL that joins inventory, lead times, and forecasted demand to flag SKUs likely to run out inside their lead time. Return a ranked list, not a dump.' },
+        { title: 'Build the Power BI report', desc: 'Forecast visuals, a risk heatmap by SKU and region, and a what-if panel for lead time. Present it as the page a supply chain manager opens every Monday.' }
       ]
     },
     // SWE
@@ -3538,12 +3538,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       },
       youtube: '3ExDEeSnyvE', ytTitle: 'System Design & Implementation of a URL Shortener',
       steps: [
-        { title: 'Design the schema', desc: 'Table for URLs (short_code, long_url, created_at, user_id). Table for clicks (timestamp, ip, user_agent). Pick PostgreSQL.' },
-        { title: 'Build the core API', desc: 'In Go or Python: POST /shorten, GET /:code. Generate short codes with base62 encoding of a counter or random.' },
-        { title: 'Add Redis caching', desc: 'Cache short→long mappings. On a miss, hit Postgres, then warm the cache. Use TTL for old links.' },
-        { title: 'Implement rate limiting', desc: 'Use a Redis-backed sliding window. Write it as an atomic Lua script to prevent race conditions.' },
-        { title: 'Add Prometheus metrics', desc: 'Track requests per second, cache hit rate, and redirect latency. Export on /metrics.' },
-        { title: 'Build the Grafana dashboard', desc: 'Visualize traffic patterns, top URLs, and error rates. Run k6 load tests and screenshot the results for your README.' }
+        { title: 'Design the schema', desc: 'PostgreSQL tables for URLs (short_code, long_url, created_at, owner) and clicks (timestamp, referrer, user_agent). Index the short code — that lookup is the whole product.' },
+        { title: 'Build the core API', desc: 'In Go or Python: POST /shorten and GET /:code. Generate codes with base62 over a counter or random bytes, and handle collisions explicitly rather than hoping.' },
+        { title: 'Add Redis caching', desc: 'Cache short-to-long mappings with a TTL. On a miss, read Postgres and warm the cache. Measure p99 latency before and after; that number goes in the README.' },
+        { title: 'Implement rate limiting', desc: 'A Redis sliding-window limiter written as an atomic Lua script so concurrent requests cannot race past the limit. Return 429 with a Retry-After header.' },
+        { title: 'Add Prometheus metrics', desc: 'Requests per second, cache hit rate, a redirect latency histogram, and error rate, exported on /metrics. Label by endpoint so the dashboard can split them.' },
+        { title: 'Build the Grafana dashboard', desc: 'Panels for traffic, top links, latency, and errors. Run a k6 load test, screenshot the dashboard under load, and note the point where it starts to degrade.' }
       ]
     },
     {
@@ -3564,12 +3564,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       },
       youtube: 'dFQa06cK7xE', ytTitle: 'PostgreSQL Job Scheduling with FOR UPDATE SKIP LOCKED',
       steps: [
-        { title: 'Design the jobs table', desc: 'Columns: id, payload (JSONB), priority, status, attempts, max_attempts, scheduled_at, locked_at, locked_by.' },
-        { title: 'Build the enqueue API', desc: 'POST /jobs endpoint that inserts with status=pending. Support delayed jobs via scheduled_at.' },
-        { title: 'Write the worker loop', desc: 'Use SELECT ... FOR UPDATE SKIP LOCKED to atomically claim jobs. Multiple workers can run safely in parallel.' },
-        { title: 'Add retry with exponential backoff', desc: 'On failure, increment attempts and reschedule with 2^attempts seconds delay, up to max_attempts.' },
-        { title: 'Build the dead-letter queue', desc: 'When max_attempts is hit, move jobs to a dead_jobs table with the failure reason for manual inspection.' },
-        { title: 'Test the failure modes', desc: 'Kill workers mid-job. Crash the database. Document every failure mode in your README — this is what proves you understand distributed systems.' }
+        { title: 'Design the jobs table', desc: 'Columns for id, payload (JSONB), priority, status, attempts, max_attempts, scheduled_at, locked_at, and locked_by. Index (status, priority, scheduled_at) — the worker query depends on it.' },
+        { title: 'Build the enqueue API', desc: 'POST /jobs inserts a pending job and supports delayed execution through scheduled_at. Validate payloads so a bad job fails at the door, not inside a worker.' },
+        { title: 'Write the worker loop', desc: 'Claim jobs with SELECT ... FOR UPDATE SKIP LOCKED so many workers run in parallel without double-processing. Run three workers and prove no job executes twice.' },
+        { title: 'Add retry with exponential backoff', desc: 'On failure, increment attempts and reschedule after 2^attempts seconds with jitter, up to max_attempts. Log every retry with the error that caused it.' },
+        { title: 'Build the dead-letter queue', desc: 'When max_attempts is reached, move the job to dead_jobs with the final error, and add an endpoint to inspect and requeue it. Dead jobs are a feature, not a bug.' },
+        { title: 'Test the failure modes', desc: 'Kill a worker mid-job, restart Postgres, enqueue a poison payload. Document what happened in each case; that write-up is what proves you understand distributed systems.' }
       ]
     },
     {
@@ -3590,12 +3590,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       },
       youtube: 'sVcwVQRHIc8', ytTitle: 'Learn RAG From Scratch - Python AI Tutorial',
       steps: [
-        { title: 'Build the ingestion pipeline', desc: "Accept PDF and Markdown uploads. Use LangChain's RecursiveCharacterTextSplitter with 500-token chunks and 50-token overlap." },
-        { title: 'Generate embeddings', desc: 'Use OpenAI text-embedding-3-small (cheap) or sentence-transformers locally (free). Batch for efficiency.' },
-        { title: 'Set up the vector DB', desc: 'Pinecone serverless is simplest; Milvus if you want self-hosted. Store chunks with metadata (filename, page, section).' },
-        { title: 'Build the retrieval API', desc: 'FastAPI endpoint that embeds the question, searches Pinecone, and returns top-k chunks with similarity scores.' },
-        { title: 'Add the LLM with citations', desc: 'Send retrieved chunks to Claude with a prompt that REQUIRES inline citations. Parse and link them in the response.' },
-        { title: 'Build the React chat UI', desc: 'File upload drop zone, chat window, clickable citations that highlight the source text. This is your demo.' }
+        { title: 'Build the ingestion pipeline', desc: 'Accept PDF and Markdown uploads and split them with RecursiveCharacterTextSplitter at roughly 500 tokens with 50 overlap. Keep filename, page, and section as metadata on every chunk.' },
+        { title: 'Generate embeddings', desc: 'Use a hosted embedding model or sentence-transformers locally; batch requests and cache by content hash so re-uploads cost nothing. Note the dimension — it fixes your index.' },
+        { title: 'Set up the vector DB', desc: 'Pinecone serverless for zero ops, Milvus to self-host. Upsert chunks with metadata and confirm a known question retrieves the right chunk before going further.' },
+        { title: 'Build the retrieval API', desc: 'A FastAPI endpoint that embeds the question, searches top-k, and returns chunks with scores. Add a keyword fallback for exact identifiers that embeddings miss.' },
+        { title: 'Add the LLM with citations', desc: 'Send retrieved chunks to Claude with a prompt that requires inline citations to chunk ids. Parse and link them, and refuse to answer when nothing relevant was retrieved.' },
+        { title: 'Build the React chat UI', desc: 'Upload drop zone, chat window, and clickable citations that highlight the source passage. Record a 30-second demo of a question, its answer, and a citation click.' }
       ]
     },
     // HELP DESK
@@ -3617,12 +3617,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       },
       youtube: 'p6uPjFrjCqo', ytTitle: 'How to Build an AI Customer Support Chat Bot - Full Tutorial',
       steps: [
-        { title: 'Write your knowledge base', desc: 'Create 20–30 markdown files covering common IT issues: VPN, password resets, printer setup, MFA. Each with clear step-by-step fixes.' },
-        { title: 'Pick your bot platform', desc: 'Botpress (free, powerful) or Voiceflow (visual). Both support RAG integrations.' },
-        { title: 'Ingest the knowledge base', desc: 'Upload your markdown files. Configure the bot to search them first before generating responses.' },
-        { title: 'Add OpenAI as the fallback', desc: "If the knowledge base doesn't have an answer, route to GPT with a system prompt that enforces IT-support tone." },
-        { title: 'Build the ticket escalation flow', desc: 'When the bot can\'t help, collect user details and write to a Google Sheet via Zapier. This becomes your "ticket system."' },
-        { title: 'Measure deflection rate', desc: 'Track: questions answered vs. escalated. Shoot for 40%+ deflection. Put the number on your resume.' }
+        { title: 'Write your knowledge base', desc: '20–30 Markdown articles on the common issues — VPN, password reset, printer setup, MFA — each with a one-line symptom and a numbered fix. Consistent structure makes retrieval work.' },
+        { title: 'Pick your bot platform', desc: 'Botpress (free, flexible) or Voiceflow (visual). Build a hello-world bot first and confirm you can publish it to a web widget before adding knowledge.' },
+        { title: 'Ingest the knowledge base', desc: 'Upload the articles as a knowledge source and configure the bot to search them before generating anything. Ask ten questions and check which article each answer came from.' },
+        { title: 'Add the LLM as the fallback', desc: 'When no article matches, route to the model with a system prompt that enforces IT-support tone and says when it is unsure. Log every fallback so you can write the missing article.' },
+        { title: 'Build the ticket escalation flow', desc: 'When the bot cannot help, collect name, device, and issue, and write a row to a Google Sheet through Zapier with a ticket number. Reply with that number.' },
+        { title: 'Measure deflection rate', desc: 'Run your test questions, count answered versus escalated, and improve the weakest articles until deflection passes 40%. Put the final number on your resume.' }
       ]
     },
     {
@@ -3643,12 +3643,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       },
       youtube: 'mX-j7lC2L3A', ytTitle: 'Automate the employee identity lifecycle with Microsoft Entra',
       steps: [
-        { title: 'Get a Microsoft 365 dev tenant', desc: 'Sign up for the free developer sandbox — includes Entra ID, Power Automate, and sample users.' },
-        { title: 'Build the intake form', desc: 'Create a Microsoft Form with fields: First Name, Last Name, Department, Manager Email, Start Date.' },
-        { title: 'Create the Power Automate flow', desc: 'Trigger on form submit. First action: create user in Entra ID via the built-in connector.' },
-        { title: 'Add dynamic group assignment', desc: 'Use an expression to check Department and add the user to the right group. Handle Sales, Engineering, Marketing, etc.' },
-        { title: 'Assign M365 licenses', desc: 'Use the Assign Licenses action. Pick E3 or Business Premium depending on role.' },
-        { title: 'Email the manager credentials', desc: 'Auto-generate a secure temporary password and send it via Outlook. Include a welcome doc.' }
+        { title: 'Get a Microsoft 365 dev tenant', desc: 'Sign up for the free developer sandbox, which includes Entra ID, Power Automate, and sample users. Create a test department structure and two manager accounts.' },
+        { title: 'Build the intake form', desc: 'A Microsoft Form with first name, last name, department, manager email, and start date. Use a dropdown for department so the flow never has to guess spelling.' },
+        { title: 'Create the Power Automate flow', desc: 'Trigger on form submit, then create the user in Entra ID with the built-in connector. Generate the username from a rule and handle the duplicate-name case.' },
+        { title: 'Add dynamic group assignment', desc: 'Branch on department to add the user to the right security and Teams groups. Test every branch with a real submission, not just the first one.' },
+        { title: 'Assign licenses', desc: 'Use the assign-license action and choose the SKU by role. Add a condition that fails loudly when no licenses remain instead of silently creating an unlicensed user.' },
+        { title: 'Notify the manager', desc: 'Email the manager a welcome note with the username and first-day steps, and send the temporary password through a separate channel. Document why you split them.' }
       ]
     },
     {
@@ -3669,12 +3669,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       },
       youtube: 'oxwFatEqTsc', ytTitle: 'Snipe-IT: Free Open-source IT Asset Management Platform',
       steps: [
-        { title: 'Set up a Snipe-IT demo instance', desc: 'Use their free demo or self-host with Docker. Populate it with 50–100 sample assets.' },
-        { title: 'Get an API token', desc: 'In Snipe-IT settings, generate a personal access token. Test it with a curl request first.' },
-        { title: 'Build the Python extractor', desc: 'Use requests to paginate through /api/v1/hardware. Transform JSON into a clean Pandas DataFrame.' },
-        { title: 'Calculate key metrics', desc: 'Unassigned assets, assets by age, upcoming refresh cycles (4+ year old), license utilization rate.' },
-        { title: 'Build the Power BI report', desc: 'Connect directly to your Python script output. Create visuals: asset aging heatmap, department allocation, refresh timeline.' },
-        { title: 'Schedule the refresh', desc: 'Set up automated daily data refreshes. Publish to Power BI Service so anyone with a link can view.' }
+        { title: 'Set up a Snipe-IT instance', desc: 'Use the hosted demo or self-host with Docker. Load 50–100 sample assets across laptops, monitors, and phones with realistic purchase dates and assignments.' },
+        { title: 'Get an API token', desc: 'Generate a personal access token in Snipe-IT settings and confirm it works with a single curl request to the hardware endpoint before writing any code.' },
+        { title: 'Build the Python extractor', desc: 'Paginate through the hardware and licenses endpoints, flatten the JSON into pandas DataFrames, and save to CSV or Parquet. Handle a rate limit gracefully.' },
+        { title: 'Calculate key metrics', desc: 'Unassigned assets, age distribution, devices past a four-year refresh point, warranties expiring in 90 days, and license utilization. Write each as a function with a test.' },
+        { title: 'Build the Power BI report', desc: 'Connect to your extract and build an aging heatmap, allocation by department, and a refresh timeline. Add a slicer so a manager can see only their own team.' },
+        { title: 'Schedule the refresh', desc: 'Automate a daily extract and publish to Power BI Service so the report updates without you. Write a one-page runbook for whoever inherits it.' }
       ]
     },
     // CS
@@ -3748,12 +3748,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       },
       youtube: 'rid5M4ifGPA', ytTitle: 'Getting an MQTT Broker up and Running using Docker',
       steps: [
-        { title: 'Design the sensor simulators', desc: 'Write Python scripts that mimic vibration, temperature, and pressure sensors. Each publishes to MQTT at realistic rates.' },
-        { title: 'Set up the MQTT broker', desc: 'Run Mosquitto in Docker. Verify messages flow with MQTT Explorer.' },
-        { title: 'Build the edge processor', desc: 'A separate container that subscribes to all topics, runs a lightweight TensorFlow Lite model for anomaly detection, and only forwards critical events.' },
-        { title: 'Store time-series data', desc: 'Add InfluxDB to the compose file. Write normal readings directly; write alerts to a separate bucket.' },
-        { title: 'Build the Grafana dashboard', desc: 'Connect to InfluxDB. Create panels for live sensor values, anomaly rate, and system health.' },
-        { title: 'Package with docker-compose', desc: 'One command spins up MQTT + 3 sensors + edge processor + InfluxDB + Grafana. This is the portfolio win.' }
+        { title: 'Design the sensor simulators', desc: 'Python scripts that mimic vibration, temperature, and pressure sensors publishing to MQTT at realistic rates, with injected anomalies you can trigger on demand.' },
+        { title: 'Set up the MQTT broker', desc: 'Run Mosquitto in Docker and confirm messages flow with MQTT Explorer. Define a topic hierarchy per site and sensor so the edge processor can subscribe by wildcard.' },
+        { title: 'Build the edge processor', desc: 'A container that subscribes to all sensor topics, runs a TensorFlow Lite anomaly model on a sliding window, and forwards only critical events. Measure its memory footprint.' },
+        { title: 'Store time-series data', desc: 'Add InfluxDB to the Compose file. Write normal readings to a bucket with short retention and alerts to one kept longer. Query both to prove the split works.' },
+        { title: 'Build the Grafana dashboard', desc: 'Live sensor panels, anomaly rate over time, and a health row showing broker and processor status. Trigger an injected anomaly and watch it arrive on the dashboard.' },
+        { title: 'Package with Docker Compose', desc: 'One command starts the broker, three sensors, the edge processor, InfluxDB, and Grafana. Record a clean start from nothing to a live dashboard for the README.' }
       ]
     },
     // CLOUD

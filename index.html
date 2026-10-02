@@ -1584,7 +1584,7 @@
     display: none;
     align-items: flex-start;
     justify-content: center;
-    padding: 40px 20px 0;
+    padding: 0 20px;
     overflow-y: auto;
   }
   .modal-backdrop.open {
@@ -1599,6 +1599,7 @@
     border-radius: 16px;
     max-width: 820px;
     width: 100%;
+    margin-top: 40px;
     padding: 44px;
     position: relative;
     box-shadow:
@@ -1657,6 +1658,70 @@
     color: var(--ink);
     margin-bottom: 18px;
   }
+
+  /* Modal tabs — the Ship-It Toolkit's mono tab bar promoted to the top of the
+     modal, so one long column becomes four short panels (Overview, Build,
+     Interview, Ship). Sticky inside the modal's scroll container so it never
+     scrolls out of reach; negative margins stretch it to the modal's inner
+     edges so content slides underneath it cleanly. */
+  .modal-tabs-anchor { height: 0; }
+  .modal-tabs {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    display: flex;
+    gap: 4px;
+    margin: 22px -44px 0;
+    padding: 6px 44px 0;
+    border-bottom: 1px solid var(--line);
+    background: rgba(11, 21, 29, 0.94);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .modal-tabs::-webkit-scrollbar { display: none; }
+  .modal-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 12px 14px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--ink-muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .modal-tab:hover { color: var(--ink); }
+  .modal-tab:focus-visible { outline: 1px solid var(--green); outline-offset: -1px; border-radius: 6px 6px 0 0; }
+  .modal-tab.active {
+    color: var(--green);
+    border-bottom-color: var(--green);
+    text-shadow: 0 0 6px var(--green-glow);
+  }
+  .modal-tab .tab-count {
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    padding: 2px 7px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--ink-muted);
+    text-shadow: none;
+  }
+  .modal-tab.active .tab-count { border-color: var(--green); color: var(--green); }
+  .modal-panel { display: none; }
+  .modal-panel.active { display: block; }
+  .modal-panel > .modal-section:first-child { margin-top: 24px; }
+  .modal-next { display: flex; justify-content: flex-end; }
 
   .modal-section { margin-top: 28px; }
   .modal-section h4 {
@@ -2601,14 +2666,17 @@
     }
 
     /* Modal — tighter backdrop so modal fills screen */
-    .modal-backdrop { padding: 10px 0 0; align-items: flex-start; }
+    .modal-backdrop { padding: 0; align-items: flex-start; }
     .modal {
+      margin-top: 10px;
       padding: 28px 16px 36px;
       border-radius: 20px 20px 0 0;
       min-height: 80vh;
     }
     .modal h2 { font-size: 22px; }
     .modal-close { top: 14px; right: 14px; }
+    .modal-tabs { margin: 18px -16px 0; padding: 4px 16px 0; }
+    .modal-tab { padding: 12px 10px; letter-spacing: 0.14em; }
 
     /* Path tabs: smaller hexagons, still one scrollable row */
     .path-tabs { gap: 8px; padding: 8px 2px 10px; }
@@ -2713,6 +2781,7 @@
     .container { padding: 0 12px; }
     .deploy-grid { grid-template-columns: 1fr; }
     .modal { padding: 24px 14px 36px; }
+    .modal-tabs { margin-left: -14px; margin-right: -14px; padding-left: 14px; padding-right: 14px; }
     .path-tab { width: 78px; height: 88px; }
   }
 </style>
@@ -5132,15 +5201,46 @@ Huge thanks to AI pair-programming tools that helped me ship faster.
 ${tags} #BuildingInPublic #OpenToWork`;
   }
 
+  // Lowercases only a leading article or lead-in so a phrase can sit inside a
+  // sentence without wrecking acronyms: "A SIEM home lab" becomes "a SIEM home
+  // lab", never "a siem home lab".
+  function lowerLead(s) {
+    return String(s || '').trim().replace(/^(A|An|The|Your|This|Three)\b/, m => m.toLowerCase());
+  }
+  // First sentence of a block of copy, terminator removed. A closing quote
+  // after the period ("users." A semantic…) still counts as a break.
+  function firstSentence(s) {
+    const out = String(s || '').trim().split(/[.!?]["”']?\s+(?=[A-Z"“])/)[0].replace(/[.:;,]\s*$/, '').trim();
+    // The break may have swallowed a closing quote; re-balance so the sentence
+    // never ends on an open quotation.
+    return (out.match(/"/g) || []).length % 2 ? out + '"' : out;
+  }
+  // First clause: like firstSentence but also stops at an em dash, for the
+  // short phrase that goes inside another sentence.
+  function firstClause(s) {
+    return firstSentence(String(s || '').split(' — ')[0]);
+  }
+  // What the visitor built, as an object phrase that follows a verb. Summaries
+  // are noun phrases ("A gateway that…"). Two shapes need help: "Your first
+  // real cloud deployment — a site served from…" uses the part after the dash,
+  // and "This project involves building X" is unwrapped to "X".
+  function builtObject(p) {
+    const parts = String(p.summary || '').split(' — ');
+    let s = parts[0];
+    if (/^Your\b/.test(s) && parts[1]) s = parts[1];
+    s = firstSentence(s).replace(/^This project (involves|covers|is about) (building|creating|developing)\s+/i, '');
+    return lowerLead(s);
+  }
+
   function resumeBullets(p) {
     const topTech = p.tech.slice(0, 3).join(', ');
     const skillList = p.skills.split(',').map(s => s.trim());
     const firstSkill = skillList[0] || 'technical design';
     const secondSkill = skillList[1] || 'systems thinking';
     return [
-      `Designed and shipped ${p.title.toLowerCase()} using ${topTech}, demonstrating ${firstSkill} and ${secondSkill} in a production-style codebase.`,
-      `Delivered a real-world use case: ${p.useCase.toLowerCase().replace(/\.$/, '')}, backed by a public GitHub repo, README, and live demo.`,
-      `Leveraged AI coding assistants (Claude Code / Cursor) to accelerate delivery and write tests, reflecting the modern AI-augmented developer workflow.`
+      `Built ${builtObject(p)}. Stack: ${topTech}.`,
+      `Applied ${firstSkill} and ${secondSkill} to a real-world scenario: ${firstClause(p.useCase)}.`,
+      `Shipped it publicly with a GitHub repo, README, and live demo, using AI coding assistants (Claude Code) to accelerate scaffolding and tests.`
     ];
   }
 
@@ -5149,10 +5249,10 @@ ${tags} #BuildingInPublic #OpenToWork`;
     const topTech = p.tech.slice(0, 3).join(', ');
     return {
       situation: `I wanted a portfolio project that would prove I could handle the kind of problem a ${p.path === 'ai' ? 'junior AI engineer' : p.path === 'cyber' ? 'security engineer' : p.path === 'data' ? 'data analyst' : 'junior engineer'} actually sees on day one — not a toy tutorial.`,
-      task: `The goal was to ${p.summary.toLowerCase().replace(/\.$/, '')}, in a way that mirrors ${p.useCase.toLowerCase().replace(/\.$/, '')}.`,
+      task: `The goal was to build ${builtObject(p)}. The scenario I had in mind: ${firstClause(p.useCase)}.`,
       action: `I built it with ${topTech}, and used AI pair-programming to move faster on the boilerplate so I could focus on the hard parts — specifically ${skillList.slice(0, 2).join(' and ')}.`,
       result: `The project is live, documented, and has a short demo video. More importantly, I can walk through every decision I made — why I picked this stack, what I'd change, and where it would break under real load.`,
-      closing: `That's why I'm excited about roles where I can keep building things like this — ${p.why.split('.')[0].toLowerCase()}.`
+      closing: `That's why I'm excited about roles where I can keep building things like this. ${firstSentence(p.why)}.`
     };
   }
 
@@ -5678,7 +5778,46 @@ ${tags} #BuildingInPublic #OpenToWork`;
   }
 
   // ===== MODAL =====
-  function openModal(id) {
+  // The modal's four panels. Overview is for deciding, Build for doing,
+  // Interview and Ship for selling the finished project.
+  const MODAL_TABS = [
+    { id: 'overview',  label: 'Overview' },
+    { id: 'build',     label: 'Build' },
+    { id: 'interview', label: 'Interview' },
+    { id: 'ship',      label: 'Ship' }
+  ];
+  let modalTab = 'overview';
+  let modalTabProject = null;
+
+  function selectModalTab(tabId, { focus = false } = {}) {
+    if (!MODAL_TABS.some(t => t.id === tabId)) return;
+    const modal = document.getElementById('modal');
+    const backdrop = document.getElementById('modal-backdrop');
+    if (!modal) return;
+    modalTab = tabId;
+    modal.querySelectorAll('.modal-tab').forEach(t => {
+      const on = t.dataset.tab === tabId;
+      t.classList.toggle('active', on);
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      if (on && focus) t.focus();
+    });
+    modal.querySelectorAll('.modal-panel').forEach(panel => {
+      panel.classList.toggle('active', panel.dataset.panel === tabId);
+    });
+    // If the visitor had scrolled down into the previous panel, start the new
+    // one at the tab bar rather than at some arbitrary depth. Measured from a
+    // zero-height anchor because the sticky bar itself reports its stuck
+    // position, not its natural one.
+    const anchor = document.getElementById('modal-tabs-anchor');
+    if (anchor && backdrop) {
+      const anchorTop = anchor.getBoundingClientRect().top - backdrop.getBoundingClientRect().top + backdrop.scrollTop;
+      if (backdrop.scrollTop > anchorTop) backdrop.scrollTop = anchorTop;
+    }
+  }
+
+  // opts.tab forces a panel (the hero Continue pill opens straight onto Build).
+  function openModal(id, opts = {}) {
     const p = PROJECTS.find(x => x.id === id);
     if (!p) return;
     const backdrop = document.getElementById('modal-backdrop');
@@ -5692,6 +5831,17 @@ ${tags} #BuildingInPublic #OpenToWork`;
     const progress = state.progress[p.id] || 'none';
     const pathName = PATHS.find(x => x.id === p.path)?.name ?? '';
 
+    // Which panel to show. A re-render of the same project (step toggle,
+    // bookmark) keeps the visitor where they are; a fresh open lands on Build
+    // when the project is already in progress and on Overview otherwise.
+    const requestedTab = MODAL_TABS.some(t => t.id === opts.tab) ? opts.tab : null;
+    const activeTab = requestedTab
+      || (wasOpen && modalTabProject === p.id ? modalTab : (progress === 'started' ? 'build' : 'overview'));
+    modalTab = activeTab;
+    modalTabProject = p.id;
+    const panel = (tabId, html) =>
+      `<div class="modal-panel${tabId === activeTab ? ' active' : ''}" role="tabpanel" id="mpanel-${tabId}" data-panel="${tabId}" aria-labelledby="mtab-${tabId}">${html}</div>`;
+
     const modal = document.getElementById('modal');
     if (!modal) return;
     modal.innerHTML = `
@@ -5702,6 +5852,13 @@ ${tags} #BuildingInPublic #OpenToWork`;
       <h2>${p.title}</h2>
       <p style="font-size:16px;color:var(--ink-soft);line-height:1.6;">${p.summary}</p>
 
+      <div class="modal-tabs-anchor" id="modal-tabs-anchor"></div>
+      <div class="modal-tabs" role="tablist" aria-label="Project sections">
+        ${MODAL_TABS.map(t => `
+        <button class="modal-tab${t.id === activeTab ? ' active' : ''}" role="tab" id="mtab-${t.id}" data-tab="${t.id}" aria-selected="${t.id === activeTab}" aria-controls="mpanel-${t.id}" tabindex="${t.id === activeTab ? 0 : -1}">${t.label}${t.id === 'build' && p.steps ? `<span class="tab-count">${stepsCompleted(p.id)}/${p.steps.length}</span>` : ''}</button>`).join('')}
+      </div>
+
+      ${panel('overview', `
       <div class="modal-section">
         <h4>Why It Helps Your Resume</h4>
         <p>${p.why}</p>
@@ -5731,6 +5888,31 @@ ${tags} #BuildingInPublic #OpenToWork`;
       `;
       })() : ''}
 
+      <div class="modal-section">
+        <h4>Tech Stack</h4>
+        <div class="tech-tags" style="margin-top:10px;">
+          ${p.tech.map(t => `<span class="tag">${t}</span>`).join('')}
+        </div>
+        <p style="margin-top:12px;font-size:13px;"><strong style="color:var(--ink);">Skills gained:</strong> ${p.skills}</p>
+      </div>
+
+      <div class="modal-grid-2">
+        <div class="modal-card">
+          <h5>Real-World Use Case</h5>
+          <p>${p.useCase}</p>
+        </div>
+        <div class="modal-card">
+          <h5>Bonus: Level It Up with AI</h5>
+          <p>${p.bonus}</p>
+        </div>
+      </div>
+
+      <div class="modal-section modal-next">
+        <button class="btn-secondary modal-tab-jump" data-jump="build">Open the build roadmap →</button>
+      </div>
+      `)}
+
+      ${panel('build', `
       ${p.steps ? `
       <div class="modal-section">
         <h4>Step-by-Step Build Roadmap</h4>
@@ -5761,25 +5943,6 @@ ${tags} #BuildingInPublic #OpenToWork`;
       ` : ''}
 
       <div class="modal-section">
-        <h4>Tech Stack</h4>
-        <div class="tech-tags" style="margin-top:10px;">
-          ${p.tech.map(t => `<span class="tag">${t}</span>`).join('')}
-        </div>
-        <p style="margin-top:12px;font-size:13px;"><strong style="color:var(--ink);">Skills gained:</strong> ${p.skills}</p>
-      </div>
-
-      <div class="modal-grid-2">
-        <div class="modal-card">
-          <h5>Real-World Use Case</h5>
-          <p>${p.useCase}</p>
-        </div>
-        <div class="modal-card">
-          <h5>Bonus: Level It Up with AI</h5>
-          <p>${p.bonus}</p>
-        </div>
-      </div>
-
-      <div class="modal-section">
         <h4>How to Use AI Coding Assistants</h4>
         <p>${p.aiAssist}</p>
       </div>
@@ -5791,16 +5954,9 @@ ${tags} #BuildingInPublic #OpenToWork`;
           ${p.prompt}
         </div>
       </div>
+      `)}
 
-      <div class="modal-section">
-        <h4>How to Showcase It</h4>
-        <ul class="showcase-list">
-          <li><strong>GitHub</strong><span>${p.showcase.github}</span></li>
-          <li><strong>LinkedIn</strong><span>${p.showcase.linkedin}</span></li>
-          <li><strong>Resume</strong><span>${p.showcase.resume}</span></li>
-        </ul>
-      </div>
-
+      ${panel('interview', `
       <div class="modal-section">
         <h4>Resume Bullets (STAR-ready)</h4>
         <p style="margin-bottom:10px;">Copy these straight into your resume's Projects section. Replace the placeholders with your real numbers.</p>
@@ -5819,6 +5975,17 @@ ${tags} #BuildingInPublic #OpenToWork`;
       <div class="modal-section">
         <h4>Expect These Follow-up Questions</h4>
         <ul class="interview-qs" id="tpl-questions"></ul>
+      </div>
+      `)}
+
+      ${panel('ship', `
+      <div class="modal-section">
+        <h4>How to Showcase It</h4>
+        <ul class="showcase-list">
+          <li><strong>GitHub</strong><span>${p.showcase.github}</span></li>
+          <li><strong>LinkedIn</strong><span>${p.showcase.linkedin}</span></li>
+          <li><strong>Resume</strong><span>${p.showcase.resume}</span></li>
+        </ul>
       </div>
 
       <div class="modal-section">
@@ -5845,6 +6012,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
           <ol class="deploy-list" id="tpl-deploy"></ol>
         </div>
       </div>
+      `)}
 
       <div class="modal-actions">
         <button class="btn-primary" id="modal-bookmark">
@@ -5867,6 +6035,26 @@ ${tags} #BuildingInPublic #OpenToWork`;
 
     // Events
     document.getElementById('modal-close-btn').onclick = closeModal;
+
+    // Tabs: click, arrow-key navigation (WAI-ARIA tabs pattern), and the
+    // jump button at the end of Overview.
+    const tabButtons = Array.from(modal.querySelectorAll('.modal-tab'));
+    tabButtons.forEach((tab, i) => {
+      tab.onclick = () => {
+        selectModalTab(tab.dataset.tab);
+        window.bbTrack && window.bbTrack('modal_tab', { id: p.id, tab: tab.dataset.tab });
+      };
+      tab.onkeydown = (e) => {
+        const targets = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabButtons.length - 1 };
+        if (!(e.key in targets)) return;
+        e.preventDefault();
+        const next = tabButtons[(targets[e.key] + tabButtons.length) % tabButtons.length];
+        selectModalTab(next.dataset.tab, { focus: true });
+      };
+    });
+    modal.querySelectorAll('.modal-tab-jump').forEach(btn => {
+      btn.onclick = () => selectModalTab(btn.dataset.jump, { focus: true });
+    });
     if (!wasOpen) {
       lastFocusedBeforeModal = document.activeElement;
       document.getElementById('modal-close-btn').focus();
@@ -6351,7 +6539,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     btn.innerHTML = `<span class="cont-icon" aria-hidden="true">▶</span>Continue<span class="cont-title">${pick.title}</span><span class="cont-step">${done}/${steps.length}</span>`;
     btn.title = `Pick up ${pick.title} at step ${done + 1} of ${steps.length}`;
     btn.onclick = () => {
-      openModal(pick.id);
+      openModal(pick.id, { tab: 'build' });
       setTimeout(() => {
         const roadmap = document.querySelector('.modal .build-steps') || document.querySelector('#modal .build-steps');
         if (roadmap) roadmap.scrollIntoView({ behavior: 'smooth', block: 'center' });

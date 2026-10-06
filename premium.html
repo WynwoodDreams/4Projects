@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Career Road | BuildersBench</title>
+<meta name="robots" content="noindex, nofollow" />
+<meta name="description" content="Members-only career road: projects, certifications, Florida employers, salary, resume and LinkedIn tips, and interview prep for one role at a time." />
+<meta name="theme-color" content="#0C161B" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='none' stroke='%2300e676' stroke-width='2'/%3E%3Cpath d='M8 12l3 3 5-6' fill='none' stroke='%2300e676' stroke-width='2'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="/styles.css" />
+<style id="premium-page-style">
+  /* ===== Career Road page: additive styles only ===== */
+  .hero.cert-hero { padding: 34px 0 16px; }
+  .hero.cert-hero h1 { max-width: 18ch; }
+  .hero.cert-hero .hero-lede { max-width: 60ch; }
+  .header-actions .nav-link { display: inline-flex; color: var(--green); border-color: var(--line-3); }
+  .header-actions .nav-link svg { color: var(--green); }
+  @media (max-width: 560px) {
+    .header-actions { gap: 6px; }
+    .header-actions .nav-link span { display: none; }
+    .header-actions .nav-link { padding: 7px 9px; }
+  }
+  [hidden] { display: none !important; }
+
+  /* Gate */
+  .gate-box {
+    margin-top: 18px; max-width: 480px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.012));
+    border: 1px solid var(--line-strong); border-radius: 16px; padding: 18px;
+  }
+  .gate-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--ink-muted); margin-bottom: 8px; display: block;
+  }
+  .gate-row { display: flex; gap: 10px; }
+  .gate-input, .road-input {
+    flex: 1; min-width: 0; width: 100%;
+    font-family: 'Inter', sans-serif; font-size: 15px; color: var(--ink);
+    background: rgba(0,0,0,0.32); border: 1px solid var(--line); border-radius: 12px; padding: 13px 14px;
+    outline: none; transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .gate-input::placeholder, .road-input::placeholder { color: var(--ink-muted); }
+  .gate-input:focus, .road-input:focus { border-color: var(--line-3); box-shadow: 0 0 0 1px var(--line-3); }
+  .go-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700;
+    padding: 12px 18px; border-radius: 999px; border: 1px solid rgba(0,255,133,0.6);
+    background: linear-gradient(180deg, #45ffa0, #00e676); color: #02110A; cursor: pointer;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), 0 0 0 1px rgba(0,255,133,0.45), 0 12px 30px -12px rgba(0,255,133,0.75);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .go-btn:hover { transform: translateY(-2px); }
+  .go-btn:focus-visible { outline: 1px solid var(--green); outline-offset: 3px; }
+  .go-btn[disabled] { opacity: 0.6; cursor: wait; transform: none; }
+  .gate-msg { margin-top: 10px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.04em; color: var(--ink-muted); min-height: 16px; }
+  .gate-msg.err { color: var(--gold); }
+  .gate-note { margin-top: 14px; font-size: 12px; color: var(--ink-muted); font-style: italic; }
+
+  /* Role search */
+  .road-box { margin-top: 16px; max-width: 760px; }
+  .road-field {
+    display: flex; gap: 10px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.012));
+    border: 1px solid var(--line-strong); border-radius: 16px; padding: 12px;
+  }
+  .road-examples { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; }
+  .road-try { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-muted); }
+  .ex-chip {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.04em;
+    padding: 9px 13px; min-height: 36px; border-radius: 999px; border: 1px dashed var(--line-strong);
+    background: rgba(255,255,255,0.03); color: var(--ink-soft); cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .ex-chip:hover, .ex-chip.active { border-style: solid; border-color: var(--line-3); color: var(--green); }
+  .road-meta-row { display: flex; align-items: center; gap: 14px; margin-top: 14px; flex-wrap: wrap; }
+  .road-updated { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted); }
+  .link-btn { appearance: none; background: none; border: none; padding: 6px 0; font: inherit; font-size: 12px; color: var(--ink-muted); cursor: pointer; border-bottom: 1px solid var(--line); }
+  .link-btn:hover { color: var(--green); border-color: var(--green); }
+
+  /* Road */
+  .road-section { padding: 10px 0 60px; }
+  .road-empty { color: var(--ink-muted); font-size: 14px; margin: 24px 0; max-width: 60ch; }
+  .road-head {
+    display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: start;
+    padding: 18px 0 22px; margin: 10px 0 10px; border-top: 1px solid rgba(255,255,255,0.10); border-bottom: 1px solid rgba(255,255,255,0.10);
+    position: relative;
+  }
+  .road-head::before { content: ''; position: absolute; top: -1px; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, var(--green), rgba(0,255,133,0.2) 30%, transparent 60%); box-shadow: 0 0 14px var(--green-glow); }
+  .road-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--green); margin-bottom: 8px; }
+  .road-title { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; color: var(--ink); line-height: 1.15; }
+  .road-summary { color: var(--ink-soft); font-size: 14px; line-height: 1.55; margin-top: 10px; max-width: 62ch; }
+  .road-salary {
+    min-width: 250px; padding: 14px 16px; border: 1px solid rgba(255,255,255,0.10); border-radius: 12px;
+    background: var(--glass); box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); text-align: right;
+  }
+  .road-salary .lab { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-muted); }
+  .road-salary .num { display: block; font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; color: var(--green); text-shadow: 0 0 14px var(--green-glow); margin: 6px 0; }
+  .road-salary .note { font-size: 11.5px; color: var(--ink-soft); line-height: 1.45; }
+  @media (max-width: 760px) {
+    .road-head { grid-template-columns: 1fr; }
+    .road-salary { text-align: left; min-width: 0; }
+  }
+
+  .road-stops { margin-top: 18px; }
+  .road-stop { display: grid; grid-template-columns: 44px 1fr; gap: 14px; padding-bottom: 28px; position: relative; }
+  .road-stop:not(:last-child)::before { content: ''; position: absolute; left: 16px; top: 34px; bottom: 0; width: 1px; background: var(--line-strong); }
+  .road-num {
+    width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; color: var(--green);
+    background: rgba(0,255,133,0.10); border: 1px solid var(--line-3); text-shadow: 0 0 8px var(--green-glow); position: relative; z-index: 1;
+  }
+  .road-stop h3 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--green); margin: 8px 0 12px; font-weight: 600; }
+  .road-stop h3 small { color: var(--ink-muted); letter-spacing: 0.06em; text-transform: none; font-weight: 400; margin-left: 10px; font-size: 11px; }
+
+  .road-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  @media (max-width: 640px) { .road-cards { grid-template-columns: 1fr; } }
+  .road-card {
+    display: block; text-decoration: none; color: inherit;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.10); border-radius: 10px; padding: 14px 16px;
+    transition: border-color 0.2s, background 0.2s, transform 0.2s, box-shadow 0.2s;
+  }
+  a.road-card:hover { border-color: rgba(0,255,133,0.45); background: rgba(0,255,133,0.05); transform: translateY(-2px); box-shadow: 0 0 14px rgba(0,255,133,0.18); }
+  .road-card-kicker { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 6px; }
+  .road-card-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+  .road-card-body { font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; }
+  .road-card-tag { display: inline-block; margin-top: 8px; font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 2px 7px; border-radius: 4px; background: rgba(0,255,133,0.1); color: var(--green); border: 1px solid rgba(0,255,133,0.25); }
+
+  .company-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  @media (max-width: 640px) { .company-grid { grid-template-columns: 1fr; } }
+  .company { display: flex; gap: 10px; align-items: baseline; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: rgba(0,0,0,0.2); }
+  .company b { color: var(--ink); font-size: 13.5px; font-weight: 600; white-space: nowrap; }
+  .company .city { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green); white-space: nowrap; }
+  .company .note { font-size: 12px; color: var(--ink-muted); line-height: 1.4; }
+  @media (max-width: 640px) { .company { flex-wrap: wrap; } }
+
+  .tip-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .tip-list li { display: grid; grid-template-columns: 18px 1fr; gap: 10px; font-size: 13.5px; line-height: 1.55; color: var(--ink-soft); padding: 10px 12px; border-left: 2px solid var(--green); background: var(--glass); border-radius: 0 10px 10px 0; }
+  .tip-list li::before { content: '›'; color: var(--green); font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+
+  .video-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  @media (max-width: 640px) { .video-grid { grid-template-columns: 1fr; } }
+  .video { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #000; }
+  .video-frame { position: relative; aspect-ratio: 16 / 9; background: #000; }
+  .video-frame img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.85; }
+  .video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .video-play {
+    position: absolute; inset: 0; width: 100%; height: 100%; border: none; background: rgba(0,0,0,0.25); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .video-play span {
+    width: 56px; height: 56px; border-radius: 50%; background: var(--green); color: #02110A; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 24px var(--green-glow); font-size: 20px;
+  }
+  .video-title { padding: 10px 12px; font-size: 12.5px; color: var(--ink-soft); background: var(--bg-2); line-height: 1.4; }
+
+  .materials-empty { padding: 14px 16px; border: 1px dashed var(--line-strong); border-radius: 10px; color: var(--ink-muted); font-size: 13px; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container header-inner">
+    <a class="brand" href="/index.html" style="text-decoration:none;color:inherit;">
+      <div class="brand-mark">
+        <span class="brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <g stroke="#00FF85" stroke-width="0.7" stroke-linecap="round" opacity="0.9">
+              <line x1="5" y1="5" x2="21" y2="7"/><line x1="5" y1="5" x2="12" y2="12"/><line x1="5" y1="5" x2="18" y2="16"/><line x1="5" y1="5" x2="9" y2="20"/>
+              <line x1="12" y1="12" x2="21" y2="7"/><line x1="12" y1="12" x2="18" y2="16"/><line x1="12" y1="12" x2="9" y2="20"/><line x1="18" y1="16" x2="9" y2="20"/><line x1="21" y1="7" x2="18" y2="16"/>
+            </g>
+            <g fill="#ffffff"><circle cx="5" cy="5" r="1.2"/><circle cx="21" cy="7" r="1"/><circle cx="12" cy="12" r="1.5"/><circle cx="18" cy="16" r="1"/><circle cx="9" cy="20" r="1"/></g>
+          </svg>
+        </span>
+        <span>buildersbench<span class="brand-dot">.dev</span></span>
+      </div>
+    </a>
+    <div class="header-actions">
+      <a class="stat-pill nav-link" href="/match.html" title="Paste a job, get your plan">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <span>Match</span>
+      </a>
+      <a class="stat-pill nav-link" href="/certifications.html" title="Free AI certifications">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg>
+        <span>Certs</span>
+      </a>
+      <a class="stat-pill nav-link" href="/index.html" title="Back to projects">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        <span>Projects</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- GATE -->
+<section class="hero cert-hero" id="gate">
+  <div class="container">
+    <div class="hero-eyebrow"><span class="dot"></span>Members · Career Road</div>
+    <h1>Your road, <span class="accent">role by role.</span></h1>
+    <p class="hero-lede">
+      Type a target role and get the projects to build, the certifications employers ask for, who is hiring in Florida, what it pays, and how to present it on a resume, on LinkedIn, and in the interview.
+    </p>
+    <form class="gate-box" id="gate-form" autocomplete="off">
+      <label class="gate-label" for="gate-pw">Access password</label>
+      <div class="gate-row">
+        <input class="gate-input" id="gate-pw" type="password" placeholder="Enter the workshop password" autocomplete="current-password" required />
+        <button class="go-btn" id="gate-go" type="submit">Enter →</button>
+      </div>
+      <div class="gate-msg" id="gate-msg" role="status" aria-live="polite"></div>
+      <p class="gate-note">You get the password at a BuildersBench workshop. It stays signed in on this device for 30 days.</p>
+    </form>
+  </div>
+</section>
+
+<!-- APP -->
+<div id="app" hidden>
+  <section class="hero cert-hero">
+    <div class="container">
+      <div class="hero-eyebrow"><span class="dot"></span>Members · Career Road</div>
+      <h1>Where are you <span class="accent">headed?</span></h1>
+      <p class="hero-lede">Type the role you are aiming for. Junior, entry, associate, intern: any of them work.</p>
+      <form class="road-box" id="road-form" autocomplete="off">
+        <div class="road-field">
+          <input class="road-input" id="road-input" type="search" placeholder="e.g. junior cloud, SOC analyst, help desk" aria-label="Target role" />
+          <button class="go-btn" type="submit">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            Show my road
+          </button>
+        </div>
+        <div class="road-examples" id="road-examples"><span class="road-try">Try</span></div>
+        <div class="road-meta-row">
+          <span class="road-updated" id="road-updated"></span>
+          <button class="link-btn" id="sign-out" type="button">Sign out on this device</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="road-section">
+    <div class="container" id="road" aria-live="polite"></div>
+  </section>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">The road <span class="ital">from</span> here to hired.</div>
+        <p class="footer-tagline">Members-only roads built from workshop research. Keep the password to yourself.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Explore</h5>
+        <ul class="footer-paths">
+          <li><a href="/index.html">All projects</a></li>
+          <li><a href="/match.html">Career Match</a></li>
+          <li><a href="/prompts.html">Prompt Library</a></li>
+          <li><a href="/certifications.html">Certifications</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Connect</h5>
+        <ul class="footer-connect">
+          <li><a href="#" data-mail="contact" data-mail-show="1">Contact</a></li>
+          <li><a href="#" data-mail="feedback">Send feedback</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© <span id="footer-year"></span> · buildersbench.dev · brought to you by <a href="https://jobstatsmiami.com" target="_blank" rel="noopener noreferrer">Job Stats Miami</a></div>
+      <div><a href="#" data-mail="contact" data-mail-show="1"></a></div>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  // ===== Session =====
+  const TOKEN_KEY = 'bb-premium-token';
+  const getToken = () => { try { return localStorage.getItem(TOKEN_KEY) || ''; } catch { return ''; } };
+  const setToken = t => { try { t ? localStorage.setItem(TOKEN_KEY, t) : localStorage.removeItem(TOKEN_KEY); } catch {} };
+
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  let DATA = null;          // { roles, updated }
+  let CATALOG = null;       // { id: { title, level, path } } parsed from index.html
+
+  function showGate(msg, isErr) {
+    $('app').hidden = true; $('gate').hidden = false;
+    const m = $('gate-msg'); m.textContent = msg || ''; m.classList.toggle('err', !!isErr);
+  }
+  function showApp() { $('gate').hidden = true; $('app').hidden = false; }
+
+  async function loadData(token) {
+    const res = await fetch('/api/premium-data', { headers: { Authorization: 'Bearer ' + token } });
+    if (res.status === 401) { setToken(''); return null; }
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return res.json();
+  }
+
+  // ===== Gate =====
+  $('gate-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = $('gate-go'); btn.disabled = true;
+    const m = $('gate-msg'); m.classList.remove('err'); m.textContent = 'Checking…';
+    try {
+      const res = await fetch('/api/premium-login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: $('gate-pw').value }) });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) { m.classList.add('err'); m.textContent = body.error || 'Could not sign in.'; return; }
+      setToken(body.token);
+      $('gate-pw').value = '';
+      await boot();
+    } catch {
+      m.classList.add('err'); m.textContent = 'Network error. Try again.';
+    } finally { btn.disabled = false; }
+  });
+
+  $('sign-out').addEventListener('click', () => { setToken(''); DATA = null; showGate('Signed out.'); });
+
+  // ===== Catalog titles (parsed from the public catalog, so nothing is duplicated) =====
+  async function loadCatalog() {
+    if (CATALOG) return CATALOG;
+    CATALOG = {};
+    try {
+      const src = await (await fetch('/index.html', { cache: 'force-cache' })).text();
+      const re = /id:\s*'([\w-]+)',\s*path:\s*'([\w-]+)',\s*level:\s*'(\w+)',\s*title:\s*(['"])((?:(?!\4)[^\\]|\\.)*)\4/g;
+      let m;
+      while ((m = re.exec(src))) CATALOG[m[1]] = { path: m[2], level: m[3], title: m[5].replace(/\\(['"])/g, '$1') };
+    } catch {}
+    return CATALOG;
+  }
+
+  // ===== Matching =====
+  const norm = s => String(s || '').toLowerCase().replace(/[^a-z0-9+#. ]+/g, ' ').replace(/\s+/g, ' ').trim();
+  const STOP = new Set(['junior', 'entry', 'level', 'associate', 'intern', 'internship', 'i', 'ii', 'role', 'job', 'engineer', 'specialist', 'analyst', 'the', 'a', 'an', 'in', 'for', 'of', 'and']);
+  function matchRole(query) {
+    const q = norm(query);
+    if (!q || !DATA) return null;
+    const tokens = q.split(' ').filter(t => t && !STOP.has(t));
+    let best = null, bestScore = 0;
+    for (const r of DATA.roles) {
+      let score = 0;
+      const names = [r.title, ...(r.aliases || [])].map(norm);
+      for (const n of names) {
+        if (n === q) score += 10;
+        else if (q.includes(n) || (n.length > 3 && n.includes(q))) score += 4;
+      }
+      const words = new Set(names.join(' ').split(' '));
+      for (const t of tokens) if (words.has(t)) score += 1.5;
+      if (score > bestScore) { bestScore = score; best = r; }
+    }
+    return bestScore >= 1.5 ? best : null;
+  }
+
+  // ===== Render =====
+  const ytThumb = id => `https://img.youtube.com/vi/${encodeURIComponent(id)}/hqdefault.jpg`;
+  const projectCard = (id, i) => {
+    const c = (CATALOG && CATALOG[id]) || {};
+    return `<a class="road-card" href="/index.html#project=${encodeURIComponent(id)}">
+      <div class="road-card-kicker">Project ${i + 1}${c.level ? ` · ${esc(c.level)}` : ''}</div>
+      <div class="road-card-title">${esc(c.title || id)}</div>
+      <span class="road-card-tag">Open the build roadmap →</span>
+    </a>`;
+  };
+  const stop = (n, title, sub, body) => `
+    <div class="road-stop">
+      <div class="road-num">${n}</div>
+      <div><h3>${esc(title)}${sub ? `<small>${esc(sub)}</small>` : ''}</h3>${body}</div>
+    </div>`;
+
+  function renderRoad(r) {
+    const el = $('road');
+    if (!r) {
+      el.innerHTML = `<p class="road-empty">No road for that yet. Try one of the roles above, or the closest match such as "junior cloud" or "SOC analyst". New roads are added from workshop research.</p>`;
+      return;
+    }
+    document.querySelectorAll('#road-examples .ex-chip').forEach(c => c.classList.toggle('active', c.dataset.role === r.id));
+    if (location.hash !== '#role=' + r.id) history.replaceState(null, '', '#role=' + r.id);
+
+    const certs = (r.certs || []).map(c => `<div class="road-card"><div class="road-card-kicker">${esc(c.org || 'Certification')}</div><div class="road-card-title">${esc(c.name)}</div><div class="road-card-body">${esc(c.why)}</div></div>`).join('');
+    const companies = (r.companies || []).map(c => `<div class="company"><b>${esc(c.name)}</b><span class="city">${esc(c.city)}</span><span class="note">${esc(c.note)}</span></div>`).join('');
+    const tips = arr => `<ul class="tip-list">${(arr || []).map(t => `<li><span>${esc(t)}</span></li>`).join('')}</ul>`;
+    const videos = (r.videos || []).length
+      ? `<div class="video-grid">${r.videos.map(v => `
+          <div class="video" data-yt="${esc(v.id)}">
+            <div class="video-frame"><img src="${ytThumb(v.id)}" alt="" loading="lazy" /><button class="video-play" type="button" aria-label="Play ${esc(v.title)}"><span>▶</span></button></div>
+            <div class="video-title">${esc(v.title)}${v.by ? ` · ${esc(v.by)}` : ''}</div>
+          </div>`).join('')}</div>`
+      : `<div class="materials-empty">Interview videos for this role are being selected.</div>`;
+    const materials = (r.materials || []).length
+      ? `<div class="road-cards">${r.materials.map(m => `<a class="road-card" href="${esc(m.url)}" target="_blank" rel="noopener noreferrer"><div class="road-card-kicker">${esc(m.kind || 'Material')}</div><div class="road-card-title">${esc(m.title)}</div>${m.note ? `<div class="road-card-body">${esc(m.note)}</div>` : ''}<span class="road-card-tag">Open →</span></a>`).join('')}</div>`
+      : `<div class="materials-empty">Workshop slides, research notes, and templates for this role will appear here as they are uploaded.</div>`;
+
+    el.innerHTML = `
+      <div class="road-head">
+        <div>
+          <div class="road-eyebrow">Career road · ${esc(r.title)}</div>
+          <div class="road-title">${esc(r.title)}</div>
+          <p class="road-summary">${esc(r.summary)}</p>
+        </div>
+        <div class="road-salary">
+          <span class="lab">Avg salary · Florida · early career</span>
+          <span class="num">${esc(r.salary?.range || 'Varies')}</span>
+          <span class="note">${esc(r.salary?.note || '')}</span>
+        </div>
+      </div>
+      <div class="road-stops">
+        ${stop(1, 'Projects to build', 'from the BuildersBench catalog', `<div class="road-cards">${(r.projects || []).map(projectCard).join('')}</div>`)}
+        ${stop(2, 'Certifications employers ask for', 'in Florida entry postings', `<div class="road-cards">${certs}</div>`)}
+        ${stop(3, 'Who is hiring in Florida', 'employers with steady entry hiring', `<div class="company-grid">${companies}</div>`)}
+        ${stop(4, 'Resume tips', 'for this role specifically', tips(r.resumeTips))}
+        ${stop(5, 'LinkedIn tips', 'so recruiters find you', tips(r.linkedinTips))}
+        ${stop(6, 'Interview prep', 'videos worth the time', videos)}
+        ${stop(7, 'Workshop and research material', 'from BuildersBench sessions', materials)}
+      </div>`;
+
+    el.querySelectorAll('.video-play').forEach(btn => {
+      btn.onclick = () => {
+        const box = btn.closest('.video'); const id = box.dataset.yt;
+        box.querySelector('.video-frame').innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?autoplay=1&rel=0" title="Interview video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+      };
+    });
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function renderExamples() {
+    const wrap = $('road-examples');
+    wrap.querySelectorAll('.ex-chip').forEach(c => c.remove());
+    for (const r of DATA.roles) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'ex-chip'; b.dataset.role = r.id; b.textContent = r.title;
+      b.onclick = () => { $('road-input').value = r.title; renderRoad(r); };
+      wrap.appendChild(b);
+    }
+    $('road-updated').textContent = DATA.updated ? `Data checked ${DATA.updated}` : '';
+  }
+
+  $('road-form').addEventListener('submit', e => {
+    e.preventDefault();
+    renderRoad(matchRole($('road-input').value));
+  });
+
+  // ===== Boot =====
+  async function boot() {
+    const token = getToken();
+    if (!token) { showGate(''); return; }
+    try {
+      DATA = await loadData(token);
+    } catch { showGate('Could not load member data. Try again in a moment.', true); return; }
+    if (!DATA) { showGate('Your sign-in expired. Enter the password again.'); return; }
+    showApp();
+    renderExamples();
+    await loadCatalog();
+    const m = location.hash.match(/^#role=([\w-]+)$/);
+    const fromHash = m && DATA.roles.find(r => r.id === m[1]);
+    if (fromHash) { $('road-input').value = fromHash.title; renderRoad(fromHash); }
+  }
+  boot();
+  window.addEventListener('hashchange', () => {
+    if (!DATA) return;
+    const m = location.hash.match(/^#role=([\w-]+)$/);
+    const r = m && DATA.roles.find(x => x.id === m[1]);
+    if (r) { $('road-input').value = r.title; renderRoad(r); }
+  });
+
+  // ===== Footer year + mail =====
+  const yearEl = $('footer-year'); if (yearEl) yearEl.textContent = new Date().getFullYear();
+  const MAIL_ADDR = ['hel', 'lo'].join('') + String.fromCharCode(64) + ['jobstatsmiami', 'com'].join('.');
+  const MAIL_SUBJECTS = { feedback: 'buildersbench.dev | Feedback', contact: 'buildersbench.dev | Hello' };
+  document.querySelectorAll('a[data-mail]').forEach(a => {
+    const kind = a.dataset.mail; const params = new URLSearchParams();
+    if (MAIL_SUBJECTS[kind]) params.set('subject', MAIL_SUBJECTS[kind]);
+    a.href = 'mailto:' + MAIL_ADDR + '?' + params.toString();
+    if (a.dataset.mailShow && !a.textContent.trim()) a.textContent = MAIL_ADDR;
+  });
+</script>
+</body>
+</html>

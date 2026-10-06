@@ -39,6 +39,11 @@
   .header-actions .nav-link svg { color: var(--green); }
   /* Narrow screens: compact the nav pills to icon-only so all three fit */
   @media (max-width: 560px) {
+    .cert-hero-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .cert-stat { flex-direction: column; align-items: flex-start; gap: 3px; }
+    .cert-stat-label { font-size: 9px; letter-spacing: 0.14em; }
+  }
+  @media (max-width: 560px) {
     .header-actions { gap: 6px; }
     .header-actions .nav-link span { display: none; }
     .header-actions .nav-link { padding: 7px 9px; }
@@ -101,7 +106,7 @@
   .cert-row:last-child { border-bottom: none; }
   .cert-row-name { font-size: 13.5px; color: var(--ink-soft); line-height: 1.35; }
   a.cert-row-name {
-    color: var(--ink); text-decoration: none;
+    color: var(--ink); text-decoration: none; padding: 4px 0;
     border-bottom: 1px solid var(--line-3); transition: color 0.15s ease, border-color 0.15s ease;
   }
   a.cert-row-name:hover { color: var(--green); border-color: var(--green); }

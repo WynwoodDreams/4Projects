@@ -1669,10 +1669,8 @@
     position: sticky;
     top: 0;
     z-index: 3;
-    display: flex;
-    gap: 4px;
     margin: 22px -44px 0;
-    padding: 6px 44px 0;
+    padding: 10px 44px 14px;
     border-bottom: 1px solid var(--line);
     background: rgba(11, 21, 29, 0.94);
     backdrop-filter: blur(10px);
@@ -1681,39 +1679,54 @@
     scrollbar-width: none;
   }
   .modal-tabs::-webkit-scrollbar { display: none; }
+  /* Segmented pill track, same vocabulary as the catalog's filter chips */
+  .modal-tabs-track {
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: var(--glass);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 10px 30px -18px rgba(0,0,0,0.8);
+  }
   .modal-tab {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     flex-shrink: 0;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.18em;
+    font-size: 11.5px;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    font-weight: 500;
-    padding: 12px 14px;
-    background: none;
-    border: none;
+    font-weight: 600;
+    padding: 9px 16px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 999px;
     cursor: pointer;
-    color: var(--ink-muted);
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
+    color: var(--ink-soft);
     white-space: nowrap;
-    transition: color 0.15s, border-color 0.15s;
+    transition: color 0.15s, background-color 0.15s, border-color 0.15s, box-shadow 0.2s;
   }
-  .modal-tab:hover { color: var(--ink); }
-  .modal-tab:focus-visible { outline: 1px solid var(--green); outline-offset: -1px; border-radius: 6px 6px 0 0; }
+  .modal-tab:hover { color: var(--ink); background: rgba(255,255,255,0.05); }
+  .modal-tab:focus-visible { outline: 1px solid var(--green); outline-offset: 2px; }
   .modal-tab.active {
     color: var(--green);
-    border-bottom-color: var(--green);
-    text-shadow: 0 0 6px var(--green-glow);
+    background: rgba(0,255,133,0.14);
+    border-color: rgba(0,255,133,0.65);
+    box-shadow:
+      0 0 0 1px rgba(0,255,133,0.45),
+      0 0 22px -2px rgba(0,255,133,0.55);
+    text-shadow: 0 0 10px var(--green-glow);
   }
   .modal-tab .tab-count {
-    font-size: 9px;
+    font-size: 10px;
     letter-spacing: 0.06em;
-    padding: 2px 7px;
+    font-weight: 600;
+    padding: 2px 8px;
     border-radius: 999px;
     border: 1px solid var(--line);
+    background: rgba(0,0,0,0.30);
     color: var(--ink-muted);
     text-shadow: none;
   }
@@ -2675,8 +2688,8 @@
     }
     .modal h2 { font-size: 22px; }
     .modal-close { top: 14px; right: 14px; }
-    .modal-tabs { margin: 18px -16px 0; padding: 4px 16px 0; }
-    .modal-tab { padding: 12px 10px; letter-spacing: 0.14em; }
+    .modal-tabs { margin: 18px -16px 0; padding: 8px 16px 12px; }
+    .modal-tab { padding: 9px 10px; font-size: 10.5px; letter-spacing: 0.10em; gap: 6px; }
 
     /* Path tabs: smaller hexagons, still one scrollable row */
     .path-tabs { gap: 8px; padding: 8px 2px 10px; }
@@ -5853,9 +5866,11 @@ ${tags} #BuildingInPublic #OpenToWork`;
       <p style="font-size:16px;color:var(--ink-soft);line-height:1.6;">${p.summary}</p>
 
       <div class="modal-tabs-anchor" id="modal-tabs-anchor"></div>
-      <div class="modal-tabs" role="tablist" aria-label="Project sections">
+      <div class="modal-tabs">
+        <div class="modal-tabs-track" role="tablist" aria-label="Project sections">
         ${MODAL_TABS.map(t => `
         <button class="modal-tab${t.id === activeTab ? ' active' : ''}" role="tab" id="mtab-${t.id}" data-tab="${t.id}" aria-selected="${t.id === activeTab}" aria-controls="mpanel-${t.id}" tabindex="${t.id === activeTab ? 0 : -1}">${t.label}${t.id === 'build' && p.steps ? `<span class="tab-count">${stepsCompleted(p.id)}/${p.steps.length}</span>` : ''}</button>`).join('')}
+        </div>
       </div>
 
       ${panel('overview', `

@@ -31,9 +31,12 @@ These pass the "Would Apple ship this? Would Linear keep this?" test as-is.
 - **The step-derived progress model.** Status (Backlog / In Progress / Done) is
   *derived* from checked roadmap steps rather than self-declared. That's honest,
   Linear-grade state modeling. Keep it as the single source of truth.
-- **The project modal's depth.** Roadmap → tech stack → starter prompt → resume
-  bullets → interview pitch → ship-it toolkit is the product's core value. Long,
-  but the in-modal back-to-top handles it. Don't split it into tabs or pages.
+- **The project modal's depth.** Roadmap, tech stack, starter prompt, resume
+  bullets, interview pitch, and ship-it toolkit are the product's core value.
+  Keep every section. (Revised Oct 2026: the sections now sit under four tabs —
+  Overview, Build, Interview, Ship — grouped by what the visitor is there to do.
+  The depth stayed; only the one-long-scroll presentation changed. In-progress
+  projects open on Build; the Build tab shows live step progress.)
 - **Career Match's core flow.** One textarea, one button, one plan. The no-match
   recovery chips, the "Also a fit:" alternate path, and the honest "keyword match,
   not a recruiter" disclaimer are all exactly right.

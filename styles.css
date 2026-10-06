@@ -1039,7 +1039,7 @@
     display: none;
     align-items: flex-start;
     justify-content: center;
-    padding: 40px 20px 0;
+    padding: 0 20px;
     overflow-y: auto;
   }
   .modal-backdrop.open {
@@ -1054,6 +1054,7 @@
     border-radius: 16px;
     max-width: 820px;
     width: 100%;
+    margin-top: 40px;
     padding: 44px;
     position: relative;
     box-shadow:
@@ -1997,8 +1998,9 @@
     }
 
     /* Modal — tighter backdrop so modal fills screen */
-    .modal-backdrop { padding: 10px 0 0; align-items: flex-start; }
+    .modal-backdrop { padding: 0; align-items: flex-start; }
     .modal {
+      margin-top: 10px;
       padding: 28px 16px 36px;
       border-radius: 20px 20px 0 0;
       min-height: 80vh;

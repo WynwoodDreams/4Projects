@@ -1584,7 +1584,7 @@
     display: none;
     align-items: flex-start;
     justify-content: center;
-    padding: 40px 20px 0;
+    padding: 0 20px;
     overflow-y: auto;
   }
   .modal-backdrop.open {
@@ -1599,6 +1599,7 @@
     border-radius: 16px;
     max-width: 820px;
     width: 100%;
+    margin-top: 40px;
     padding: 44px;
     position: relative;
     box-shadow:
@@ -1657,6 +1658,70 @@
     color: var(--ink);
     margin-bottom: 18px;
   }
+
+  /* Modal tabs — the Ship-It Toolkit's mono tab bar promoted to the top of the
+     modal, so one long column becomes four short panels (Overview, Build,
+     Interview, Ship). Sticky inside the modal's scroll container so it never
+     scrolls out of reach; negative margins stretch it to the modal's inner
+     edges so content slides underneath it cleanly. */
+  .modal-tabs-anchor { height: 0; }
+  .modal-tabs {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    display: flex;
+    gap: 4px;
+    margin: 22px -44px 0;
+    padding: 6px 44px 0;
+    border-bottom: 1px solid var(--line);
+    background: rgba(11, 21, 29, 0.94);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .modal-tabs::-webkit-scrollbar { display: none; }
+  .modal-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 12px 14px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--ink-muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .modal-tab:hover { color: var(--ink); }
+  .modal-tab:focus-visible { outline: 1px solid var(--green); outline-offset: -1px; border-radius: 6px 6px 0 0; }
+  .modal-tab.active {
+    color: var(--green);
+    border-bottom-color: var(--green);
+    text-shadow: 0 0 6px var(--green-glow);
+  }
+  .modal-tab .tab-count {
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    padding: 2px 7px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--ink-muted);
+    text-shadow: none;
+  }
+  .modal-tab.active .tab-count { border-color: var(--green); color: var(--green); }
+  .modal-panel { display: none; }
+  .modal-panel.active { display: block; }
+  .modal-panel > .modal-section:first-child { margin-top: 24px; }
+  .modal-next { display: flex; justify-content: flex-end; }
 
   .modal-section { margin-top: 28px; }
   .modal-section h4 {
@@ -2601,14 +2666,17 @@
     }
 
     /* Modal — tighter backdrop so modal fills screen */
-    .modal-backdrop { padding: 10px 0 0; align-items: flex-start; }
+    .modal-backdrop { padding: 0; align-items: flex-start; }
     .modal {
+      margin-top: 10px;
       padding: 28px 16px 36px;
       border-radius: 20px 20px 0 0;
       min-height: 80vh;
     }
     .modal h2 { font-size: 22px; }
     .modal-close { top: 14px; right: 14px; }
+    .modal-tabs { margin: 18px -16px 0; padding: 4px 16px 0; }
+    .modal-tab { padding: 12px 10px; letter-spacing: 0.14em; }
 
     /* Path tabs: smaller hexagons, still one scrollable row */
     .path-tabs { gap: 8px; padding: 8px 2px 10px; }
@@ -2713,6 +2781,7 @@
     .container { padding: 0 12px; }
     .deploy-grid { grid-template-columns: 1fr; }
     .modal { padding: 24px 14px 36px; }
+    .modal-tabs { margin-left: -14px; margin-right: -14px; padding-left: 14px; padding-right: 14px; }
     .path-tab { width: 78px; height: 88px; }
   }
 </style>
@@ -3363,12 +3432,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       },
       youtube: 'XgAZBRZ7yy0', ytTitle: 'Automate GitHub PR Reviews with AI (Claude & GitHub Actions)',
       steps: [
-        { title: 'Create the GitHub Action skeleton', desc: 'Make a new repo. Add .github/workflows/review.yml that triggers on pull_request.' },
-        { title: 'Fetch the PR diff', desc: 'Use the GitHub API (or actions/github-script) to get the changed files and their diff content.' },
-        { title: 'Send the diff to the LLM', desc: 'Write a Python script that chunks the diff and asks the model to review each chunk for bugs, style, and security issues.' },
-        { title: 'Format feedback as PR comments', desc: 'Parse the LLM response and post inline review comments on the specific lines using the GitHub API.' },
-        { title: 'Add static analysis', desc: 'Run SonarQube or CodeQL alongside the LLM review. Have the AI summarize and prioritize the combined findings.' },
-        { title: 'Test on a real repo', desc: "Install the action on one of your own projects. Show a PR with the bot's review comments in your portfolio screenshots." }
+        { title: 'Create the GitHub Action skeleton', desc: 'New repo with a workflow that triggers on pull_request. Have it print the PR number first so you know the trigger and permissions work before adding anything clever.' },
+        { title: 'Fetch the PR diff', desc: 'Use the GitHub API or actions/github-script to pull the changed files and their diff hunks. Save the raw diff as an artifact so you can inspect exactly what the model will see.' },
+        { title: 'Send the diff to the LLM', desc: 'A Python script that chunks the diff per file, asks the model for bugs, style, and security issues, and returns structured JSON with file, line, severity, and comment.' },
+        { title: 'Post inline review comments', desc: 'Map each finding to a line in the diff and post it through the review API. Validate first — a comment on an unchanged line is rejected, and the model gets lines wrong.' },
+        { title: 'Add static analysis', desc: 'Run SonarQube or CodeQL in the same workflow and feed the findings to the model to deduplicate and prioritize. The combined summary comment is what reviewers actually read.' },
+        { title: 'Test on a real repo', desc: 'Install the action on one of your own projects, open a PR with a deliberate bug, and confirm the bot catches it. Screenshot that review for your portfolio.' }
       ]
     },
     // DATA ANALYST
@@ -3390,12 +3459,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       },
       youtube: 'H3sZnfOXM88', ytTitle: 'Build an AI-Powered Data Dashboard with Python & Streamlit',
       steps: [
-        { title: 'Get the dataset', desc: "Download the UCI Online Retail II dataset — it's the classic for RFM analysis and has real-world messiness." },
-        { title: 'Clean the data', desc: 'Handle negative quantities (returns), missing customer IDs, and date parsing. Document every decision in your notebook.' },
-        { title: 'Calculate R, F, M scores', desc: 'For each customer: Recency (days since last purchase), Frequency (count of orders), Monetary (total spend). Score each on 1–5.' },
-        { title: 'Segment customers', desc: 'Combine scores into segments: Champions, Loyal, At-Risk, Lost, New. Validate with business logic.' },
-        { title: 'Build the Streamlit dashboard', desc: 'Two pages: a data overview with Plotly charts, and a segment drill-down with individual customer lists.' },
-        { title: 'Add the AI recommendation layer', desc: 'For each segment, have GPT generate tailored marketing copy and offer suggestions. Let users regenerate with a button.' }
+        { title: 'Get the dataset', desc: 'Download the UCI Online Retail II dataset — the classic for RFM, with real-world messiness. Load it into pandas and record row counts before and after every cleaning step.' },
+        { title: 'Clean the data', desc: 'Handle negative quantities (returns), missing customer IDs, and date parsing. Write down each decision and why; the interview question is always "what did you throw away?"' },
+        { title: 'Calculate R, F, M scores', desc: 'Per customer: Recency (days since last purchase), Frequency (order count), Monetary (total spend), each scored 1–5 by quintile. Sanity-check the top customers by hand.' },
+        { title: 'Segment customers', desc: 'Combine scores into named segments — Champions, Loyal, At-Risk, Lost, New — and check that segment sizes and spend make business sense before building anything on top.' },
+        { title: 'Build the Streamlit dashboard', desc: 'Two pages: an overview with Plotly charts of segment size and revenue, and a drill-down listing the customers in any segment. Deploy it so the link works in an application.' },
+        { title: 'Add the AI recommendation layer', desc: 'For each segment, have the model draft a tailored campaign idea and offer. Add a regenerate button, and show one example where you edited the output and explain why.' }
       ]
     },
     {
@@ -3442,12 +3511,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       },
       youtube: 'nIoHj7ei2to', ytTitle: 'Python Time Series Forecasting Tutorial with Meta Prophet',
       steps: [
-        { title: 'Get historical sales data', desc: 'Use a Kaggle retail dataset or generate synthetic data for 3 years with seasonality. Store in PostgreSQL.' },
-        { title: 'Explore seasonality patterns', desc: 'Use pandas + Plotly to plot daily, weekly, and yearly patterns. Identify holidays and anomalies.' },
-        { title: 'Build the Prophet model', desc: "Train Meta's Prophet on the time series with built-in holiday effects. Generate 90-day forecasts with confidence intervals." },
-        { title: 'Compare to other models', desc: 'Also train ARIMA and a simple LSTM. Evaluate with MAPE on a held-out test set. Document which won and why.' },
-        { title: 'Build the stock-out risk query', desc: 'Write SQL that joins inventory levels, lead times, and forecasted demand to flag high-risk SKUs.' },
-        { title: 'Build the Power BI report', desc: 'Create an interactive dashboard with forecast visualizations, risk heatmaps, and a What-If scenario panel.' }
+        { title: 'Get historical sales data', desc: 'Use a Kaggle retail dataset or generate three years of daily sales with weekly and holiday seasonality. Load it into PostgreSQL with a proper date dimension.' },
+        { title: 'Explore seasonality patterns', desc: 'Plot daily, weekly, and yearly views with pandas and Plotly. Mark holidays and anomalies — a forecast is only as good as what you understood about the past.' },
+        { title: 'Build the Prophet model', desc: 'Train Prophet with holiday effects and produce 90-day forecasts with confidence intervals. Hold out the last 90 days so you can measure accuracy instead of guessing.' },
+        { title: 'Compare to other models', desc: 'Train ARIMA and a simple LSTM on the same split, score all three with MAPE, and write one paragraph on which won and why. That paragraph is the portfolio.' },
+        { title: 'Build the stock-out risk query', desc: 'SQL that joins inventory, lead times, and forecasted demand to flag SKUs likely to run out inside their lead time. Return a ranked list, not a dump.' },
+        { title: 'Build the Power BI report', desc: 'Forecast visuals, a risk heatmap by SKU and region, and a what-if panel for lead time. Present it as the page a supply chain manager opens every Monday.' }
       ]
     },
     // SWE
@@ -3469,12 +3538,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       },
       youtube: '3ExDEeSnyvE', ytTitle: 'System Design & Implementation of a URL Shortener',
       steps: [
-        { title: 'Design the schema', desc: 'Table for URLs (short_code, long_url, created_at, user_id). Table for clicks (timestamp, ip, user_agent). Pick PostgreSQL.' },
-        { title: 'Build the core API', desc: 'In Go or Python: POST /shorten, GET /:code. Generate short codes with base62 encoding of a counter or random.' },
-        { title: 'Add Redis caching', desc: 'Cache short→long mappings. On a miss, hit Postgres, then warm the cache. Use TTL for old links.' },
-        { title: 'Implement rate limiting', desc: 'Use a Redis-backed sliding window. Write it as an atomic Lua script to prevent race conditions.' },
-        { title: 'Add Prometheus metrics', desc: 'Track requests per second, cache hit rate, and redirect latency. Export on /metrics.' },
-        { title: 'Build the Grafana dashboard', desc: 'Visualize traffic patterns, top URLs, and error rates. Run k6 load tests and screenshot the results for your README.' }
+        { title: 'Design the schema', desc: 'PostgreSQL tables for URLs (short_code, long_url, created_at, owner) and clicks (timestamp, referrer, user_agent). Index the short code — that lookup is the whole product.' },
+        { title: 'Build the core API', desc: 'In Go or Python: POST /shorten and GET /:code. Generate codes with base62 over a counter or random bytes, and handle collisions explicitly rather than hoping.' },
+        { title: 'Add Redis caching', desc: 'Cache short-to-long mappings with a TTL. On a miss, read Postgres and warm the cache. Measure p99 latency before and after; that number goes in the README.' },
+        { title: 'Implement rate limiting', desc: 'A Redis sliding-window limiter written as an atomic Lua script so concurrent requests cannot race past the limit. Return 429 with a Retry-After header.' },
+        { title: 'Add Prometheus metrics', desc: 'Requests per second, cache hit rate, a redirect latency histogram, and error rate, exported on /metrics. Label by endpoint so the dashboard can split them.' },
+        { title: 'Build the Grafana dashboard', desc: 'Panels for traffic, top links, latency, and errors. Run a k6 load test, screenshot the dashboard under load, and note the point where it starts to degrade.' }
       ]
     },
     {
@@ -3495,12 +3564,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       },
       youtube: 'dFQa06cK7xE', ytTitle: 'PostgreSQL Job Scheduling with FOR UPDATE SKIP LOCKED',
       steps: [
-        { title: 'Design the jobs table', desc: 'Columns: id, payload (JSONB), priority, status, attempts, max_attempts, scheduled_at, locked_at, locked_by.' },
-        { title: 'Build the enqueue API', desc: 'POST /jobs endpoint that inserts with status=pending. Support delayed jobs via scheduled_at.' },
-        { title: 'Write the worker loop', desc: 'Use SELECT ... FOR UPDATE SKIP LOCKED to atomically claim jobs. Multiple workers can run safely in parallel.' },
-        { title: 'Add retry with exponential backoff', desc: 'On failure, increment attempts and reschedule with 2^attempts seconds delay, up to max_attempts.' },
-        { title: 'Build the dead-letter queue', desc: 'When max_attempts is hit, move jobs to a dead_jobs table with the failure reason for manual inspection.' },
-        { title: 'Test the failure modes', desc: 'Kill workers mid-job. Crash the database. Document every failure mode in your README — this is what proves you understand distributed systems.' }
+        { title: 'Design the jobs table', desc: 'Columns for id, payload (JSONB), priority, status, attempts, max_attempts, scheduled_at, locked_at, and locked_by. Index (status, priority, scheduled_at) — the worker query depends on it.' },
+        { title: 'Build the enqueue API', desc: 'POST /jobs inserts a pending job and supports delayed execution through scheduled_at. Validate payloads so a bad job fails at the door, not inside a worker.' },
+        { title: 'Write the worker loop', desc: 'Claim jobs with SELECT ... FOR UPDATE SKIP LOCKED so many workers run in parallel without double-processing. Run three workers and prove no job executes twice.' },
+        { title: 'Add retry with exponential backoff', desc: 'On failure, increment attempts and reschedule after 2^attempts seconds with jitter, up to max_attempts. Log every retry with the error that caused it.' },
+        { title: 'Build the dead-letter queue', desc: 'When max_attempts is reached, move the job to dead_jobs with the final error, and add an endpoint to inspect and requeue it. Dead jobs are a feature, not a bug.' },
+        { title: 'Test the failure modes', desc: 'Kill a worker mid-job, restart Postgres, enqueue a poison payload. Document what happened in each case; that write-up is what proves you understand distributed systems.' }
       ]
     },
     {
@@ -3521,12 +3590,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       },
       youtube: 'sVcwVQRHIc8', ytTitle: 'Learn RAG From Scratch - Python AI Tutorial',
       steps: [
-        { title: 'Build the ingestion pipeline', desc: "Accept PDF and Markdown uploads. Use LangChain's RecursiveCharacterTextSplitter with 500-token chunks and 50-token overlap." },
-        { title: 'Generate embeddings', desc: 'Use OpenAI text-embedding-3-small (cheap) or sentence-transformers locally (free). Batch for efficiency.' },
-        { title: 'Set up the vector DB', desc: 'Pinecone serverless is simplest; Milvus if you want self-hosted. Store chunks with metadata (filename, page, section).' },
-        { title: 'Build the retrieval API', desc: 'FastAPI endpoint that embeds the question, searches Pinecone, and returns top-k chunks with similarity scores.' },
-        { title: 'Add the LLM with citations', desc: 'Send retrieved chunks to Claude with a prompt that REQUIRES inline citations. Parse and link them in the response.' },
-        { title: 'Build the React chat UI', desc: 'File upload drop zone, chat window, clickable citations that highlight the source text. This is your demo.' }
+        { title: 'Build the ingestion pipeline', desc: 'Accept PDF and Markdown uploads and split them with RecursiveCharacterTextSplitter at roughly 500 tokens with 50 overlap. Keep filename, page, and section as metadata on every chunk.' },
+        { title: 'Generate embeddings', desc: 'Use a hosted embedding model or sentence-transformers locally; batch requests and cache by content hash so re-uploads cost nothing. Note the dimension — it fixes your index.' },
+        { title: 'Set up the vector DB', desc: 'Pinecone serverless for zero ops, Milvus to self-host. Upsert chunks with metadata and confirm a known question retrieves the right chunk before going further.' },
+        { title: 'Build the retrieval API', desc: 'A FastAPI endpoint that embeds the question, searches top-k, and returns chunks with scores. Add a keyword fallback for exact identifiers that embeddings miss.' },
+        { title: 'Add the LLM with citations', desc: 'Send retrieved chunks to Claude with a prompt that requires inline citations to chunk ids. Parse and link them, and refuse to answer when nothing relevant was retrieved.' },
+        { title: 'Build the React chat UI', desc: 'Upload drop zone, chat window, and clickable citations that highlight the source passage. Record a 30-second demo of a question, its answer, and a citation click.' }
       ]
     },
     // HELP DESK
@@ -3548,12 +3617,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       },
       youtube: 'p6uPjFrjCqo', ytTitle: 'How to Build an AI Customer Support Chat Bot - Full Tutorial',
       steps: [
-        { title: 'Write your knowledge base', desc: 'Create 20–30 markdown files covering common IT issues: VPN, password resets, printer setup, MFA. Each with clear step-by-step fixes.' },
-        { title: 'Pick your bot platform', desc: 'Botpress (free, powerful) or Voiceflow (visual). Both support RAG integrations.' },
-        { title: 'Ingest the knowledge base', desc: 'Upload your markdown files. Configure the bot to search them first before generating responses.' },
-        { title: 'Add OpenAI as the fallback', desc: "If the knowledge base doesn't have an answer, route to GPT with a system prompt that enforces IT-support tone." },
-        { title: 'Build the ticket escalation flow', desc: 'When the bot can\'t help, collect user details and write to a Google Sheet via Zapier. This becomes your "ticket system."' },
-        { title: 'Measure deflection rate', desc: 'Track: questions answered vs. escalated. Shoot for 40%+ deflection. Put the number on your resume.' }
+        { title: 'Write your knowledge base', desc: '20–30 Markdown articles on the common issues — VPN, password reset, printer setup, MFA — each with a one-line symptom and a numbered fix. Consistent structure makes retrieval work.' },
+        { title: 'Pick your bot platform', desc: 'Botpress (free, flexible) or Voiceflow (visual). Build a hello-world bot first and confirm you can publish it to a web widget before adding knowledge.' },
+        { title: 'Ingest the knowledge base', desc: 'Upload the articles as a knowledge source and configure the bot to search them before generating anything. Ask ten questions and check which article each answer came from.' },
+        { title: 'Add the LLM as the fallback', desc: 'When no article matches, route to the model with a system prompt that enforces IT-support tone and says when it is unsure. Log every fallback so you can write the missing article.' },
+        { title: 'Build the ticket escalation flow', desc: 'When the bot cannot help, collect name, device, and issue, and write a row to a Google Sheet through Zapier with a ticket number. Reply with that number.' },
+        { title: 'Measure deflection rate', desc: 'Run your test questions, count answered versus escalated, and improve the weakest articles until deflection passes 40%. Put the final number on your resume.' }
       ]
     },
     {
@@ -3574,12 +3643,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       },
       youtube: 'mX-j7lC2L3A', ytTitle: 'Automate the employee identity lifecycle with Microsoft Entra',
       steps: [
-        { title: 'Get a Microsoft 365 dev tenant', desc: 'Sign up for the free developer sandbox — includes Entra ID, Power Automate, and sample users.' },
-        { title: 'Build the intake form', desc: 'Create a Microsoft Form with fields: First Name, Last Name, Department, Manager Email, Start Date.' },
-        { title: 'Create the Power Automate flow', desc: 'Trigger on form submit. First action: create user in Entra ID via the built-in connector.' },
-        { title: 'Add dynamic group assignment', desc: 'Use an expression to check Department and add the user to the right group. Handle Sales, Engineering, Marketing, etc.' },
-        { title: 'Assign M365 licenses', desc: 'Use the Assign Licenses action. Pick E3 or Business Premium depending on role.' },
-        { title: 'Email the manager credentials', desc: 'Auto-generate a secure temporary password and send it via Outlook. Include a welcome doc.' }
+        { title: 'Get a Microsoft 365 dev tenant', desc: 'Sign up for the free developer sandbox, which includes Entra ID, Power Automate, and sample users. Create a test department structure and two manager accounts.' },
+        { title: 'Build the intake form', desc: 'A Microsoft Form with first name, last name, department, manager email, and start date. Use a dropdown for department so the flow never has to guess spelling.' },
+        { title: 'Create the Power Automate flow', desc: 'Trigger on form submit, then create the user in Entra ID with the built-in connector. Generate the username from a rule and handle the duplicate-name case.' },
+        { title: 'Add dynamic group assignment', desc: 'Branch on department to add the user to the right security and Teams groups. Test every branch with a real submission, not just the first one.' },
+        { title: 'Assign licenses', desc: 'Use the assign-license action and choose the SKU by role. Add a condition that fails loudly when no licenses remain instead of silently creating an unlicensed user.' },
+        { title: 'Notify the manager', desc: 'Email the manager a welcome note with the username and first-day steps, and send the temporary password through a separate channel. Document why you split them.' }
       ]
     },
     {
@@ -3600,12 +3669,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       },
       youtube: 'oxwFatEqTsc', ytTitle: 'Snipe-IT: Free Open-source IT Asset Management Platform',
       steps: [
-        { title: 'Set up a Snipe-IT demo instance', desc: 'Use their free demo or self-host with Docker. Populate it with 50–100 sample assets.' },
-        { title: 'Get an API token', desc: 'In Snipe-IT settings, generate a personal access token. Test it with a curl request first.' },
-        { title: 'Build the Python extractor', desc: 'Use requests to paginate through /api/v1/hardware. Transform JSON into a clean Pandas DataFrame.' },
-        { title: 'Calculate key metrics', desc: 'Unassigned assets, assets by age, upcoming refresh cycles (4+ year old), license utilization rate.' },
-        { title: 'Build the Power BI report', desc: 'Connect directly to your Python script output. Create visuals: asset aging heatmap, department allocation, refresh timeline.' },
-        { title: 'Schedule the refresh', desc: 'Set up automated daily data refreshes. Publish to Power BI Service so anyone with a link can view.' }
+        { title: 'Set up a Snipe-IT instance', desc: 'Use the hosted demo or self-host with Docker. Load 50–100 sample assets across laptops, monitors, and phones with realistic purchase dates and assignments.' },
+        { title: 'Get an API token', desc: 'Generate a personal access token in Snipe-IT settings and confirm it works with a single curl request to the hardware endpoint before writing any code.' },
+        { title: 'Build the Python extractor', desc: 'Paginate through the hardware and licenses endpoints, flatten the JSON into pandas DataFrames, and save to CSV or Parquet. Handle a rate limit gracefully.' },
+        { title: 'Calculate key metrics', desc: 'Unassigned assets, age distribution, devices past a four-year refresh point, warranties expiring in 90 days, and license utilization. Write each as a function with a test.' },
+        { title: 'Build the Power BI report', desc: 'Connect to your extract and build an aging heatmap, allocation by department, and a refresh timeline. Add a slicer so a manager can see only their own team.' },
+        { title: 'Schedule the refresh', desc: 'Automate a daily extract and publish to Power BI Service so the report updates without you. Write a one-page runbook for whoever inherits it.' }
       ]
     },
     // CS
@@ -3679,12 +3748,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       },
       youtube: 'rid5M4ifGPA', ytTitle: 'Getting an MQTT Broker up and Running using Docker',
       steps: [
-        { title: 'Design the sensor simulators', desc: 'Write Python scripts that mimic vibration, temperature, and pressure sensors. Each publishes to MQTT at realistic rates.' },
-        { title: 'Set up the MQTT broker', desc: 'Run Mosquitto in Docker. Verify messages flow with MQTT Explorer.' },
-        { title: 'Build the edge processor', desc: 'A separate container that subscribes to all topics, runs a lightweight TensorFlow Lite model for anomaly detection, and only forwards critical events.' },
-        { title: 'Store time-series data', desc: 'Add InfluxDB to the compose file. Write normal readings directly; write alerts to a separate bucket.' },
-        { title: 'Build the Grafana dashboard', desc: 'Connect to InfluxDB. Create panels for live sensor values, anomaly rate, and system health.' },
-        { title: 'Package with docker-compose', desc: 'One command spins up MQTT + 3 sensors + edge processor + InfluxDB + Grafana. This is the portfolio win.' }
+        { title: 'Design the sensor simulators', desc: 'Python scripts that mimic vibration, temperature, and pressure sensors publishing to MQTT at realistic rates, with injected anomalies you can trigger on demand.' },
+        { title: 'Set up the MQTT broker', desc: 'Run Mosquitto in Docker and confirm messages flow with MQTT Explorer. Define a topic hierarchy per site and sensor so the edge processor can subscribe by wildcard.' },
+        { title: 'Build the edge processor', desc: 'A container that subscribes to all sensor topics, runs a TensorFlow Lite anomaly model on a sliding window, and forwards only critical events. Measure its memory footprint.' },
+        { title: 'Store time-series data', desc: 'Add InfluxDB to the Compose file. Write normal readings to a bucket with short retention and alerts to one kept longer. Query both to prove the split works.' },
+        { title: 'Build the Grafana dashboard', desc: 'Live sensor panels, anomaly rate over time, and a health row showing broker and processor status. Trigger an injected anomaly and watch it arrive on the dashboard.' },
+        { title: 'Package with Docker Compose', desc: 'One command starts the broker, three sensors, the edge processor, InfluxDB, and Grafana. Record a clean start from nothing to a live dashboard for the README.' }
       ]
     },
     // CLOUD
@@ -5132,15 +5201,46 @@ Huge thanks to AI pair-programming tools that helped me ship faster.
 ${tags} #BuildingInPublic #OpenToWork`;
   }
 
+  // Lowercases only a leading article or lead-in so a phrase can sit inside a
+  // sentence without wrecking acronyms: "A SIEM home lab" becomes "a SIEM home
+  // lab", never "a siem home lab".
+  function lowerLead(s) {
+    return String(s || '').trim().replace(/^(A|An|The|Your|This|Three)\b/, m => m.toLowerCase());
+  }
+  // First sentence of a block of copy, terminator removed. A closing quote
+  // after the period ("users." A semantic…) still counts as a break.
+  function firstSentence(s) {
+    const out = String(s || '').trim().split(/[.!?]["”']?\s+(?=[A-Z"“])/)[0].replace(/[.:;,]\s*$/, '').trim();
+    // The break may have swallowed a closing quote; re-balance so the sentence
+    // never ends on an open quotation.
+    return (out.match(/"/g) || []).length % 2 ? out + '"' : out;
+  }
+  // First clause: like firstSentence but also stops at an em dash, for the
+  // short phrase that goes inside another sentence.
+  function firstClause(s) {
+    return firstSentence(String(s || '').split(' — ')[0]);
+  }
+  // What the visitor built, as an object phrase that follows a verb. Summaries
+  // are noun phrases ("A gateway that…"). Two shapes need help: "Your first
+  // real cloud deployment — a site served from…" uses the part after the dash,
+  // and "This project involves building X" is unwrapped to "X".
+  function builtObject(p) {
+    const parts = String(p.summary || '').split(' — ');
+    let s = parts[0];
+    if (/^Your\b/.test(s) && parts[1]) s = parts[1];
+    s = firstSentence(s).replace(/^This project (involves|covers|is about) (building|creating|developing)\s+/i, '');
+    return lowerLead(s);
+  }
+
   function resumeBullets(p) {
     const topTech = p.tech.slice(0, 3).join(', ');
     const skillList = p.skills.split(',').map(s => s.trim());
     const firstSkill = skillList[0] || 'technical design';
     const secondSkill = skillList[1] || 'systems thinking';
     return [
-      `Designed and shipped ${p.title.toLowerCase()} using ${topTech}, demonstrating ${firstSkill} and ${secondSkill} in a production-style codebase.`,
-      `Delivered a real-world use case: ${p.useCase.toLowerCase().replace(/\.$/, '')}, backed by a public GitHub repo, README, and live demo.`,
-      `Leveraged AI coding assistants (Claude Code / Cursor) to accelerate delivery and write tests, reflecting the modern AI-augmented developer workflow.`
+      `Built ${builtObject(p)}. Stack: ${topTech}.`,
+      `Applied ${firstSkill} and ${secondSkill} to a real-world scenario: ${firstClause(p.useCase)}.`,
+      `Shipped it publicly with a GitHub repo, README, and live demo, using AI coding assistants (Claude Code) to accelerate scaffolding and tests.`
     ];
   }
 
@@ -5149,10 +5249,10 @@ ${tags} #BuildingInPublic #OpenToWork`;
     const topTech = p.tech.slice(0, 3).join(', ');
     return {
       situation: `I wanted a portfolio project that would prove I could handle the kind of problem a ${p.path === 'ai' ? 'junior AI engineer' : p.path === 'cyber' ? 'security engineer' : p.path === 'data' ? 'data analyst' : 'junior engineer'} actually sees on day one — not a toy tutorial.`,
-      task: `The goal was to ${p.summary.toLowerCase().replace(/\.$/, '')}, in a way that mirrors ${p.useCase.toLowerCase().replace(/\.$/, '')}.`,
+      task: `The goal was to build ${builtObject(p)}. The scenario I had in mind: ${firstClause(p.useCase)}.`,
       action: `I built it with ${topTech}, and used AI pair-programming to move faster on the boilerplate so I could focus on the hard parts — specifically ${skillList.slice(0, 2).join(' and ')}.`,
       result: `The project is live, documented, and has a short demo video. More importantly, I can walk through every decision I made — why I picked this stack, what I'd change, and where it would break under real load.`,
-      closing: `That's why I'm excited about roles where I can keep building things like this — ${p.why.split('.')[0].toLowerCase()}.`
+      closing: `That's why I'm excited about roles where I can keep building things like this. ${firstSentence(p.why)}.`
     };
   }
 
@@ -5678,7 +5778,46 @@ ${tags} #BuildingInPublic #OpenToWork`;
   }
 
   // ===== MODAL =====
-  function openModal(id) {
+  // The modal's four panels. Overview is for deciding, Build for doing,
+  // Interview and Ship for selling the finished project.
+  const MODAL_TABS = [
+    { id: 'overview',  label: 'Overview' },
+    { id: 'build',     label: 'Build' },
+    { id: 'interview', label: 'Interview' },
+    { id: 'ship',      label: 'Ship' }
+  ];
+  let modalTab = 'overview';
+  let modalTabProject = null;
+
+  function selectModalTab(tabId, { focus = false } = {}) {
+    if (!MODAL_TABS.some(t => t.id === tabId)) return;
+    const modal = document.getElementById('modal');
+    const backdrop = document.getElementById('modal-backdrop');
+    if (!modal) return;
+    modalTab = tabId;
+    modal.querySelectorAll('.modal-tab').forEach(t => {
+      const on = t.dataset.tab === tabId;
+      t.classList.toggle('active', on);
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      if (on && focus) t.focus();
+    });
+    modal.querySelectorAll('.modal-panel').forEach(panel => {
+      panel.classList.toggle('active', panel.dataset.panel === tabId);
+    });
+    // If the visitor had scrolled down into the previous panel, start the new
+    // one at the tab bar rather than at some arbitrary depth. Measured from a
+    // zero-height anchor because the sticky bar itself reports its stuck
+    // position, not its natural one.
+    const anchor = document.getElementById('modal-tabs-anchor');
+    if (anchor && backdrop) {
+      const anchorTop = anchor.getBoundingClientRect().top - backdrop.getBoundingClientRect().top + backdrop.scrollTop;
+      if (backdrop.scrollTop > anchorTop) backdrop.scrollTop = anchorTop;
+    }
+  }
+
+  // opts.tab forces a panel (the hero Continue pill opens straight onto Build).
+  function openModal(id, opts = {}) {
     const p = PROJECTS.find(x => x.id === id);
     if (!p) return;
     const backdrop = document.getElementById('modal-backdrop');
@@ -5692,6 +5831,17 @@ ${tags} #BuildingInPublic #OpenToWork`;
     const progress = state.progress[p.id] || 'none';
     const pathName = PATHS.find(x => x.id === p.path)?.name ?? '';
 
+    // Which panel to show. A re-render of the same project (step toggle,
+    // bookmark) keeps the visitor where they are; a fresh open lands on Build
+    // when the project is already in progress and on Overview otherwise.
+    const requestedTab = MODAL_TABS.some(t => t.id === opts.tab) ? opts.tab : null;
+    const activeTab = requestedTab
+      || (wasOpen && modalTabProject === p.id ? modalTab : (progress === 'started' ? 'build' : 'overview'));
+    modalTab = activeTab;
+    modalTabProject = p.id;
+    const panel = (tabId, html) =>
+      `<div class="modal-panel${tabId === activeTab ? ' active' : ''}" role="tabpanel" id="mpanel-${tabId}" data-panel="${tabId}" aria-labelledby="mtab-${tabId}">${html}</div>`;
+
     const modal = document.getElementById('modal');
     if (!modal) return;
     modal.innerHTML = `
@@ -5702,6 +5852,13 @@ ${tags} #BuildingInPublic #OpenToWork`;
       <h2>${p.title}</h2>
       <p style="font-size:16px;color:var(--ink-soft);line-height:1.6;">${p.summary}</p>
 
+      <div class="modal-tabs-anchor" id="modal-tabs-anchor"></div>
+      <div class="modal-tabs" role="tablist" aria-label="Project sections">
+        ${MODAL_TABS.map(t => `
+        <button class="modal-tab${t.id === activeTab ? ' active' : ''}" role="tab" id="mtab-${t.id}" data-tab="${t.id}" aria-selected="${t.id === activeTab}" aria-controls="mpanel-${t.id}" tabindex="${t.id === activeTab ? 0 : -1}">${t.label}${t.id === 'build' && p.steps ? `<span class="tab-count">${stepsCompleted(p.id)}/${p.steps.length}</span>` : ''}</button>`).join('')}
+      </div>
+
+      ${panel('overview', `
       <div class="modal-section">
         <h4>Why It Helps Your Resume</h4>
         <p>${p.why}</p>
@@ -5731,6 +5888,31 @@ ${tags} #BuildingInPublic #OpenToWork`;
       `;
       })() : ''}
 
+      <div class="modal-section">
+        <h4>Tech Stack</h4>
+        <div class="tech-tags" style="margin-top:10px;">
+          ${p.tech.map(t => `<span class="tag">${t}</span>`).join('')}
+        </div>
+        <p style="margin-top:12px;font-size:13px;"><strong style="color:var(--ink);">Skills gained:</strong> ${p.skills}</p>
+      </div>
+
+      <div class="modal-grid-2">
+        <div class="modal-card">
+          <h5>Real-World Use Case</h5>
+          <p>${p.useCase}</p>
+        </div>
+        <div class="modal-card">
+          <h5>Bonus: Level It Up with AI</h5>
+          <p>${p.bonus}</p>
+        </div>
+      </div>
+
+      <div class="modal-section modal-next">
+        <button class="btn-secondary modal-tab-jump" data-jump="build">Open the build roadmap →</button>
+      </div>
+      `)}
+
+      ${panel('build', `
       ${p.steps ? `
       <div class="modal-section">
         <h4>Step-by-Step Build Roadmap</h4>
@@ -5761,25 +5943,6 @@ ${tags} #BuildingInPublic #OpenToWork`;
       ` : ''}
 
       <div class="modal-section">
-        <h4>Tech Stack</h4>
-        <div class="tech-tags" style="margin-top:10px;">
-          ${p.tech.map(t => `<span class="tag">${t}</span>`).join('')}
-        </div>
-        <p style="margin-top:12px;font-size:13px;"><strong style="color:var(--ink);">Skills gained:</strong> ${p.skills}</p>
-      </div>
-
-      <div class="modal-grid-2">
-        <div class="modal-card">
-          <h5>Real-World Use Case</h5>
-          <p>${p.useCase}</p>
-        </div>
-        <div class="modal-card">
-          <h5>Bonus: Level It Up with AI</h5>
-          <p>${p.bonus}</p>
-        </div>
-      </div>
-
-      <div class="modal-section">
         <h4>How to Use AI Coding Assistants</h4>
         <p>${p.aiAssist}</p>
       </div>
@@ -5791,16 +5954,9 @@ ${tags} #BuildingInPublic #OpenToWork`;
           ${p.prompt}
         </div>
       </div>
+      `)}
 
-      <div class="modal-section">
-        <h4>How to Showcase It</h4>
-        <ul class="showcase-list">
-          <li><strong>GitHub</strong><span>${p.showcase.github}</span></li>
-          <li><strong>LinkedIn</strong><span>${p.showcase.linkedin}</span></li>
-          <li><strong>Resume</strong><span>${p.showcase.resume}</span></li>
-        </ul>
-      </div>
-
+      ${panel('interview', `
       <div class="modal-section">
         <h4>Resume Bullets (STAR-ready)</h4>
         <p style="margin-bottom:10px;">Copy these straight into your resume's Projects section. Replace the placeholders with your real numbers.</p>
@@ -5819,6 +5975,17 @@ ${tags} #BuildingInPublic #OpenToWork`;
       <div class="modal-section">
         <h4>Expect These Follow-up Questions</h4>
         <ul class="interview-qs" id="tpl-questions"></ul>
+      </div>
+      `)}
+
+      ${panel('ship', `
+      <div class="modal-section">
+        <h4>How to Showcase It</h4>
+        <ul class="showcase-list">
+          <li><strong>GitHub</strong><span>${p.showcase.github}</span></li>
+          <li><strong>LinkedIn</strong><span>${p.showcase.linkedin}</span></li>
+          <li><strong>Resume</strong><span>${p.showcase.resume}</span></li>
+        </ul>
       </div>
 
       <div class="modal-section">
@@ -5845,6 +6012,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
           <ol class="deploy-list" id="tpl-deploy"></ol>
         </div>
       </div>
+      `)}
 
       <div class="modal-actions">
         <button class="btn-primary" id="modal-bookmark">
@@ -5867,6 +6035,26 @@ ${tags} #BuildingInPublic #OpenToWork`;
 
     // Events
     document.getElementById('modal-close-btn').onclick = closeModal;
+
+    // Tabs: click, arrow-key navigation (WAI-ARIA tabs pattern), and the
+    // jump button at the end of Overview.
+    const tabButtons = Array.from(modal.querySelectorAll('.modal-tab'));
+    tabButtons.forEach((tab, i) => {
+      tab.onclick = () => {
+        selectModalTab(tab.dataset.tab);
+        window.bbTrack && window.bbTrack('modal_tab', { id: p.id, tab: tab.dataset.tab });
+      };
+      tab.onkeydown = (e) => {
+        const targets = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabButtons.length - 1 };
+        if (!(e.key in targets)) return;
+        e.preventDefault();
+        const next = tabButtons[(targets[e.key] + tabButtons.length) % tabButtons.length];
+        selectModalTab(next.dataset.tab, { focus: true });
+      };
+    });
+    modal.querySelectorAll('.modal-tab-jump').forEach(btn => {
+      btn.onclick = () => selectModalTab(btn.dataset.jump, { focus: true });
+    });
     if (!wasOpen) {
       lastFocusedBeforeModal = document.activeElement;
       document.getElementById('modal-close-btn').focus();
@@ -6351,7 +6539,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     btn.innerHTML = `<span class="cont-icon" aria-hidden="true">▶</span>Continue<span class="cont-title">${pick.title}</span><span class="cont-step">${done}/${steps.length}</span>`;
     btn.title = `Pick up ${pick.title} at step ${done + 1} of ${steps.length}`;
     btn.onclick = () => {
-      openModal(pick.id);
+      openModal(pick.id, { tab: 'build' });
       setTimeout(() => {
         const roadmap = document.querySelector('.modal .build-steps') || document.querySelector('#modal .build-steps');
         if (roadmap) roadmap.scrollIntoView({ behavior: 'smooth', block: 'center' });

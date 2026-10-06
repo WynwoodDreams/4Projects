@@ -33,6 +33,7 @@ answering, which is enough to make guessing slow.
 | Field | What goes there |
 | --- | --- |
 | `id`, `title`, `path` | Stable id, display title, catalog path id |
+| `track` | `aws` for the Cloud Practitioner cohort (shown first), `general` for later cohorts |
 | `aliases` | Phrases a visitor might type; matching is substring and token based |
 | `summary` | One or two sentences about the role in Florida |
 | `salary.range`, `salary.note` | Florida early-career base band and a one-line caveat |

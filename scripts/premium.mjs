@@ -18,6 +18,7 @@ export function validatePremium() {
     else if (seen.has(r.id)) errors.push(`Duplicate premium role id: ${r.id}`);
     else seen.add(r.id);
 
+    if (!['aws', 'general'].includes(r.track)) errors.push(`${where} needs track: 'aws' or 'general'.`);
     for (const key of ['title', 'summary', 'path']) {
       if (!r[key]) errors.push(`${where} has no ${key}.`);
     }

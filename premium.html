@@ -65,7 +65,9 @@
     border: 1px solid var(--line-strong); border-radius: 16px; padding: 12px;
   }
   .road-examples { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; }
-  .road-try { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-muted); }
+  .road-try { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-muted); flex-basis: 100%; }
+  #road-examples-aws .road-try { color: var(--green); text-shadow: 0 0 8px var(--green-glow); }
+  #road-examples-general .ex-chip { opacity: 0.8; }
   .ex-chip {
     font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.04em;
     padding: 9px 13px; min-height: 36px; border-radius: 999px; border: 1px dashed var(--line-strong);
@@ -218,7 +220,7 @@
     <div class="container">
       <div class="hero-eyebrow"><span class="dot"></span>Members · Career Road</div>
       <h1>Where are you <span class="accent">headed?</span></h1>
-      <p class="hero-lede">Type the role you are aiming for. Junior, entry, associate, intern: any of them work.</p>
+      <p class="hero-lede" id="cohort-note">Type the role you are aiming for. Junior, entry, associate, intern: any of them work.</p>
       <form class="road-box" id="road-form" autocomplete="off">
         <div class="road-field">
           <input class="road-input" id="road-input" type="search" placeholder="e.g. junior cloud, SOC analyst, help desk" aria-label="Target role" />
@@ -227,7 +229,8 @@
             Show my road
           </button>
         </div>
-        <div class="road-examples" id="road-examples"><span class="road-try">Try</span></div>
+        <div class="road-examples" id="road-examples-aws"><span class="road-try">AWS cohort</span></div>
+        <div class="road-examples" id="road-examples-general"><span class="road-try">More roads</span></div>
         <div class="road-meta-row">
           <span class="road-updated" id="road-updated"></span>
           <button class="link-btn" id="sign-out" type="button">Sign out on this device</button>
@@ -376,7 +379,7 @@
       el.innerHTML = `<p class="road-empty">No road for that yet. Try one of the roles above, or the closest match such as "junior cloud" or "SOC analyst". New roads are added from workshop research.</p>`;
       return;
     }
-    document.querySelectorAll('#road-examples .ex-chip').forEach(c => c.classList.toggle('active', c.dataset.role === r.id));
+    document.querySelectorAll('.road-examples .ex-chip').forEach(c => c.classList.toggle('active', c.dataset.role === r.id));
     if (location.hash !== '#role=' + r.id) history.replaceState(null, '', '#role=' + r.id);
 
     const certs = (r.certs || []).map(c => `<div class="road-card"><div class="road-card-kicker">${esc(c.org || 'Certification')}</div><div class="road-card-title">${esc(c.name)}</div><div class="road-card-body">${esc(c.why)}</div></div>`).join('');
@@ -426,14 +429,19 @@
   }
 
   function renderExamples() {
-    const wrap = $('road-examples');
-    wrap.querySelectorAll('.ex-chip').forEach(c => c.remove());
-    for (const r of DATA.roles) {
-      const b = document.createElement('button');
-      b.type = 'button'; b.className = 'ex-chip'; b.dataset.role = r.id; b.textContent = r.title;
-      b.onclick = () => { $('road-input').value = r.title; renderRoad(r); };
-      wrap.appendChild(b);
+    for (const track of ['aws', 'general']) {
+      const wrap = $('road-examples-' + track);
+      wrap.querySelectorAll('.ex-chip').forEach(c => c.remove());
+      const roles = DATA.roles.filter(r => (r.track || 'general') === track);
+      wrap.hidden = !roles.length;
+      for (const r of roles) {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'ex-chip'; b.dataset.role = r.id; b.textContent = r.title;
+        b.onclick = () => { $('road-input').value = r.title; renderRoad(r); };
+        wrap.appendChild(b);
+      }
     }
+    if (DATA.cohort && DATA.cohort.note) $('cohort-note').textContent = DATA.cohort.note + ' Type a role, or pick one below.';
     $('road-updated').textContent = DATA.updated ? `Data checked ${DATA.updated}` : '';
   }
 

@@ -2927,9 +2927,20 @@
     .reset-btn {
       align-self: flex-end;
       font-size: 9.5px;
-      padding: 6px 4px;
+      padding: 10px 8px;
+      min-height: 36px;
       margin-top: -8px;
     }
+    /* Card header: let the time badge drop under the level pill instead of
+       wrapping mid-phrase beside it */
+    .card-top { flex-wrap: wrap; align-items: center; row-gap: 6px; }
+    .time-badge { white-space: nowrap; }
+    /* Thumb-sized targets for the small text controls */
+    .header-actions .stat-pill { min-height: 34px; }
+    .copy-prompt-btn { min-height: 34px; padding: 8px 12px; }
+    .footer-col li { margin-bottom: 4px; }
+    .footer-col a { display: inline-block; padding: 6px 0; }
+    .footer-bottom a { display: inline-block; padding: 6px 0; }
 
     /* Path header banner — stack vertically on mobile */
     .path-header {

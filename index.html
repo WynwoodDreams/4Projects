@@ -1240,7 +1240,7 @@
   .path-header {
     display: grid;
     grid-template-columns: 1fr auto;
-    grid-template-rows: auto auto auto;
+    grid-template-rows: auto auto 1fr;
     column-gap: 36px;
     row-gap: 8px;
     align-items: start;
@@ -1438,19 +1438,24 @@
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
-    gap: 8px;
+    gap: 12px;
     align-self: center;
+    align-items: flex-end;
     text-align: right;
     margin: 0;
-    padding: 0;
-    border-top: none;
+    padding: 14px 16px;
+    min-width: 260px;
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 12px;
+    background: var(--glass);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
   }
   .path-meta-item {
     display: flex;
-    flex-direction: row;
-    align-items: baseline;
-    justify-content: flex-end;
-    gap: 10px;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    width: 100%;
   }
   .path-meta-label {
     font-family: 'JetBrains Mono', monospace;
@@ -1460,12 +1465,50 @@
     color: var(--ink-muted);
     font-weight: 500;
   }
+  .path-meta-note { color: var(--ink-muted); opacity: 0.7; letter-spacing: 0.12em; margin-left: 6px; }
   .path-meta-value {
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
     color: var(--ink);
     font-weight: 500;
     letter-spacing: 0.02em;
+  }
+  .path-salary-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: var(--green);
+    text-shadow: 0 0 14px var(--green-glow);
+  }
+  .path-salary-bar {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    overflow: hidden;
+  }
+  .path-salary-fill {
+    position: absolute;
+    top: 0; bottom: 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(0,255,133,0.45), var(--green));
+    box-shadow: 0 0 10px var(--green-glow);
+  }
+  .path-role-chips { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+  .path-role-chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    padding: 4px 9px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(0,0,0,0.25);
+    white-space: nowrap;
   }
 
   .bookmark-btn {
@@ -2840,21 +2883,16 @@
       grid-column: 1;
       grid-row: 4;
       width: 100%;
-      flex-direction: column;
-      gap: 6px;
+      min-width: 0;
+      align-items: flex-start;
+      gap: 10px;
       margin-top: 8px;
-      padding-top: 10px;
+      padding: 12px 14px;
       text-align: left;
-      border-top: 1px dashed var(--line);
     }
-    .path-meta-item {
-      flex: 1 1 100%;
-      flex-direction: row;
-      justify-content: flex-start;
-      gap: 12px;
-    }
-    .path-meta-label { min-width: 56px; }
-    .path-meta-value { font-size: 11.5px; flex: 1; }
+    .path-meta-item { align-items: flex-start; }
+    .path-salary-value { font-size: 20px; }
+    .path-role-chips { justify-content: flex-start; }
   }
 
   /* Very small phones */
@@ -3190,24 +3228,30 @@
 
 <script>
   // ===== DATA =====
+  // Salary bands are US base pay for early-career to senior individual
+  // contributors, rounded from 2026 market data (ZipRecruiter, Salary.com,
+  // Glassdoor, KORE1 guides). salaryRange is in $k and drives the range bar;
+  // SALARY_SCALE is the bar's full width so bands compare across paths.
+  const SALARY_SCALE = [40, 210];
+  const SALARY_ASOF = '2026';
   const PATHS = [
     { id: 'all', icon: '✦', name: 'All Projects', short: 'All', desc: 'Every project across every path.' },
     { id: 'ai', icon: '🤖', name: 'AI Engineer', short: 'AI', desc: 'Building autonomous systems that go beyond chat.',
-      salary: '$110k – $180k', roles: ['AI Engineer', 'ML Engineer', 'Applied Research Engineer'] },
+      salary: '$120k – $200k', salaryRange: [120, 200], roles: ['AI Engineer', 'ML Engineer', 'Applied Research Engineer'] },
     { id: 'cloud', icon: '☁️', name: 'Cloud Computing', short: 'Cloud', desc: 'Serverless, multi-cloud, platform engineering.',
-      salary: '$95k – $160k', roles: ['Cloud Engineer', 'DevOps Engineer', 'Platform Engineer'] },
+      salary: '$115k – $190k', salaryRange: [115, 190], roles: ['Cloud Engineer', 'DevOps Engineer', 'Platform Engineer'] },
     { id: 'cs', icon: '🎓', name: 'Computer Science', short: 'CS', desc: 'Research-grade systems with real rigor.',
-      salary: '$80k – $140k', roles: ['Software Engineer', 'Systems Engineer', 'Research Engineer'] },
+      salary: '$100k – $170k', salaryRange: [100, 170], roles: ['Software Engineer', 'Systems Engineer', 'Research Engineer'] },
     { id: 'cyber', icon: '🛡', name: 'Cybersecurity', short: 'Cyber', desc: 'Defending against the next generation of attacks.',
-      salary: '$75k – $135k', roles: ['SOC Analyst', 'Security Engineer', 'AI Security Researcher'] },
+      salary: '$80k – $150k', salaryRange: [80, 150], roles: ['SOC Analyst', 'Security Engineer', 'AI Security Researcher'] },
     { id: 'data', icon: '📊', name: 'Data Analyst', short: 'Data', desc: 'Turning raw data into real business strategy.',
-      salary: '$65k – $110k', roles: ['Data Analyst', 'BI Developer', 'Analytics Engineer'] },
+      salary: '$65k – $120k', salaryRange: [65, 120], roles: ['Data Analyst', 'BI Developer', 'Analytics Engineer'] },
     { id: 'helpdesk', icon: '🎧', name: 'Help Desk', short: 'Help Desk', desc: 'The AI-augmented first line of support.',
-      salary: '$42k – $65k', roles: ['Help Desk Technician', 'Tier 1 / 2 Support', 'Customer Support Engineer'] },
+      salary: '$45k – $70k', salaryRange: [45, 70], roles: ['Help Desk Technician', 'Tier 1 / 2 Support', 'Customer Support Engineer'] },
     { id: 'swe', icon: '💻', name: 'Software Engineer', short: 'Software', desc: 'Production-grade systems that scale.',
-      salary: '$85k – $150k', roles: ['Software Engineer', 'Full-Stack Developer', 'Backend Engineer'] },
+      salary: '$110k – $190k', salaryRange: [110, 190], roles: ['Software Engineer', 'Full-Stack Developer', 'Backend Engineer'] },
     { id: 'tech-it', icon: '🛠', name: 'Tech / IT Support', short: 'IT Support', desc: 'Where hardware meets automation.',
-      salary: '$52k – $85k', roles: ['IT Support Specialist', 'Systems Administrator', 'IT Automation Engineer'] }
+      salary: '$60k – $100k', salaryRange: [60, 100], roles: ['IT Support Specialist', 'Systems Administrator', 'IT Automation Engineer'] }
   ];
 
   // Lucide-style line icons (lucide.dev) — stroke-based, consistent 24x24 grid
@@ -5492,6 +5536,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
         }].filter(g => g.path);
 
     const totalGroups = groups.length;
+    const salaryPct = k => Math.round(((k - SALARY_SCALE[0]) / (SALARY_SCALE[1] - SALARY_SCALE[0])) * 100);
     container.innerHTML = groups.map((g, gi) => {
       const idx = String(gi + 1).padStart(2, '0');
       const total = String(totalGroups).padStart(2, '0');
@@ -5507,8 +5552,15 @@ ${tags} #BuildingInPublic #OpenToWork`;
           <div class="path-desc">${g.path.desc}</div>
           ${g.path.salary ? `
           <div class="path-meta">
-            <div class="path-meta-item"><span class="path-meta-label">Salary</span><span class="path-meta-value">${g.path.salary}</span></div>
-            <div class="path-meta-item"><span class="path-meta-label">Roles</span><span class="path-meta-value">${g.path.roles.join(' · ')}</span></div>
+            <div class="path-meta-item path-meta-salary">
+              <span class="path-meta-label">Salary <span class="path-meta-note">US base · ${SALARY_ASOF}</span></span>
+              <span class="path-salary-value">${g.path.salary}</span>
+              ${g.path.salaryRange ? `<span class="path-salary-bar" aria-hidden="true"><span class="path-salary-fill" style="left:${salaryPct(g.path.salaryRange[0])}%;width:${salaryPct(g.path.salaryRange[1]) - salaryPct(g.path.salaryRange[0])}%"></span></span>` : ''}
+            </div>
+            <div class="path-meta-item path-meta-roles">
+              <span class="path-meta-label">Roles</span>
+              <span class="path-role-chips">${g.path.roles.map(r => `<span class="path-role-chip">${r}</span>`).join('')}</span>
+            </div>
           </div>
           ` : ''}
         </div>

@@ -711,7 +711,7 @@
   .path-header {
     display: grid;
     grid-template-columns: 1fr auto;
-    grid-template-rows: auto auto auto;
+    grid-template-rows: auto auto 1fr;
     column-gap: 36px;
     row-gap: 8px;
     align-items: start;
@@ -909,19 +909,24 @@
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
-    gap: 8px;
+    gap: 12px;
     align-self: center;
+    align-items: flex-end;
     text-align: right;
     margin: 0;
-    padding: 0;
-    border-top: none;
+    padding: 14px 16px;
+    min-width: 260px;
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 12px;
+    background: var(--glass);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
   }
   .path-meta-item {
     display: flex;
-    flex-direction: row;
-    align-items: baseline;
-    justify-content: flex-end;
-    gap: 10px;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    width: 100%;
   }
   .path-meta-label {
     font-family: 'JetBrains Mono', monospace;
@@ -931,12 +936,50 @@
     color: var(--ink-muted);
     font-weight: 500;
   }
+  .path-meta-note { color: var(--ink-muted); opacity: 0.7; letter-spacing: 0.12em; margin-left: 6px; }
   .path-meta-value {
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
     color: var(--ink);
     font-weight: 500;
     letter-spacing: 0.02em;
+  }
+  .path-salary-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: var(--green);
+    text-shadow: 0 0 14px var(--green-glow);
+  }
+  .path-salary-bar {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    overflow: hidden;
+  }
+  .path-salary-fill {
+    position: absolute;
+    top: 0; bottom: 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(0,255,133,0.45), var(--green));
+    box-shadow: 0 0 10px var(--green-glow);
+  }
+  .path-role-chips { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+  .path-role-chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    padding: 4px 9px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(0,0,0,0.25);
+    white-space: nowrap;
   }
 
   .bookmark-btn {
@@ -2076,21 +2119,16 @@
       grid-column: 1;
       grid-row: 4;
       width: 100%;
-      flex-direction: column;
-      gap: 6px;
+      min-width: 0;
+      align-items: flex-start;
+      gap: 10px;
       margin-top: 8px;
-      padding-top: 10px;
+      padding: 12px 14px;
       text-align: left;
-      border-top: 1px dashed var(--line);
     }
-    .path-meta-item {
-      flex: 1 1 100%;
-      flex-direction: row;
-      justify-content: flex-start;
-      gap: 12px;
-    }
-    .path-meta-label { min-width: 56px; }
-    .path-meta-value { font-size: 11.5px; flex: 1; }
+    .path-meta-item { align-items: flex-start; }
+    .path-salary-value { font-size: 20px; }
+    .path-role-chips { justify-content: flex-start; }
   }
 
   /* Very small phones */

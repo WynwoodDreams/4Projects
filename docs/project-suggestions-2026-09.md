@@ -64,7 +64,7 @@ Every card needs a video. The video IDs below came from search results and **hav
 
 | ID | Level | Title | Stack | Why now | Candidate video |
 |---|---|---|---|---|---|
-| hd-8 | Intermediate | IT Support Agent in Copilot Studio with SharePoint Knowledge and Ticket Creation | Microsoft Copilot Studio, SharePoint, Power Automate, Microsoft Teams | Microsoft runs its own IT front door on a Copilot agent; building one is the most current help-desk skill you can show. | `KqJ1rbaGGK4` — Create an AI Ticketing System with Copilot |
+| hd-8 | Intermediate | IT Support Agent in Copilot Studio with SharePoint Knowledge and Ticket Creation | Microsoft Copilot Studio, SharePoint, Power Automate, Microsoft Teams | Microsoft runs its own IT front door on a Copilot agent; building one is the most current help-desk skill you can show. | `tDQ3EmPgrvU` — Copilot Studio Knowledge and Topics IT Helpdesk Agent (replaced `KqJ1rbaGGK4`, which has embedding disabled) |
 | hd-9 | Advanced | Employee Self-Service Portal on Power Pages and Dataverse | Power Pages, Dataverse, Power Automate approvals, Entra ID auth | A ticket-and-request portal with role-based access is what enterprises ask junior admins to maintain and extend. | `1RmI6tkaU4I` — Build a Customer Self-Service Portal in Microsoft Power Pages Step-by-Step |
 
 ### Software Engineer

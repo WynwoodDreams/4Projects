@@ -18,9 +18,9 @@
 <link rel="stylesheet" href="/styles.css" />
 <style id="match-page-style">
   /* ===== Career Match page — additive styles only ===== */
-  .cert-hero { padding: 52px 0 20px; }
-  .cert-hero h1 { max-width: 17ch; }
-  .cert-hero .hero-lede { max-width: 60ch; }
+  .hero.cert-hero { padding: 34px 0 16px; }
+  .hero.cert-hero h1 { max-width: 17ch; }
+  .hero.cert-hero .hero-lede { max-width: 60ch; }
 
   .header-actions .nav-link { display: inline-flex; color: var(--green); border-color: var(--line-3); }
   .header-actions .nav-link svg { color: var(--green); }
@@ -32,7 +32,7 @@
   }
 
   /* Input */
-  .match-box { margin-top: 26px; max-width: 760px; }
+  .match-box { margin-top: 18px; max-width: 760px; }
   .match-field {
     display: flex; flex-direction: column; gap: 12px;
     background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.012));
@@ -325,9 +325,9 @@
     </p>
     <div class="match-box">
       <div class="match-field">
-        <textarea id="match-input" placeholder="e.g. Junior Data Analyst — SQL, Tableau, Excel, building dashboards and reporting for the marketing team…" aria-label="Job title or description"></textarea>
+        <textarea id="match-input" placeholder="e.g. Junior Data Analyst: SQL, Tableau, Excel, building dashboards and reporting for the marketing team…" aria-label="Job title or description"></textarea>
         <div class="match-row">
-          <span class="match-hint">Paste a title or the whole posting — more detail = a sharper match.</span>
+          <span class="match-hint">Paste a title or the whole posting. More detail means a sharper match.</span>
           <span class="match-kbd" aria-hidden="true"><kbd id="match-kbd-mod">Ctrl</kbd><kbd>Enter</kbd></span>
           <button class="match-go" id="match-go" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>

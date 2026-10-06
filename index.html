@@ -2588,6 +2588,74 @@
     color: var(--ink-soft);
     line-height: 1.55;
   }
+  /* Focused step: the first unchecked step (or the one the reader picked)
+     opens an inline detail rail. Everything else stays title + description so
+     the track keeps its rhythm. Height animates through grid-template-rows so
+     the list slides rather than jumps. */
+  .build-step-title {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 0;
+    margin-bottom: 4px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  .build-step-title:hover { color: var(--green); }
+  .build-step-title:focus-visible { outline: 1px solid var(--green); outline-offset: 3px; border-radius: 3px; }
+  .build-step.is-complete .build-step-title { color: var(--ink-soft); text-decoration: line-through; text-decoration-color: var(--line-3); }
+  .build-step.is-focus .build-step-check {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(0,255,133,0.12), 0 0 14px var(--green-glow);
+  }
+  .build-step.is-focus .build-step-title { color: var(--green); text-shadow: 0 0 10px var(--green-glow); }
+  .build-step-detail {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.28s ease;
+  }
+  .build-step-detail-inner { overflow: hidden; min-height: 0; }
+  .build-step.is-focus .build-step-detail { grid-template-rows: 1fr; }
+  .step-facts {
+    margin: 12px 0 2px;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--green);
+    border-radius: 0 10px 10px 0;
+    background: var(--glass);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 14px;
+    row-gap: 8px;
+  }
+  .step-facts dt {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--green);
+    padding-top: 3px;
+    white-space: nowrap;
+  }
+  .step-facts dd {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+  .step-facts dd.step-fact-time { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink); }
+  @media (max-width: 520px) {
+    .step-facts { grid-template-columns: 1fr; row-gap: 2px; }
+    .step-facts dt { padding-top: 6px; }
+    .step-facts dt:first-child { padding-top: 0; }
+  }
   .steps-progress {
     display: flex;
     align-items: center;
@@ -3287,12 +3355,12 @@
       },
       youtube: 'FpdqG3Cy6ow', ytTitle: 'Cybersecurity Project: Automating Audits in AWS With Prowler',
       steps: [
-        { title: 'Set up a test environment', desc: "Use a local VM or Docker container as your scan target — never scan networks you don't own. Install nmap, python-nmap, and reportlab." },
-        { title: 'Build the network scanner', desc: 'Write a Python script that uses python-nmap to discover hosts and identify open ports. Save results to JSON.' },
-        { title: 'Add compliance checks', desc: 'Create a CIS Benchmark checker — scripts that verify things like password policy, firewall status, and unauthorized services.' },
-        { title: 'Design the PDF report', desc: 'Use ReportLab to build a professional report with an executive summary, findings by severity, and screenshots. This is what recruiters will see.' },
-        { title: 'Add the AI risk-scoring layer', desc: 'Feed findings to Claude or GPT and ask for a prioritized remediation plan. Include it in the report as "AI Analyst Notes."' },
-        { title: 'Automate with GitHub Actions', desc: 'Set it up to run weekly against a lab target and publish the report. Include a sample PDF in your repo.' }
+        { title: 'Set up a test environment', desc: "Use a local VM or Docker container as your scan target — never scan networks you don't own. Install nmap, python-nmap, and reportlab.", doneWhen: "nmap -sV against the lab target returns open ports, and import nmap works in Python.", time: "1 to 2 hours", watchOut: "Scanning anything but your own VM can be illegal. Bind the target to a host-only network before the first scan." },
+        { title: 'Build the network scanner', desc: 'Write a Python script that uses python-nmap to discover hosts and identify open ports. Save results to JSON.', doneWhen: "A scan.json file lists every host with its open ports and service versions.", time: "2 to 3 hours", watchOut: "python-nmap needs the nmap binary on PATH, and service detection is slow. Start with the top 100 ports." },
+        { title: 'Add compliance checks', desc: 'Create a CIS Benchmark checker — scripts that verify things like password policy, firewall status, and unauthorized services.', doneWhen: "At least five checks return pass or fail with the CIS control number attached to each.", time: "3 to 5 hours", watchOut: "Do not try to cover the whole benchmark. Five well-cited checks beat fifty vague ones." },
+        { title: 'Design the PDF report', desc: 'Use ReportLab to build a professional report with an executive summary, findings by severity, and screenshots. This is what recruiters will see.', doneWhen: "report.pdf opens with a summary page, a severity table, and one finding per page.", time: "3 to 4 hours", watchOut: "Build the layout from a fixed sample first. Live data with missing fields will crash a half-finished template." },
+        { title: 'Add the AI risk-scoring layer', desc: 'Feed findings to Claude or GPT and ask for a prioritized remediation plan. Include it in the report as "AI Analyst Notes."', doneWhen: "The report has an AI Analyst Notes section that ranks findings and suggests a fix for each.", time: "2 hours", watchOut: "Send only the findings, never raw host data or credentials, to the model. State that in the README." },
+        { title: 'Automate with GitHub Actions', desc: 'Set it up to run weekly against a lab target and publish the report. Include a sample PDF in your repo.', doneWhen: "A scheduled workflow runs green and uploads the PDF as an artifact you can download.", time: "2 hours", watchOut: "The lab target is not reachable from a hosted runner. Use a self-hosted runner or scan a container started in the job." }
       ]
     },
     // CYBER
@@ -3314,12 +3382,12 @@
       },
       youtube: 'qmFPYhkrZDI', ytTitle: 'Prompt Injection Tutorial: AI Agent Under Attack',
       steps: [
-        { title: 'Study the attack landscape', desc: "Read OWASP's LLM Top 10. Collect real jailbreak examples from DAN, prompt injection databases, and academic papers." },
-        { title: 'Generate a training dataset', desc: 'Use the AI prompt below to generate 500+ adversarial prompts across categories: direct injection, indirect, obfuscated, roleplay.' },
-        { title: 'Train a baseline classifier', desc: 'Use scikit-learn with TF-IDF + Logistic Regression first. Get a baseline accuracy score before reaching for deep learning.' },
-        { title: 'Build the FastAPI gateway', desc: 'Create an API that sits in front of the LLM. Incoming prompts get scored; malicious ones get blocked with a 403.' },
-        { title: 'Add the LLM-as-judge layer', desc: 'For edge cases, send ambiguous prompts to a second LLM with a security-focused system prompt. Combine scores.' },
-        { title: 'Build a security dashboard', desc: 'Log all blocked attacks with timestamps, attack type, and source. Use this in your demo video.' }
+        { title: 'Study the attack landscape', desc: "Read OWASP's LLM Top 10. Collect real jailbreak examples from DAN, prompt injection databases, and academic papers.", doneWhen: "A notes file lists at least 30 real attack examples sorted into four or more categories.", time: "2 to 3 hours", watchOut: "Collecting attacks is not the project. Timebox it, or you will spend a week reading and ship nothing." },
+        { title: 'Generate a training dataset', desc: 'Use the AI prompt below to generate 500+ adversarial prompts across categories: direct injection, indirect, obfuscated, roleplay.', doneWhen: "A labeled CSV with 500 or more rows, roughly half malicious and half benign, loads in pandas.", time: "2 to 3 hours", watchOut: "Generated benign prompts are often too polite. Add real questions from Stack Overflow or support forums so the classifier does not learn tone." },
+        { title: 'Train a baseline classifier', desc: 'Use scikit-learn with TF-IDF + Logistic Regression first. Get a baseline accuracy score before reaching for deep learning.', doneWhen: "A held-out test set reports precision, recall, and F1, and the numbers are written in the README.", time: "2 to 4 hours", watchOut: "Accuracy alone hides the problem. A model that blocks nothing scores 50 percent on a balanced set." },
+        { title: 'Build the FastAPI gateway', desc: 'Create an API that sits in front of the LLM. Incoming prompts get scored; malicious ones get blocked with a 403.', doneWhen: "A benign prompt returns the model's reply and a known injection returns a 403 with a reason.", time: "3 to 4 hours", watchOut: "Load the classifier once at startup. Loading it per request makes every call take seconds." },
+        { title: 'Add the LLM-as-judge layer', desc: 'For edge cases, send ambiguous prompts to a second LLM with a security-focused system prompt. Combine scores.', doneWhen: "Prompts scored in the gray zone get a second opinion, and the combined decision is logged.", time: "2 to 3 hours", watchOut: "The judge model can itself be injected. Put the user prompt in a delimited block and tell the judge to never follow it." },
+        { title: 'Build a security dashboard', desc: 'Log all blocked attacks with timestamps, attack type, and source. Use this in your demo video.', doneWhen: "A page or notebook shows blocked attempts over time and the top attack categories.", time: "2 to 3 hours", watchOut: "Do not log full prompts in plain text. Hash or truncate them so the dashboard is not a leak." }
       ]
     },
     {
@@ -3340,12 +3408,12 @@
       },
       youtube: 'qS0GbELdB8M', ytTitle: 'Deepfake Detection Voice | Deep Learning Project With Code',
       steps: [
-        { title: 'Collect your audio dataset', desc: 'Download ASVspoof or LibriSpeech for real voices; generate fake samples with ElevenLabs or PlayHT free tier.' },
-        { title: 'Extract MFCC features', desc: 'Use librosa to extract Mel-frequency cepstral coefficients, pitch variance, and spectral features from each sample.' },
-        { title: 'Train the detection model', desc: 'Start with a Random Forest for a fast baseline, then try a small CNN on mel-spectrograms. Track accuracy on held-out data.' },
-        { title: 'Build the FastAPI service', desc: 'Create an /analyze endpoint that accepts audio uploads and returns a Human vs. AI confidence score.' },
-        { title: 'Make it real-time capable', desc: 'Refactor the audio processing pipeline with async to keep latency under 200ms — critical for VoIP use cases.' },
-        { title: 'Deploy and demo', desc: 'Host on Railway or Render. Create a simple upload page so recruiters can test it with their own audio clips.' }
+        { title: 'Collect your audio dataset', desc: 'Download ASVspoof or LibriSpeech for real voices; generate fake samples with ElevenLabs or PlayHT free tier.', doneWhen: "A folder of real and synthetic clips with a labels CSV, at least 200 samples per class.", time: "2 to 3 hours", watchOut: "Match sample rates and formats before anything else. A 44.1 kHz fake next to 16 kHz real clips is a tell the model will cheat on." },
+        { title: 'Extract MFCC features', desc: 'Use librosa to extract Mel-frequency cepstral coefficients, pitch variance, and spectral features from each sample.', doneWhen: "A features.npy and matching labels array exist, and a quick plot shows classes separate somewhat.", time: "2 to 3 hours", watchOut: "Normalize per clip. Loudness differences between sources will dominate every other feature." },
+        { title: 'Train the detection model', desc: 'Start with a Random Forest for a fast baseline, then try a small CNN on mel-spectrograms. Track accuracy on held-out data.', doneWhen: "The baseline reports accuracy and a confusion matrix on data the model never saw.", time: "3 to 5 hours", watchOut: "Split by speaker, not by clip. Clips from the same voice in train and test inflate the score." },
+        { title: 'Build the FastAPI service', desc: 'Create an /analyze endpoint that accepts audio uploads and returns a Human vs. AI confidence score.', doneWhen: "curl with an audio file returns JSON with a label and a confidence score.", time: "2 to 3 hours", watchOut: "Reject files over a size limit and anything that is not audio before it reaches librosa." },
+        { title: 'Make it real-time capable', desc: 'Refactor the audio processing pipeline with async to keep latency under 200ms — critical for VoIP use cases.', doneWhen: "A timing log shows the median request under 200 ms on a 3-second clip.", time: "3 to 4 hours", watchOut: "async does not speed up CPU work. Move feature extraction to a thread pool or it will block the event loop." },
+        { title: 'Deploy and demo', desc: 'Host on Railway or Render. Create a simple upload page so recruiters can test it with their own audio clips.', doneWhen: "A public URL accepts an upload from a phone and shows the verdict.", time: "2 hours", watchOut: "Free tiers sleep. Note the cold-start delay on the page so a recruiter does not think it is broken." }
       ]
     },
     {
@@ -3366,12 +3434,12 @@
       },
       youtube: 'ApN40Pw55K8', ytTitle: 'Behavioral Biometrics for User Authentication',
       steps: [
-        { title: 'Build the data capture frontend', desc: 'Create a simple login page in HTML/JS that captures keystroke dwell time, flight time, and mouse trajectories.' },
-        { title: 'Design the event schema', desc: 'Store events in a clean time-series format (JSON schema in the AI prompt below). Think about GDPR early.' },
-        { title: 'Train the baseline model', desc: 'Use scikit-learn\'s Isolation Forest on a single user\'s "normal" typing pattern to detect anomalies.' },
-        { title: 'Build the Flask backend', desc: 'Create endpoints to /enroll (collect training data) and /verify (score a new session against the profile).' },
-        { title: 'Create a live demo page', desc: 'Let users type a paragraph to train the model, then try to "impersonate" by typing differently. Show the anomaly score in real time.' },
-        { title: 'Upgrade to LSTM (bonus)', desc: 'Once the baseline works, replace Isolation Forest with a small LSTM to catch evolving typing patterns over time.' }
+        { title: 'Build the data capture frontend', desc: 'Create a simple login page in HTML/JS that captures keystroke dwell time, flight time, and mouse trajectories.', doneWhen: "Typing in the page produces a console log of keydown and keyup timestamps and mouse points.", time: "2 to 3 hours", watchOut: "Use performance.now, not Date.now. Millisecond rounding destroys the timing signal you are trying to capture." },
+        { title: 'Design the event schema', desc: 'Store events in a clean time-series format (JSON schema in the AI prompt below). Think about GDPR early.', doneWhen: "Events post to the server as JSON that validates against a written schema.", time: "1 to 2 hours", watchOut: "Never store the typed text itself. Keep timings and key categories only, and say so in the README." },
+        { title: 'Train the baseline model', desc: 'Use scikit-learn\'s Isolation Forest on a single user\'s "normal" typing pattern to detect anomalies.', doneWhen: "The model scores a fresh session from the same user as normal and a different typist as anomalous.", time: "3 to 4 hours", watchOut: "You need enough enrollment data. Under about 300 keystrokes the profile is noise." },
+        { title: 'Build the Flask backend', desc: 'Create endpoints to /enroll (collect training data) and /verify (score a new session against the profile).', doneWhen: "POST /enroll stores a profile and POST /verify returns a score with a threshold decision.", time: "2 to 3 hours", watchOut: "Persist the trained model to disk. A restart that wipes every profile makes the demo unrepeatable." },
+        { title: 'Create a live demo page', desc: 'Let users type a paragraph to train the model, then try to "impersonate" by typing differently. Show the anomaly score in real time.', doneWhen: "Someone else can enroll, type, and watch the score change live as they imitate you.", time: "2 to 3 hours", watchOut: "Show the score as a gauge, not a raw number. Nobody knows whether 0.37 is good." },
+        { title: 'Upgrade to LSTM (bonus)', desc: 'Once the baseline works, replace Isolation Forest with a small LSTM to catch evolving typing patterns over time.', doneWhen: "The LSTM matches or beats the Isolation Forest on the same held-out sessions, with the comparison in the README.", time: "4 to 6 hours", watchOut: "Keep the baseline in the repo. If the LSTM is worse, that comparison is still a strong talking point." }
       ]
     },
     // AI ENGINEER
@@ -3947,12 +4015,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       },
       youtube: '4Lvg5hKF_G4', ytTitle: 'Beginner Friendly FREE Cybersecurity Home Lab using an AI Penetration tester',
       steps: [
-        { title: 'Install VirtualBox + base VMs', desc: 'Install VirtualBox on your laptop. Spin up one Ubuntu Server VM (the "victim") and one Kali Linux VM (the "analyst").' },
-        { title: 'Network the lab safely', desc: 'Put both VMs on a host-only network so traffic stays isolated. Verify they can ping each other but cannot reach the internet.' },
-        { title: 'Install the AI agent toolkit', desc: 'On the Kali box, set up Python 3, scikit-learn, and the open-source AI pen-test agent of your choice. Get an OpenAI or Anthropic API key for the natural-language layer.' },
-        { title: 'Generate sample malicious traffic', desc: 'From Kali, run a basic nmap scan + a Hydra brute-force against the Ubuntu VM. Capture the traffic with tcpdump or Wireshark.' },
-        { title: 'Train the classifier', desc: 'Use the AI prompt below to build a basic scikit-learn classifier. Feed it your captured traffic + labeled malicious vs benign samples.' },
-        { title: 'Document and demo', desc: 'Write up the lab as a README with diagrams, attack screenshots, and the classifier output. Record a short demo of the agent flagging an attack live.' }
+        { title: 'Install VirtualBox + base VMs', desc: 'Install VirtualBox on your laptop. Spin up one Ubuntu Server VM (the "victim") and one Kali Linux VM (the "analyst").', doneWhen: "Both VMs boot, you can log in to each, and snapshots named clean exist for both.", time: "1 to 2 hours", watchOut: "Take the snapshot before anything else. You will want to roll back after the first brute-force test." },
+        { title: 'Network the lab safely', desc: 'Put both VMs on a host-only network so traffic stays isolated. Verify they can ping each other but cannot reach the internet.', doneWhen: "Each VM can ping the other and curl to any public site fails.", time: "30 to 60 minutes", watchOut: "Install packages before you cut internet access, or add a second NAT adapter you can disable." },
+        { title: 'Install the AI agent toolkit', desc: 'On the Kali box, set up Python 3, scikit-learn, and the open-source AI pen-test agent of your choice. Get an OpenAI or Anthropic API key for the natural-language layer.', doneWhen: "A hello-world script calls the model API from the Kali box and prints a reply.", time: "1 to 2 hours", watchOut: "Put the API key in an environment variable, and keep the Kali box off the internet except for that call." },
+        { title: 'Generate sample malicious traffic', desc: 'From Kali, run a basic nmap scan + a Hydra brute-force against the Ubuntu VM. Capture the traffic with tcpdump or Wireshark.', doneWhen: "A pcap file exists with both the scan and the brute-force, and Wireshark shows the attempts.", time: "1 to 2 hours", watchOut: "Hydra against a real service on a VM you own is fine. Pointing it anywhere else is a crime." },
+        { title: 'Train the classifier', desc: 'Use the AI prompt below to build a basic scikit-learn classifier. Feed it your captured traffic + labeled malicious vs benign samples.', doneWhen: "The classifier labels held-out flows and the README lists its precision and recall.", time: "3 to 4 hours", watchOut: "Your malicious traffic is all from one tool. Say that limitation out loud rather than claiming general detection." },
+        { title: 'Document and demo', desc: 'Write up the lab as a README with diagrams, attack screenshots, and the classifier output. Record a short demo of the agent flagging an attack live.', doneWhen: "The README has a network diagram, screenshots, and a link to a demo video under three minutes.", time: "2 to 3 hours", watchOut: "Blur or crop anything showing your home network or real hostnames." }
       ]
     },
     {
@@ -4131,12 +4199,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       },
       youtube: 'bltbJ2TUQWU', ytTitle: 'Setup Your Own FREE SIEM at Home! - Wazuh',
       steps: [
-        { title: 'Stand up the lab', desc: 'Create two VMs in VirtualBox — a Wazuh server (Ubuntu) and a Windows 10/11 victim. Get them on the same host-only network so nothing touches your real LAN.' },
-        { title: 'Install Wazuh and onboard agents', desc: 'Deploy the Wazuh manager, then install agents on both machines. Confirm logs are arriving in the dashboard before you write a single rule.' },
-        { title: 'Add Sysmon for real telemetry', desc: 'Install Sysmon on the Windows host with a well-known config (SwiftOnSecurity is the standard starting point). This is what turns thin Windows logs into detection-grade data.' },
-        { title: 'Write your first detections', desc: 'Pick 3–5 MITRE techniques and write a rule for each. Start with process creation and persistence — they are the easiest to trigger safely. Use the AI prompt below.' },
-        { title: 'Simulate the attacks', desc: 'Use Atomic Red Team to run the exact techniques you wrote rules for. Confirm each alert fires. Document any that did not, and fix them — this iteration is the actual skill.' },
-        { title: 'Build the coverage report', desc: 'Map your rules to an ATT&CK Navigator layer showing what you cover and what you do not. Honest gaps read as maturity, not weakness. Screen-record one detection end to end.' }
+        { title: 'Stand up the lab', desc: 'Create two VMs in VirtualBox — a Wazuh server (Ubuntu) and a Windows 10/11 victim. Get them on the same host-only network so nothing touches your real LAN.', doneWhen: "Both VMs are on a host-only network with snapshots taken, and neither can reach your LAN.", time: "1 to 2 hours", watchOut: "Give the Wazuh server at least 4 GB of RAM. The indexer fails silently with less." },
+        { title: 'Install Wazuh and onboard agents', desc: 'Deploy the Wazuh manager, then install agents on both machines. Confirm logs are arriving in the dashboard before you write a single rule.', doneWhen: "Both agents show Active in the dashboard and a test login appears as an event.", time: "1 to 2 hours", watchOut: "Windows Firewall blocks the agent by default. Allow the manager's port before troubleshooting anything else." },
+        { title: 'Add Sysmon for real telemetry', desc: 'Install Sysmon on the Windows host with a well-known config (SwiftOnSecurity is the standard starting point). This is what turns thin Windows logs into detection-grade data.', doneWhen: "Event ID 1 process-creation logs from Sysmon appear in Wazuh when you open Notepad.", time: "1 to 2 hours", watchOut: "Wazuh needs the Sysmon channel added to its agent config. Installing Sysmon alone changes nothing in the dashboard." },
+        { title: 'Write your first detections', desc: 'Pick 3–5 MITRE techniques and write a rule for each. Start with process creation and persistence — they are the easiest to trigger safely. Use the AI prompt below.', doneWhen: "Three to five rules exist, each with the ATT&CK technique ID in its description.", time: "3 to 4 hours", watchOut: "Test each rule with a manual trigger before Atomic Red Team. A typo in the XML silently disables the whole file." },
+        { title: 'Simulate the attacks', desc: 'Use Atomic Red Team to run the exact techniques you wrote rules for. Confirm each alert fires. Document any that did not, and fix them — this iteration is the actual skill.', doneWhen: "Every rule has fired at least once from its atomic test, with screenshots.", time: "2 to 4 hours", watchOut: "Run atomics with cleanup. Some leave persistence behind that will fire your rules forever." },
+        { title: 'Build the coverage report', desc: 'Map your rules to an ATT&CK Navigator layer showing what you cover and what you do not. Honest gaps read as maturity, not weakness. Screen-record one detection end to end.', doneWhen: "A Navigator JSON layer is in the repo with a screenshot in the README and a recorded detection.", time: "2 hours", watchOut: "Mark only what you have actually tested as covered. Reviewers check." }
       ]
     },
     // ===== NETWORKING FUNDAMENTALS =====
@@ -4591,12 +4659,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       youtube: 'helyWKUGxJU',
       ytTitle: 'Add Passkey (WebAuthn) Login to Your Web App with ReactJS + NodeJS',
       steps: [
-        { title: 'Build the shell app', desc: 'A React front end with register and login pages and a Node API with a users table. Serve it over HTTPS locally — WebAuthn requires a secure context.' },
-        { title: 'Implement registration', desc: 'Generate registration options on the server, call the browser API, verify the response, and store the public key and credential id. Test it with your laptop’s built-in authenticator.' },
-        { title: 'Implement authentication', desc: 'Generate a challenge, call the browser API, verify the signature against the stored public key, and issue a session. Confirm the signature counter is tracked.' },
-        { title: 'Handle multiple credentials', desc: 'Let a user register a second passkey (phone plus laptop) and manage them from a settings page. Deleting the last one should require confirmation.' },
-        { title: 'Try to break it', desc: 'Change the origin, replay an old response, tamper with the challenge. Each should fail with a clear server error. Document what you tried.' },
-        { title: 'Write the explainer', desc: 'A README section that explains, without jargon, why a fake login page cannot capture a passkey. This is what you will say in the interview.' }
+        { title: 'Build the shell app', desc: 'A React front end with register and login pages and a Node API with a users table. Serve it over HTTPS locally — WebAuthn requires a secure context.', doneWhen: "The app loads over https on localhost with no browser warning, and a user row can be created.", time: "2 to 3 hours", watchOut: "localhost counts as a secure context, but a LAN IP does not. Use mkcert if you want to test from a phone." },
+        { title: 'Implement registration', desc: 'Generate registration options on the server, call the browser API, verify the response, and store the public key and credential id. Test it with your laptop’s built-in authenticator.', doneWhen: "Registering stores a credential id and public key, and the browser shows the platform authenticator prompt.", time: "3 to 4 hours", watchOut: "The rpId must match the domain exactly. A mismatch fails with a vague error on the client." },
+        { title: 'Implement authentication', desc: 'Generate a challenge, call the browser API, verify the signature against the stored public key, and issue a session. Confirm the signature counter is tracked.', doneWhen: "A registered user logs in with a passkey and gets a session cookie, and the counter increments.", time: "2 to 3 hours", watchOut: "Store the challenge server-side per login attempt and expire it. Reusing one defeats the point." },
+        { title: 'Handle multiple credentials', desc: 'Let a user register a second passkey (phone plus laptop) and manage them from a settings page. Deleting the last one should require confirmation.', doneWhen: "A user can see two passkeys, name them, and remove one, with a confirm on the last.", time: "2 to 3 hours", watchOut: "Pass the existing credential ids as excludeCredentials, or the same device registers twice." },
+        { title: 'Try to break it', desc: 'Change the origin, replay an old response, tamper with the challenge. Each should fail with a clear server error. Document what you tried.', doneWhen: "A written test log shows origin, replay, and challenge tampering each rejected with a specific error.", time: "2 hours", watchOut: "Make the server error specific in logs but generic to the client. Detailed client errors help attackers." },
+        { title: 'Write the explainer', desc: 'A README section that explains, without jargon, why a fake login page cannot capture a passkey. This is what you will say in the interview.', doneWhen: "A README section a non-engineer could read explains why phishing fails against passkeys.", time: "1 hour", watchOut: "Keep it under 200 words. If it needs a diagram, draw the origin binding, nothing else." }
       ]
     },
     {
@@ -4618,12 +4686,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       youtube: 'A6BhGdttz9k',
       ytTitle: 'Red Teaming with Garak, PyRIT, and Promptfoo',
       steps: [
-        { title: 'Host a target model', desc: 'Install Ollama and pull a small open-weight chat model. Confirm you can query it over its local API. Everything you attack from here on is yours.' },
-        { title: 'Run Garak probes', desc: 'Point Garak at the Ollama endpoint and run its prompt injection, jailbreak, and leakage probe sets. Save the raw output.' },
-        { title: 'Run PyRIT attack strategies', desc: 'Set up PyRIT with a target and a scorer, and run multi-turn attack strategies. Note which succeed and after how many turns.' },
-        { title: 'Build a Promptfoo eval suite', desc: 'Write your own red-team test cases in Promptfoo for the app’s specific use case — the scenarios a generic tool would miss.' },
-        { title: 'Add guardrails and re-test', desc: 'Write a system prompt with safety instructions, add an input filter, and re-run everything. Record the change in success rates per category.' },
-        { title: 'Write the findings report', desc: 'Executive summary, methodology, findings with severity and OWASP mapping, mitigations, and before/after metrics. Export to PDF.' }
+        { title: 'Host a target model', desc: 'Install Ollama and pull a small open-weight chat model. Confirm you can query it over its local API. Everything you attack from here on is yours.', doneWhen: "curl to the local Ollama API returns a chat completion from the model.", time: "30 to 60 minutes", watchOut: "Pick a model that fits your RAM. A 7B model needs about 8 GB free or it will crawl." },
+        { title: 'Run Garak probes', desc: 'Point Garak at the Ollama endpoint and run its prompt injection, jailbreak, and leakage probe sets. Save the raw output.', doneWhen: "A garak report file exists with pass and fail counts per probe.", time: "2 to 3 hours", watchOut: "Full probe sets take hours on CPU. Run two or three probe families first, the rest overnight." },
+        { title: 'Run PyRIT attack strategies', desc: 'Set up PyRIT with a target and a scorer, and run multi-turn attack strategies. Note which succeed and after how many turns.', doneWhen: "A log of at least three multi-turn strategies with success or fail and turn count for each.", time: "3 to 4 hours", watchOut: "PyRIT scorers can themselves be an LLM. Use a different model as the scorer than the one under attack." },
+        { title: 'Build a Promptfoo eval suite', desc: 'Write your own red-team test cases in Promptfoo for the app’s specific use case — the scenarios a generic tool would miss.', doneWhen: "promptfoo eval runs your YAML and prints a table of pass and fail for your custom cases.", time: "2 to 3 hours", watchOut: "Write assertions that check for the harmful outcome, not for a refusal phrase. Models refuse in many ways." },
+        { title: 'Add guardrails and re-test', desc: 'Write a system prompt with safety instructions, add an input filter, and re-run everything. Record the change in success rates per category.', doneWhen: "A before-and-after table shows the attack success rate per category with the guardrails on.", time: "2 to 3 hours", watchOut: "Re-run the exact same probes. Changing the test set between runs makes the comparison meaningless." },
+        { title: 'Write the findings report', desc: 'Executive summary, methodology, findings with severity and OWASP mapping, mitigations, and before/after metrics. Export to PDF.', doneWhen: "A PDF with executive summary, methodology, findings by severity, and OWASP LLM Top 10 mapping.", time: "2 to 3 hours", watchOut: "Lead with the three findings that matter. A 40-page dump of tool output is not a report." }
       ]
     },
     {
@@ -4645,12 +4713,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       youtube: 'nF15vzo5Gts',
       ytTitle: 'Creating an SBOM Attestation with Trivy and Cosign from Sigstore',
       steps: [
-        { title: 'Build and scan', desc: 'A workflow that builds a container image, pushes it to a registry, and runs Trivy. Fail the build on critical vulnerabilities to set the baseline.' },
-        { title: 'Generate the SBOM', desc: 'Add Syft to produce an SPDX or CycloneDX SBOM and upload it as a build artifact. Open it and understand what is inside your image.' },
-        { title: 'Sign keylessly with Cosign', desc: 'Use the workflow’s OIDC token to sign the image with Sigstore. Verify the signature locally and find your entry in the transparency log.' },
-        { title: 'Attach attestations', desc: 'Attach the SBOM and a SLSA provenance attestation to the image. Verify both with Cosign and inspect the provenance to see the builder identity.' },
-        { title: 'Gate the cluster', desc: 'Install Kyverno on a kind cluster and write an image-verification policy pinned to your workflow identity. Deploy a signed image (allowed) and an unsigned one (rejected).' },
-        { title: 'Document the chain', desc: 'A README with a diagram from source to running pod, the verification commands, and a plain-language explanation of which attack each control stops.' }
+        { title: 'Build and scan', desc: 'A workflow that builds a container image, pushes it to a registry, and runs Trivy. Fail the build on critical vulnerabilities to set the baseline.', doneWhen: "A push builds and pushes an image, and a critical CVE in the base image fails the workflow.", time: "2 to 3 hours", watchOut: "Pin the base image by digest or your baseline changes every run and you cannot tell what you fixed." },
+        { title: 'Generate the SBOM', desc: 'Add Syft to produce an SPDX or CycloneDX SBOM and upload it as a build artifact. Open it and understand what is inside your image.', doneWhen: "An SBOM artifact downloads from the run, and you can name three packages in it you did not know were there.", time: "1 to 2 hours", watchOut: "Scan the image, not the repo. The image carries OS packages the source tree never shows." },
+        { title: 'Sign keylessly with Cosign', desc: 'Use the workflow’s OIDC token to sign the image with Sigstore. Verify the signature locally and find your entry in the transparency log.', doneWhen: "cosign verify succeeds locally against your workflow identity, and you can open the Rekor entry.", time: "2 to 3 hours", watchOut: "The job needs id-token: write permission, or keyless signing fails with an unhelpful auth error." },
+        { title: 'Attach attestations', desc: 'Attach the SBOM and a SLSA provenance attestation to the image. Verify both with Cosign and inspect the provenance to see the builder identity.', doneWhen: "cosign verify-attestation succeeds for both the SBOM and the provenance, and the provenance names your repo and commit.", time: "2 to 3 hours", watchOut: "Attest by image digest, never by tag. A tag can move after you sign." },
+        { title: 'Gate the cluster', desc: 'Install Kyverno on a kind cluster and write an image-verification policy pinned to your workflow identity. Deploy a signed image (allowed) and an unsigned one (rejected).', doneWhen: "kubectl apply of a signed image succeeds and an unsigned one is rejected with the policy message.", time: "3 to 4 hours", watchOut: "Pin the policy to your repo and workflow path, not just the Sigstore issuer, or any GitHub workflow passes." },
+        { title: 'Document the chain', desc: 'A README with a diagram from source to running pod, the verification commands, and a plain-language explanation of which attack each control stops.', doneWhen: "A README with a source-to-pod diagram, the verify commands, and one sentence per control on what it stops.", time: "2 hours", watchOut: "Name the attacks: a compromised dependency, a tampered image, a rogue build. Readers connect controls to threats." }
       ]
     },
     {
@@ -4672,12 +4740,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       youtube: 'PBXWJqA5NL4',
       ytTitle: 'Creating Custom Rules in OpenSearch Security Analytics',
       steps: [
-        { title: 'Stand up OpenSearch', desc: 'Docker Compose with OpenSearch and Dashboards. Enable Security Analytics and confirm you can create a detector on a sample index.' },
-        { title: 'Design the event schema', desc: 'Define fields for each agent event type. Use the AI prompt to pressure-test it — what would you need to investigate an incident after the fact?' },
-        { title: 'Build the log generator', desc: 'A Python script that emits realistic benign traffic plus scripted attack sequences, with a flag to replay a specific scenario on demand.' },
-        { title: 'Write the detection rules', desc: 'Implement five rules as custom Security Analytics rules. Start with the credential-in-prompt rule — it is the easiest to get right and the most convincing.' },
-        { title: 'Tune against noise', desc: 'Run 24 hours of synthetic benign traffic and count false positives per rule. Adjust thresholds and document the trade-off for each.' },
-        { title: 'Write the runbooks', desc: 'For each detection: what it means, how to confirm it, what to do next. Map each to MITRE ATLAS. This is what a SOC lead will read first.' }
+        { title: 'Stand up OpenSearch', desc: 'Docker Compose with OpenSearch and Dashboards. Enable Security Analytics and confirm you can create a detector on a sample index.', doneWhen: "The Dashboards UI opens, Security Analytics is enabled, and a detector on a sample index fires an alert.", time: "1 to 2 hours", watchOut: "Set vm.max_map_count on the host or the OpenSearch container exits with no useful message." },
+        { title: 'Design the event schema', desc: 'Define fields for each agent event type. Use the AI prompt to pressure-test it — what would you need to investigate an incident after the fact?', doneWhen: "A written schema with field names and types, plus one sample event per event type, in the repo.", time: "2 hours", watchOut: "Include a session or trace id on every event. Without it you cannot reconstruct an attack across tool calls." },
+        { title: 'Build the log generator', desc: 'A Python script that emits realistic benign traffic plus scripted attack sequences, with a flag to replay a specific scenario on demand.', doneWhen: "The generator streams events into the index, and a replay flag reproduces one attack scenario on demand.", time: "3 to 4 hours", watchOut: "Make benign traffic messy: retries, long prompts, odd hours. Clean benign data makes every rule look perfect." },
+        { title: 'Write the detection rules', desc: 'Implement five rules as custom Security Analytics rules. Start with the credential-in-prompt rule — it is the easiest to get right and the most convincing.', doneWhen: "Five rules are saved, and replaying each scenario produces exactly its alert.", time: "3 to 5 hours", watchOut: "Write each rule against the replayed scenario first, then check it against benign traffic. The order matters." },
+        { title: 'Tune against noise', desc: 'Run 24 hours of synthetic benign traffic and count false positives per rule. Adjust thresholds and document the trade-off for each.', doneWhen: "A table of false positives per rule over 24 hours of synthetic traffic, before and after tuning.", time: "2 to 3 hours plus the soak", watchOut: "Do not tune a rule into silence. Record what each threshold change costs in missed detections." },
+        { title: 'Write the runbooks', desc: 'For each detection: what it means, how to confirm it, what to do next. Map each to MITRE ATLAS. This is what a SOC lead will read first.', doneWhen: "One runbook per rule with meaning, confirmation steps, next action, and an ATLAS technique ID.", time: "2 to 3 hours", watchOut: "Write for the analyst at 3 a.m. Short steps and exact queries, not paragraphs." }
       ]
     },
     {
@@ -5800,6 +5868,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     { id: 'ship',      label: 'Ship' }
   ];
   let modalTab = 'overview';
+  let modalStepPick = { id: null, index: null };
   let modalTabProject = null;
 
   function selectModalTab(tabId, { focus = false } = {}) {
@@ -5852,6 +5921,11 @@ ${tags} #BuildingInPublic #OpenToWork`;
       || (wasOpen && modalTabProject === p.id ? modalTab : (progress === 'started' ? 'build' : 'overview'));
     modalTab = activeTab;
     modalTabProject = p.id;
+    // Which build step is expanded: the reader's pick, else the first unchecked
+    // step. Checking a step clears the pick so the focus walks down the track.
+    const stepsArr = p.steps ? (state.stepProgress[p.id] || []) : [];
+    const firstOpen = p.steps ? p.steps.findIndex((_, i) => !stepsArr[i]) : -1;
+    const focusStep = (modalStepPick.id === p.id && modalStepPick.index !== null) ? modalStepPick.index : firstOpen;
     const panel = (tabId, html) =>
       `<div class="modal-panel${tabId === activeTab ? ' active' : ''}" role="tabpanel" id="mpanel-${tabId}" data-panel="${tabId}" aria-labelledby="mtab-${tabId}">${html}</div>`;
 
@@ -5931,7 +6005,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
       ${p.steps ? `
       <div class="modal-section">
         <h4>Step-by-Step Build Roadmap</h4>
-        <p style="margin-bottom:8px;">Follow this sequence. Check off each step as you finish it — your progress is tracked automatically.</p>
+        <p style="margin-bottom:8px;">Follow this sequence. Check off each step as you finish it — your progress is tracked automatically. Your current step opens its detail; tap any title to peek ahead.</p>
         <div class="steps-progress">
           <div class="card-progress-track"><div class="card-progress-fill" style="width:${p.steps.length ? Math.round((stepsCompleted(p.id) / p.steps.length) * 100) : 0}%"></div></div>
           <span class="steps-progress-label">${stepsCompleted(p.id)} of ${p.steps.length} steps complete</span>
@@ -5939,16 +6013,28 @@ ${tags} #BuildingInPublic #OpenToWork`;
         <div class="build-steps">
           ${p.steps.map((s, i) => {
             const isDone = !!(state.stepProgress[p.id] || [])[i];
+            const hasDetail = !!(s.doneWhen || s.time || s.watchOut);
+            const isFocus = i === focusStep;
             return `
-            <div class="build-step ${isDone ? 'is-complete' : ''}">
+            <div class="build-step ${isDone ? 'is-complete' : ''}${isFocus ? ' is-focus' : ''}" data-step="${i}">
               <button class="build-step-check" data-step-index="${i}" aria-pressed="${isDone}" aria-label="Mark step ${i + 1}, ${s.title}, as ${isDone ? 'not done' : 'done'}">
                 ${isDone
                   ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>'
                   : (i + 1)}
               </button>
               <div class="build-step-body">
-                <strong>${s.title}</strong>
+                <button class="build-step-title" type="button" data-step-index="${i}" aria-expanded="${isFocus}">${s.title}</button>
                 <span>${s.desc}</span>
+                ${hasDetail ? `
+                <div class="build-step-detail">
+                  <div class="build-step-detail-inner">
+                    <dl class="step-facts">
+                      ${s.doneWhen ? `<dt>Done when</dt><dd>${s.doneWhen}</dd>` : ''}
+                      ${s.time ? `<dt>Time</dt><dd class="step-fact-time">${s.time}</dd>` : ''}
+                      ${s.watchOut ? `<dt>Watch out</dt><dd>${s.watchOut}</dd>` : ''}
+                    </dl>
+                  </div>
+                </div>` : ''}
               </div>
             </div>
           `;
@@ -6168,8 +6254,23 @@ ${tags} #BuildingInPublic #OpenToWork`;
     };
     modal.querySelectorAll('.build-step-check').forEach(btn => {
       btn.onclick = () => {
+        modalStepPick = { id: null, index: null }; // let focus advance to the next open step
         toggleStep(p.id, Number(btn.dataset.stepIndex));
         openModal(p.id); // re-render
+      };
+    });
+    modal.querySelectorAll('.build-step-title').forEach(btn => {
+      btn.onclick = () => {
+        const idx = Number(btn.dataset.stepIndex);
+        const row = btn.closest('.build-step');
+        const open = row.classList.contains('is-focus');
+        modalStepPick = { id: p.id, index: open ? -1 : idx };
+        // Toggle in place so the height animates; no re-render needed.
+        modal.querySelectorAll('.build-step').forEach(r => {
+          const on = !open && r === row;
+          r.classList.toggle('is-focus', on);
+          r.querySelector('.build-step-title').setAttribute('aria-expanded', on);
+        });
       };
     });
     const markAllBtn = document.getElementById('modal-mark-all');

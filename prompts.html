@@ -18,20 +18,20 @@
 <link rel="stylesheet" href="/styles.css" />
 <style id="prompt-page-style">
   /* ===== Prompt Library page — additive styles only ===== */
-  .cert-hero { padding: 52px 0 26px; }
-  .cert-hero h1 { max-width: 18ch; }
-  .cert-hero .hero-lede { max-width: 62ch; }
-  .cert-hero-stats { display: flex; gap: 30px; margin-top: 26px; flex-wrap: wrap; }
-  .cert-stat { display: flex; flex-direction: column; gap: 2px; }
+  .hero.cert-hero { padding: 34px 0 16px; }
+  .hero.cert-hero h1 { max-width: 18ch; font-size: clamp(30px, 4.6vw, 44px); margin-bottom: 12px; }
+  .hero.cert-hero .hero-lede { max-width: 62ch; font-size: 14px; }
+  .cert-hero-stats { display: flex; gap: 26px; margin-top: 16px; flex-wrap: wrap; }
+  .cert-stat { display: flex; flex-direction: row; align-items: baseline; gap: 8px; }
   .cert-stat-num {
-    font-family: 'JetBrains Mono', monospace; font-size: 30px; font-weight: 700;
+    font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700;
     color: var(--green); line-height: 1; text-shadow: 0 0 14px var(--green-glow);
   }
   .cert-stat-label {
     font-family: 'JetBrains Mono', monospace; font-size: 10px;
     letter-spacing: 0.20em; text-transform: uppercase; color: var(--ink-muted);
   }
-  .cert-note { margin-top: 20px; font-size: 12.5px; color: var(--ink-muted); font-style: italic; max-width: 72ch; }
+  .cert-note { margin-top: 12px; font-size: 12px; color: var(--ink-muted); font-style: italic; max-width: 72ch; }
 
   /* Header nav links stay visible where stat-pills hide on mobile */
   .header-actions .nav-link { display: inline-flex; color: var(--green); border-color: var(--line-3); }
@@ -43,15 +43,60 @@
     .header-actions .nav-link { padding: 7px 9px; }
   }
 
-  /* Filter chip row */
+  /* Stage tabs: one stage on screen at a time. Same segmented pill track
+     as the project modal, so the two tab bars read as one control. */
   .prompt-filters {
-    display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    display: flex; align-items: center; gap: 12px;
     margin: 0 0 14px;
+    overflow-x: auto; scrollbar-width: none;
   }
-  .prompt-filters .filter-label {
+  .prompt-filters::-webkit-scrollbar { display: none; }
+  .prompt-filters .stage-label {
     font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
-    letter-spacing: 0.20em; text-transform: uppercase; color: var(--ink-muted); margin-right: 4px;
+    letter-spacing: 0.20em; text-transform: uppercase; color: var(--ink-muted); flex-shrink: 0;
   }
+  .stage-tabs {
+    display: inline-flex; gap: 4px; padding: 4px;
+    border-radius: 999px; border: 1px solid rgba(255,255,255,0.14);
+    background: var(--glass);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 10px 30px -18px rgba(0,0,0,0.8);
+  }
+  .stage-tab {
+    display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase; font-weight: 600;
+    padding: 8px 14px; background: transparent; border: 1px solid transparent; border-radius: 999px;
+    cursor: pointer; color: var(--ink-soft); white-space: nowrap;
+    transition: color 0.15s, background-color 0.15s, border-color 0.15s, box-shadow 0.2s;
+  }
+  .stage-tab .stage-idx { font-size: 9px; letter-spacing: 0.06em; color: var(--ink-muted); }
+  .stage-tab:hover { color: var(--ink); background: rgba(255,255,255,0.05); }
+  .stage-tab:focus-visible { outline: 1px solid var(--green); outline-offset: 2px; }
+  .stage-tab.active {
+    color: var(--green); background: rgba(0,255,133,0.14); border-color: rgba(0,255,133,0.65);
+    box-shadow: 0 0 0 1px rgba(0,255,133,0.45), 0 0 22px -2px rgba(0,255,133,0.55);
+    text-shadow: 0 0 10px var(--green-glow);
+  }
+  .stage-tab.active .stage-idx { color: var(--green); }
+  @media (max-width: 640px) {
+    .prompt-filters .stage-label { display: none; }
+    .stage-tab { padding: 8px 11px; font-size: 10.5px; letter-spacing: 0.08em; }
+  }
+
+  /* Previous / next stage footer under the grid */
+  .stage-pager {
+    display: flex; justify-content: space-between; gap: 12px; margin: 8px 0 40px;
+  }
+  .stage-pager button {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 10px 16px; border-radius: 999px; cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.16); background: var(--glass); color: var(--ink-soft);
+    transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+  }
+  .stage-pager button:hover { color: var(--green); border-color: var(--line-3); box-shadow: 0 0 0 1px var(--line-3); }
+  .stage-pager button:focus-visible { outline: 1px solid var(--green); outline-offset: 2px; }
+  .stage-pager .pager-next { margin-left: auto; color: var(--green); border-color: var(--line-3); background: rgba(0,255,133,0.06); }
+  .stage-pager button[hidden] { display: none; }
 
   /* Stage jumps land below the sticky header + filter bar instead of under them */
   .path-group { scroll-margin-top: 130px; }
@@ -329,7 +374,13 @@
   };
 
   // ===== STATE =====
-  let currentStage = 'all';
+  // One stage on screen at a time. The hash keeps a link to a stage shareable
+  // (#build) and lets Back return to the previous stage.
+  const stageFromHash = () => {
+    const id = location.hash.replace(/^#(stage-)?/, '');
+    return STAGES.some(s => s.id === id) ? id : STAGES[0].id;
+  };
+  let currentStage = stageFromHash();
 
   function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
 
@@ -344,24 +395,40 @@
     toastTimeout = setTimeout(() => el.classList.remove('show'), 2200);
   }
 
-  // ===== FILTERS =====
+  // ===== STAGE TABS =====
+  function setStage(id, { scroll = false } = {}) {
+    if (!STAGES.some(s => s.id === id)) return;
+    currentStage = id;
+    if (location.hash !== '#' + id) history.replaceState(null, '', '#' + id);
+    renderFilters();
+    renderPrompts();
+    if (scroll) {
+      const el = document.getElementById('stage-' + id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
   function renderFilters() {
     const bar = document.getElementById('prompt-filters');
-    const chips = [{ id: 'all', name: 'All' }].concat(STAGES.map(s => ({ id: s.id, name: s.name })));
-    bar.innerHTML = '<span class="filter-label">Jump to stage</span>' + chips.map(c =>
-      `<button class="filter-chip ${currentStage === c.id ? 'active' : ''}" data-stage="${c.id}" aria-pressed="${currentStage === c.id}">${esc(c.name)}</button>`
-    ).join('');
-    bar.querySelectorAll('.filter-chip').forEach(btn => {
-      btn.onclick = () => {
-        currentStage = btn.dataset.stage;
-        renderFilters();
-        renderPrompts();
-        if (currentStage !== 'all') {
-          const el = document.getElementById('stage-' + currentStage);
-          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+    bar.innerHTML = '<span class="stage-label">Stage</span><div class="stage-tabs" role="tablist" aria-label="Prompt stages">' +
+      STAGES.map((st, i) => {
+        const on = currentStage === st.id;
+        return `<button class="stage-tab ${on ? 'active' : ''}" role="tab" id="stab-${st.id}" data-stage="${st.id}" aria-selected="${on}" aria-controls="stage-${st.id}" tabindex="${on ? 0 : -1}"><span class="stage-idx">${String(i + 1).padStart(2, '0')}</span>${esc(st.name)}</button>`;
+      }).join('') + '</div>';
+    const tabs = Array.from(bar.querySelectorAll('.stage-tab'));
+    tabs.forEach((btn, i) => {
+      btn.onclick = () => setStage(btn.dataset.stage);
+      btn.onkeydown = e => {
+        const dir = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+        if (!dir) return;
+        e.preventDefault();
+        const next = tabs[(i + dir + tabs.length) % tabs.length];
+        setStage(next.dataset.stage);
+        document.getElementById('stab-' + next.dataset.stage)?.focus();
       };
     });
+    const active = bar.querySelector('.stage-tab.active');
+    if (active) bar.scrollLeft = Math.max(0, active.offsetLeft - 16);
   }
 
   function promptCardHTML(p) {
@@ -379,7 +446,7 @@
 
   function renderPrompts() {
     const container = document.getElementById('prompts-container');
-    const stages = currentStage === 'all' ? STAGES : STAGES.filter(s => s.id === currentStage);
+    const stages = STAGES.filter(s => s.id === currentStage);
     const total = String(STAGES.length).padStart(2, '0');
 
     container.innerHTML = stages.map(stage => {
@@ -387,7 +454,7 @@
       const items = PROMPTS[stage.id] || [];
       const count = items.length;
       return `
-        <div class="path-group" id="stage-${stage.id}">
+        <div class="path-group" id="stage-${stage.id}" role="tabpanel" aria-labelledby="stab-${stage.id}">
           <div class="path-header">
             <div class="path-header-eyebrow">
               <span class="path-index">STAGE ${idx} / ${total}</span>
@@ -401,6 +468,18 @@
           </div>
         </div>`;
     }).join('');
+
+    // Previous / next stage
+    const idx = STAGES.findIndex(s => s.id === currentStage);
+    const prev = STAGES[idx - 1], next = STAGES[idx + 1];
+    container.insertAdjacentHTML('beforeend', `
+      <nav class="stage-pager" aria-label="Stage navigation">
+        <button class="pager-prev" type="button" ${prev ? `data-stage="${prev.id}"` : 'hidden'}>← ${prev ? esc(prev.name) : ''}</button>
+        <button class="pager-next" type="button" ${next ? `data-stage="${next.id}"` : 'hidden'}>Next: ${next ? esc(next.name) : ''} →</button>
+      </nav>`);
+    container.querySelectorAll('.stage-pager button[data-stage]').forEach(btn => {
+      btn.onclick = () => setStage(btn.dataset.stage, { scroll: true });
+    });
 
     // Wire copy buttons
     container.querySelectorAll('.prompt-card').forEach(card => {
@@ -428,6 +507,7 @@
   renderStats();
   renderFilters();
   renderPrompts();
+  window.addEventListener('hashchange', () => { const id = stageFromHash(); if (id !== currentStage) setStage(id); });
 
   // ===== Footer year =====
   const yearEl = document.getElementById('footer-year');

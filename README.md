@@ -19,6 +19,7 @@ A curated portfolio project guide for students chasing internships, first roles,
 - A **free-tier deploy cheatsheet** (Vercel, Railway, Render, Cloudflare Workers, Hugging Face Spaces)
 - **Saved / Started / Done** progress tracking (localStorage — stays on your device)
 - **Shareable lists** + JSON export/import for backup
+- A private **click heatmap** dashboard at `/heatmap.html` (see `docs/heatmap.md`)
 
 ## Tech
 

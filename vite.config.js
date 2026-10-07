@@ -30,6 +30,7 @@ export default defineConfig({
         prompts: fileURLToPath(new URL('./prompts.html', import.meta.url)),
         match: fileURLToPath(new URL('./match.html', import.meta.url)),
         premium: fileURLToPath(new URL('./premium.html', import.meta.url)),
+        heatmap: fileURLToPath(new URL('./heatmap.html', import.meta.url)),
       },
     },
   },

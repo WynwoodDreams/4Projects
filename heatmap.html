@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Heatmap | BuildersBench</title>
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#141517" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='3' fill='%23ff5c6c'/%3E%3Ccircle cx='12' cy='12' r='8' fill='none' stroke='%23ff5c6c' stroke-width='2'/%3E%3C/svg%3E" />
+<style>
+  @font-face { font-family: 'Inter'; font-weight: 400; font-display: swap; src: url('/fonts/inter-400.woff2') format('woff2'); }
+  @font-face { font-family: 'Inter'; font-weight: 500; font-display: swap; src: url('/fonts/inter-500.woff2') format('woff2'); }
+  @font-face { font-family: 'Inter'; font-weight: 600; font-display: swap; src: url('/fonts/inter-600.woff2') format('woff2'); }
+  @font-face { font-family: 'Inter'; font-weight: 700; font-display: swap; src: url('/fonts/inter-700.woff2') format('woff2'); }
+  @font-face { font-family: 'JetBrains Mono'; font-weight: 400; font-display: swap; src: url('/fonts/jetbrains-mono-400.woff2') format('woff2'); }
+  @font-face { font-family: 'JetBrains Mono'; font-weight: 500; font-display: swap; src: url('/fonts/jetbrains-mono-500.woff2') format('woff2'); }
+  @font-face { font-family: 'JetBrains Mono'; font-weight: 600; font-display: swap; src: url('/fonts/jetbrains-mono-600.woff2') format('woff2'); }
+
+  :root {
+    --bg: #141517; --panel: #17181b; --panel-2: #1b1c20; --line: #222327; --line-2: #2c2e33; --line-3: #3a3d44;
+    --ink: #e9e9ec; --ink-2: #b8bac1; --muted: #8a8d96; --dim: #5c5f68;
+    --coral: #ff5c6c; --coral-2: #ff8a95; --green: #3ddc84;
+    --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  button { font: inherit; cursor: pointer; color: inherit; }
+  input { font: inherit; }
+  [hidden] { display: none !important; }
+  .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+
+  .app { min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* Top nav */
+  .top { position: sticky; top: 0; z-index: 30; min-height: 56px; display: flex; align-items: center; gap: 16px; padding: 8px 20px; background: rgba(20,21,23,.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; letter-spacing: -.01em; text-decoration: none; color: var(--ink); }
+  .brand .logo { width: 26px; height: 26px; border-radius: 7px; background: linear-gradient(135deg, var(--coral), #ff8a3d); display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 0 16px rgba(255,92,108,.55); }
+  .brand small { color: var(--dim); font-weight: 500; font-size: 13px; }
+  .vsep { width: 1px; height: 24px; background: var(--line-2); }
+  .group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .chip { height: 32px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--panel-2); color: var(--ink-2); font-size: 13px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .chip:hover { border-color: var(--line-3); color: var(--ink); }
+  .chip[aria-pressed="true"] { background: rgba(255,92,108,.14); border-color: var(--coral); color: var(--coral-2); }
+  .spacer { flex: 1 1 auto; }
+  .live { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+  .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .btn { height: 32px; padding: 0 12px; border-radius: 6px; border: 1px solid var(--line-2); background: var(--panel-2); color: var(--ink); font-size: 13px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; }
+  .btn:hover { border-color: var(--line-3); }
+  .btn.primary { background: var(--coral); border-color: var(--coral); color: #141517; font-weight: 600; }
+  svg.ic { width: 16px; height: 16px; flex: none; }
+
+  /* Body */
+  .body { display: flex; flex-wrap: wrap; flex: 1 1 auto; align-items: stretch; }
+  .side { flex: 1 1 240px; max-width: 260px; min-width: 220px; border-right: 1px solid var(--line); background: var(--panel); padding: 18px 14px; display: flex; flex-direction: column; gap: 22px; }
+  .side section { display: flex; flex-direction: column; gap: 8px; }
+  .side .eyebrow { padding: 0 12px; }
+  .pages { display: flex; flex-direction: column; gap: 2px; }
+  .pg { width: 100%; text-align: left; padding: 10px 12px; border-radius: 8px; border: 1px solid transparent; background: transparent; color: var(--ink-2); display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; }
+  .pg:hover { background: #1f2024; color: var(--ink); }
+  .pg[aria-pressed="true"] { background: #202126; border-color: var(--line-2); color: #fff; }
+  .pg b { font-weight: 500; color: var(--coral-2); font-size: 11px; }
+  .ranges { display: flex; gap: 6px; padding: 0 4px; }
+  .ranges .chip { flex: 1 1 0; justify-content: center; padding: 0; height: 30px; font-size: 12px; }
+  .dates { display: flex; flex-direction: column; gap: 6px; padding: 0 4px; }
+  .dates label { font-size: 11px; color: var(--muted); }
+  .di { height: 32px; padding: 0 10px; border-radius: 6px; border: 1px solid var(--line-2); background: #111214; color: var(--ink); font-size: 12px; width: 100%; color-scheme: dark; }
+  .di:focus { outline: none; border-color: var(--coral); }
+  .legend { padding: 0 12px; display: flex; flex-direction: column; gap: 6px; }
+  .legend .bar { height: 8px; border-radius: 4px; background: linear-gradient(90deg, #1d3fb8 0%, #2ea8ff 30%, #ffd23f 60%, #ff7a1a 80%, #ff2d3f 100%); }
+  .legend .ends { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); }
+  .summary { margin-top: auto; padding: 12px; border-radius: 8px; background: var(--panel-2); border: 1px solid var(--line-2); display: flex; flex-direction: column; gap: 4px; }
+  .summary .path { font-size: 13px; color: #fff; }
+  .stats { display: flex; gap: 14px; margin-top: 6px; }
+  .stats div div:first-child { font-size: 16px; font-weight: 600; }
+  .stats div div:last-child { font-size: 10px; color: var(--muted); }
+  .stats .hi { color: var(--coral-2); }
+
+  .main { flex: 999 1 560px; min-width: 0; padding: 18px 20px 24px; display: flex; flex-direction: column; gap: 12px; }
+  .main h1 { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
+  .toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .toolbar .sub { font-size: 12px; color: var(--muted); }
+  .frame { border: 1px solid var(--line-2); border-radius: 12px; background: #0f1012; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.45); }
+  .frame .bar { height: 38px; display: flex; align-items: center; gap: 8px; padding: 0 14px; background: var(--panel); border-bottom: 1px solid var(--line); }
+  .frame .bar i { width: 10px; height: 10px; border-radius: 50%; background: var(--line-3); }
+  .frame .url { margin-left: 10px; flex: 1 1 auto; height: 24px; border-radius: 6px; background: #0f1012; border: 1px solid var(--line-2); display: inline-flex; align-items: center; padding: 0 10px; font-size: 11px; color: var(--muted); overflow: hidden; white-space: nowrap; }
+  .frame .size { font-size: 11px; color: var(--dim); }
+  .viewport { overflow-x: auto; background: #0f1012; }
+  .stage { position: relative; margin: 0 auto; }
+  .stage iframe { display: block; border: 0; width: 100%; height: 100%; background: #fff; }
+  .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .stage .shield { position: absolute; inset: 0; }
+  .stage .shield:not(.off) { cursor: not-allowed; }
+  .pin { position: absolute; width: 10px; height: 10px; border-radius: 50%; border: 2px solid #fff; background: var(--coral); box-shadow: 0 0 0 3px rgba(255,92,108,.35); transform: translate(-50%,-50%); pointer-events: none; }
+  .msg { padding: 40px 24px; text-align: center; color: var(--muted); font-size: 13px; }
+
+  /* Bottom drawer */
+  .drawer { position: sticky; bottom: 0; z-index: 25; background: var(--panel); border-top: 1px solid var(--line-2); box-shadow: 0 -16px 40px rgba(0,0,0,.4); }
+  .drawer .handle { width: 100%; height: 44px; display: flex; align-items: center; gap: 12px; padding: 0 20px; background: transparent; border: none; }
+  .drawer .handle i { width: 36px; height: 4px; border-radius: 2px; background: var(--line-3); }
+  .drawer .handle b { font-size: 13px; font-weight: 600; }
+  .drawer .handle .sub { font-size: 11px; color: var(--muted); }
+  .drawer .handle .state { font-size: 12px; color: var(--coral-2); font-weight: 500; }
+  .drawer .scroll { max-height: 260px; overflow: auto; border-top: 1px solid var(--line); }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  td, th { padding: 9px 14px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+  th { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; position: sticky; top: 0; background: var(--panel); }
+  tr:hover td { background: #1c1d21; }
+  td.el { font-family: Inter, system-ui, sans-serif; color: var(--ink-2); max-width: 320px; overflow: hidden; text-overflow: ellipsis; }
+  .dens { display: flex; align-items: center; gap: 8px; min-width: 160px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; flex: none; box-shadow: 0 0 10px currentColor; background: currentColor; }
+  .track { flex: 1 1 auto; height: 6px; border-radius: 3px; background: #26272c; overflow: hidden; }
+  .track div { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #2ea8ff, var(--c)); }
+
+  /* Key gate */
+  .gate { max-width: 440px; margin: 60px auto; padding: 22px; border: 1px solid var(--line-2); border-radius: 12px; background: var(--panel-2); display: flex; flex-direction: column; gap: 12px; }
+  .gate p { margin: 0; font-size: 13px; color: var(--ink-2); line-height: 1.5; }
+  .gate .row { display: flex; gap: 8px; }
+  .gate .di { flex: 1 1 auto; }
+  .err { color: var(--coral-2); font-size: 12px; }
+
+  @media (max-width: 760px) {
+    .side { max-width: none; border-right: 0; border-bottom: 1px solid var(--line); }
+    .summary { margin-top: 0; }
+    .main { padding: 14px 12px 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <a class="brand" href="/">
+      <span class="logo"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#141517" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" opacity=".6"/></svg></span>
+      Heatlens <small>buildersbench.dev</small>
+    </a>
+    <div class="vsep"></div>
+    <div class="group" id="visitorFilters">
+      <span class="eyebrow">Sessions</span>
+      <button class="chip" data-visitor="" aria-pressed="true">All</button>
+      <button class="chip" data-visitor="new" aria-pressed="false">New</button>
+      <button class="chip" data-visitor="returning" aria-pressed="false">Returning</button>
+    </div>
+    <div class="group" id="deviceFilters">
+      <span class="eyebrow">Device</span>
+      <button class="chip" data-device="" aria-pressed="true">All</button>
+      <button class="chip" data-device="desktop" aria-pressed="false">Desktop</button>
+      <button class="chip" data-device="tablet" aria-pressed="false">Tablet</button>
+      <button class="chip" data-device="mobile" aria-pressed="false">Mobile</button>
+    </div>
+    <div class="spacer"></div>
+    <div class="group">
+      <span class="live"><i></i>Updated <span class="mono" id="updatedAt">—</span></span>
+      <button class="btn" id="refresh"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg>Refresh</button>
+      <button class="btn" id="exportCsv"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 21h16"/></svg>Export</button>
+      <button class="btn" id="signOut" title="Forget the dashboard key on this device">Key</button>
+    </div>
+  </header>
+
+  <div class="gate" id="gate" hidden>
+    <div class="eyebrow">Dashboard key</div>
+    <p>This page reads click data through <span class="mono">/api/clicks</span>. Paste the value of the <span class="mono">HEATMAP_KEY</span> environment variable from Vercel. It is kept only in this browser.</p>
+    <form class="row" id="gateForm">
+      <input class="di mono" id="keyInput" type="password" autocomplete="off" placeholder="HEATMAP_KEY" required />
+      <button class="btn primary" type="submit">Open</button>
+    </form>
+    <div class="err" id="gateErr" hidden></div>
+  </div>
+
+  <div class="body" id="dash" hidden>
+    <aside class="side">
+      <section>
+        <div class="eyebrow">Pages</div>
+        <div class="pages" id="pageList"><div class="msg">Loading…</div></div>
+      </section>
+      <section>
+        <div class="eyebrow">Date range</div>
+        <div class="ranges" id="ranges">
+          <button class="chip" data-days="1" aria-pressed="false">24h</button>
+          <button class="chip" data-days="7" aria-pressed="true">7d</button>
+          <button class="chip" data-days="30" aria-pressed="false">30d</button>
+          <button class="chip" data-days="90" aria-pressed="false">90d</button>
+        </div>
+        <div class="dates">
+          <label for="from">From</label><input class="di mono" id="from" type="date" />
+          <label for="to">To</label><input class="di mono" id="to" type="date" />
+        </div>
+      </section>
+      <section>
+        <div class="eyebrow">Intensity</div>
+        <div class="legend">
+          <div class="bar"></div>
+          <div class="ends mono"><span>0</span><span>clicks / cell</span><span id="maxCell">—</span></div>
+        </div>
+      </section>
+      <div class="summary">
+        <div style="font-size:11px;color:var(--muted)">Selected page</div>
+        <div class="path mono" id="sumPath">/</div>
+        <div class="stats">
+          <div><div class="mono hi" id="sumClicks">0</div><div>clicks</div></div>
+          <div><div class="mono" id="sumSessions">0</div><div>sessions</div></div>
+          <div><div class="mono" id="sumRage">0</div><div>rage</div></div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="toolbar">
+        <h1>Click density</h1>
+        <span class="sub mono" id="subline"></span>
+        <div class="spacer"></div>
+        <div class="group">
+          <button class="chip" id="toggleOverlay" aria-pressed="true"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>Overlay</button>
+          <button class="chip" id="toggleInteract" aria-pressed="false">Interact with page</button>
+        </div>
+      </div>
+      <div class="frame">
+        <div class="bar"><i></i><i></i><i></i><span class="url mono" id="urlBar"></span><span class="size mono" id="sizeLabel"></span></div>
+        <div class="viewport">
+          <div class="stage" id="stage">
+            <iframe id="preview" title="Page preview" src="about:blank"></iframe>
+            <canvas id="heat"></canvas>
+            <div id="pins"></div>
+            <div class="shield" id="shield"></div>
+          </div>
+        </div>
+      </div>
+      <div class="msg" id="status" hidden></div>
+    </main>
+  </div>
+
+  <section class="drawer" id="drawer" hidden>
+    <button class="handle" id="drawerToggle" aria-expanded="true">
+      <i></i><b>Ranked click coordinates</b>
+      <span class="sub mono" id="drawerSub"></span>
+      <span class="spacer"></span>
+      <span class="state" id="drawerState">Collapse</span>
+    </button>
+    <div class="scroll" id="drawerBody">
+      <table class="mono">
+        <thead><tr><th>#</th><th>X</th><th>Y</th><th>Clicks</th><th>Share</th><th>Element</th><th style="width:100%">Density</th></tr></thead>
+        <tbody id="rankBody"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const KEY = 'bb_hm_key';
+  const CELL = 24;          // px bin size for the ranked table
+  const RADIUS = 28;        // blob radius in preview px
+  const WIDTHS = { desktop: 1280, tablet: 820, mobile: 390, '': 1280 };
+
+  const state = { key: '', page: '/', days: 7, from: null, to: null, device: '', visitor: '', overlay: true, drawer: true, pages: [], points: [] };
+  try { state.key = localStorage.getItem(KEY) || ''; } catch {}
+
+  const fmt = (n) => Math.round(n).toLocaleString('en-US');
+  const dayStr = (d) => d.toISOString().slice(0, 10);
+
+  function window_() {
+    if (state.from && state.to) return { from: state.from + 'T00:00:00Z', to: state.to + 'T23:59:59Z' };
+    const now = new Date();
+    return { from: new Date(now.getTime() - state.days * 864e5).toISOString(), to: new Date(now.getTime() + 60e3).toISOString() };
+  }
+
+  async function api(params) {
+    const q = new URLSearchParams(params);
+    const res = await fetch('/api/clicks?' + q, { headers: { Authorization: 'Bearer ' + state.key } });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) { const e = new Error(body.error || ('HTTP ' + res.status)); e.status = res.status; throw e; }
+    return body;
+  }
+
+  // ---------- Gate ----------
+  function showGate(err) {
+    $('gate').hidden = false; $('dash').hidden = true; $('drawer').hidden = true;
+    $('gateErr').hidden = !err; $('gateErr').textContent = err || '';
+  }
+  $('gateForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    state.key = $('keyInput').value.trim();
+    try { localStorage.setItem(KEY, state.key); } catch {}
+    boot();
+  });
+  $('signOut').addEventListener('click', () => { try { localStorage.removeItem(KEY); } catch {} state.key = ''; showGate(); });
+
+  async function boot() {
+    if (!state.key) return showGate();
+    try {
+      await loadPages();
+    } catch (e) {
+      return showGate(e.status === 401 ? 'That key is not right.' : e.message);
+    }
+    $('gate').hidden = true; $('dash').hidden = false; $('drawer').hidden = false;
+    loadPoints();
+  }
+
+  // ---------- Pages ----------
+  async function loadPages() {
+    const w = window_();
+    const { pages } = await api({ view: 'pages', from: w.from, to: w.to });
+    state.pages = pages || [];
+    if (!state.pages.some(p => p.page === state.page) && state.pages.length) state.page = state.pages[0].page;
+    renderPages();
+  }
+  function renderPages() {
+    const el = $('pageList');
+    if (!state.pages.length) { el.innerHTML = '<div class="msg">No clicks recorded in this range yet.</div>'; return; }
+    el.innerHTML = '';
+    for (const p of state.pages) {
+      const b = document.createElement('button');
+      b.className = 'pg'; b.setAttribute('aria-pressed', String(p.page === state.page));
+      b.innerHTML = '<span class="mono"></span><b class="mono"></b>';
+      b.firstChild.textContent = p.page; b.lastChild.textContent = fmt(p.clicks);
+      b.addEventListener('click', () => { state.page = p.page; renderPages(); loadPoints(); });
+      el.appendChild(b);
+    }
+    const cur = state.pages.find(p => p.page === state.page) || { clicks: 0, sessions: 0, rage: 0 };
+    $('sumPath').textContent = state.page;
+    $('sumClicks').textContent = fmt(cur.clicks); $('sumSessions').textContent = fmt(cur.sessions); $('sumRage').textContent = fmt(cur.rage);
+  }
+
+  // ---------- Points + preview ----------
+  let loadSeq = 0;
+  async function loadPoints() {
+    const seq = ++loadSeq;
+    const w = window_();
+    $('status').hidden = false; $('status').textContent = 'Loading clicks…';
+    let body;
+    try {
+      body = await api({ view: 'points', page: state.page, from: w.from, to: w.to, device: state.device, visitor: state.visitor });
+    } catch (e) { $('status').textContent = e.message; return; }
+    if (seq !== loadSeq) return;
+    state.points = body.points || [];
+    $('updatedAt').textContent = new Date().toLocaleTimeString();
+    $('status').hidden = state.points.length > 0;
+    $('status').textContent = 'No clicks match these filters.';
+    const label = state.from && state.to ? state.from + ' → ' + state.to : 'Last ' + ($('ranges').querySelector('[aria-pressed="true"]') || {}).textContent;
+    $('subline').textContent = state.page + ' · ' + label + ' · ' + (state.visitor || 'all sessions') + ' · ' + (state.device || 'all devices') + ' · ' + fmt(state.points.length) + ' clicks';
+    $('drawerSub').textContent = state.page;
+    loadPreview();
+  }
+
+  const stage = $('stage'), iframe = $('preview'), canvas = $('heat');
+  let previewW = 1280, previewH = 800;
+
+  function loadPreview() {
+    previewW = WIDTHS[state.device] || 1280;
+    stage.style.width = previewW + 'px';
+    $('sizeLabel').textContent = previewW + ' px';
+    $('urlBar').textContent = location.origin + state.page;
+    const src = state.page + (state.page.includes('?') ? '&' : '?') + 'hm=preview';
+    if (iframe.getAttribute('data-src') !== src) {
+      iframe.setAttribute('data-src', src);
+      iframe.src = src;
+    } else {
+      sizeAndDraw();
+    }
+  }
+  iframe.addEventListener('load', () => { sizeAndDraw(); setTimeout(sizeAndDraw, 600); setTimeout(sizeAndDraw, 2000); });
+
+  function sizeAndDraw() {
+    let h = 800;
+    try { h = iframe.contentDocument.documentElement.scrollHeight || h; } catch {}
+    previewH = Math.max(400, Math.min(h, 20000));
+    stage.style.height = previewH + 'px';
+    draw();
+  }
+
+  // Map a stored click to preview pixels. x scales with document width, y with
+  // document height, so clicks recorded at other viewport sizes land near the
+  // same element on a page laid out at the preview width.
+  function mapPoint(p) {
+    return { x: p.x * (previewW / p.doc_w), y: p.y * (previewH / p.doc_h), p };
+  }
+
+  function draw() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(previewW * dpr); canvas.height = Math.round(previewH * dpr);
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, previewW, previewH);
+    $('pins').innerHTML = '';
+    const mapped = state.points.map(mapPoint).filter(m => m.x >= 0 && m.x <= previewW && m.y >= 0 && m.y <= previewH);
+    rank(mapped);
+    if (!state.overlay || !mapped.length) return;
+
+    // 1. Accumulate alpha blobs in an offscreen canvas.
+    const off = document.createElement('canvas');
+    off.width = canvas.width; off.height = canvas.height;
+    const o = off.getContext('2d');
+    o.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const n = mapped.length;
+    const a = Math.max(0.035, Math.min(0.5, 12 / Math.sqrt(n)));
+    for (const m of mapped) {
+      const g = o.createRadialGradient(m.x, m.y, 0, m.x, m.y, RADIUS);
+      g.addColorStop(0, 'rgba(0,0,0,' + a + ')'); g.addColorStop(1, 'rgba(0,0,0,0)');
+      o.fillStyle = g; o.beginPath(); o.arc(m.x, m.y, RADIUS, 0, Math.PI * 2); o.fill();
+    }
+
+    // 2. Cool-to-hot palette, looked up by accumulated alpha.
+    const pal = document.createElement('canvas'); pal.width = 256; pal.height = 1;
+    const pc = pal.getContext('2d');
+    const pg = pc.createLinearGradient(0, 0, 256, 0);
+    pg.addColorStop(0.00, '#1d3fb8'); pg.addColorStop(0.30, '#2ea8ff'); pg.addColorStop(0.55, '#ffd23f');
+    pg.addColorStop(0.78, '#ff7a1a'); pg.addColorStop(1.00, '#ff2d3f');
+    pc.fillStyle = pg; pc.fillRect(0, 0, 256, 1);
+    const lut = pc.getImageData(0, 0, 256, 1).data;
+
+    const img = o.getImageData(0, 0, off.width, off.height);
+    const d = img.data;
+    for (let i = 3; i < d.length; i += 4) {
+      const v = d[i]; if (!v) continue;
+      const k = v * 4;
+      d[i - 3] = lut[k]; d[i - 2] = lut[k + 1]; d[i - 1] = lut[k + 2];
+      d[i] = Math.min(235, 40 + v * 0.9);
+    }
+    ctx.putImageData(img, 0, 0);
+
+    // 3. Soft base wash so the page reads as "cool" where nothing happened.
+    ctx.globalCompositeOperation = 'destination-over';
+    ctx.fillStyle = 'rgba(29,63,184,0.10)'; ctx.fillRect(0, 0, previewW, previewH);
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
+  // ---------- Ranked table ----------
+  let ranked = [];
+  function rank(mapped) {
+    const cells = new Map();
+    for (const m of mapped) {
+      const cx = Math.floor(m.x / CELL), cy = Math.floor(m.y / CELL), k = cx + ',' + cy;
+      let c = cells.get(k);
+      if (!c) { c = { cx, cy, n: 0, sx: 0, sy: 0, targets: new Map(), rage: 0 }; cells.set(k, c); }
+      c.n++; c.sx += m.x; c.sy += m.y; if (m.p.rage) c.rage++;
+      const t = m.p.target || '—'; c.targets.set(t, (c.targets.get(t) || 0) + 1);
+    }
+    ranked = [...cells.values()].sort((a, b) => b.n - a.n).slice(0, 60);
+    const max = ranked.length ? ranked[0].n : 0;
+    const total = mapped.length || 1;
+    $('maxCell').textContent = fmt(max);
+    const tb = $('rankBody'); tb.innerHTML = '';
+    const color = (v) => v > .85 ? '#ff2d3f' : v > .6 ? '#ff7a1a' : v > .4 ? '#ffd23f' : v > .2 ? '#2ea8ff' : '#1d3fb8';
+    ranked.forEach((c, i) => {
+      const v = c.n / max;
+      const x = Math.round(c.sx / c.n), y = Math.round(c.sy / c.n);
+      const top = [...c.targets.entries()].sort((a, b) => b[1] - a[1])[0][0];
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td style="color:var(--muted)"></td><td></td><td></td><td style="color:#fff;font-weight:600"></td><td style="color:var(--muted)"></td><td class="el"></td><td><div class="dens"><span class="dot"></span><div class="track"><div></div></div></div></td>';
+      const td = tr.children;
+      td[0].textContent = String(i + 1).padStart(2, '0'); td[1].textContent = x; td[2].textContent = y;
+      td[3].textContent = fmt(c.n); td[4].textContent = (100 * c.n / total).toFixed(1) + '%';
+      td[5].textContent = top + (c.rage ? '  ⚠ ' + c.rage + ' rage' : ''); td[5].title = top;
+      const dot = td[6].querySelector('.dot'); dot.style.color = color(v);
+      const fill = td[6].querySelector('.track div'); fill.style.width = Math.round(v * 100) + '%'; fill.style.setProperty('--c', color(v));
+      tr.addEventListener('click', () => { stage.scrollIntoView({ behavior: 'smooth', block: 'start' }); window.scrollBy(0, y - 120); });
+      tb.appendChild(tr);
+      if (i < 3 && state.overlay) { const pin = document.createElement('div'); pin.className = 'pin'; pin.style.left = x + 'px'; pin.style.top = y + 'px'; $('pins').appendChild(pin); }
+    });
+  }
+
+  // ---------- Controls ----------
+  function pressGroup(container, attr, value) {
+    container.querySelectorAll('[' + attr + ']').forEach(b => b.setAttribute('aria-pressed', String(b.getAttribute(attr) === value)));
+  }
+  $('visitorFilters').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-visitor]'); if (!b) return;
+    state.visitor = b.dataset.visitor; pressGroup($('visitorFilters'), 'data-visitor', state.visitor); loadPoints();
+  });
+  $('deviceFilters').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-device]'); if (!b) return;
+    state.device = b.dataset.device; pressGroup($('deviceFilters'), 'data-device', state.device); loadPoints();
+  });
+  $('ranges').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-days]'); if (!b) return;
+    state.days = Number(b.dataset.days); state.from = state.to = null;
+    $('from').value = ''; $('to').value = '';
+    pressGroup($('ranges'), 'data-days', String(state.days)); refreshAll();
+  });
+  const onDate = () => {
+    const f = $('from').value, t = $('to').value;
+    if (f && t && f <= t) { state.from = f; state.to = t; pressGroup($('ranges'), 'data-days', 'none'); refreshAll(); }
+  };
+  $('from').addEventListener('change', onDate); $('to').addEventListener('change', onDate);
+  $('from').max = $('to').max = dayStr(new Date());
+
+  $('toggleOverlay').addEventListener('click', (e) => {
+    state.overlay = !state.overlay; e.currentTarget.setAttribute('aria-pressed', String(state.overlay)); draw();
+  });
+  $('toggleInteract').addEventListener('click', (e) => {
+    const on = $('shield').classList.toggle('off'); e.currentTarget.setAttribute('aria-pressed', String(on));
+  });
+  $('drawerToggle').addEventListener('click', () => {
+    state.drawer = !state.drawer; $('drawerBody').hidden = !state.drawer;
+    $('drawerToggle').setAttribute('aria-expanded', String(state.drawer));
+    $('drawerState').textContent = state.drawer ? 'Collapse' : 'Expand';
+  });
+  $('refresh').addEventListener('click', refreshAll);
+  $('exportCsv').addEventListener('click', () => {
+    const rows = [['rank', 'x', 'y', 'clicks', 'share', 'element', 'rage']];
+    const total = state.points.length || 1;
+    ranked.forEach((c, i) => rows.push([i + 1, Math.round(c.sx / c.n), Math.round(c.sy / c.n), c.n, (100 * c.n / total).toFixed(1) + '%', [...c.targets.entries()].sort((a, b) => b[1] - a[1])[0][0], c.rage]));
+    const csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+    a.download = 'heatmap' + state.page.replace(/\//g, '_') + '.csv'; a.click();
+    URL.revokeObjectURL(a.href);
+  });
+  async function refreshAll() { try { await loadPages(); } catch (e) { return showGate(e.message); } loadPoints(); }
+  window.addEventListener('resize', () => { if (state.points.length) draw(); });
+
+  boot();
+})();
+</script>
+</body>
+</html>

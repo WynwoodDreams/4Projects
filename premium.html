@@ -442,7 +442,7 @@
       }
     }
     if (DATA.cohort && DATA.cohort.note) $('cohort-note').textContent = DATA.cohort.note + ' Type a role, or pick one below.';
-    $('road-updated').textContent = DATA.updated ? `Data checked ${DATA.updated}` : '';
+    $('road-updated').textContent = (DATA.updated ? `Data checked ${DATA.updated}` : '') + (DATA.placeholderPassword ? ' · placeholder password in use' : '');
   }
 
   $('road-form').addEventListener('submit', e => {

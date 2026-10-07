@@ -13,8 +13,10 @@ the password, not the URL.
 
 - One shared password, stored as the `PREMIUM_PASSWORD` environment variable
   in Vercel (Project → Settings → Environment Variables, Production and
-  Preview). There is no fallback: until it is set, the sign-in form says
-  access is not configured.
+  Preview). Until it is set, a placeholder in `api/_premium-auth.js`
+  (`cloud2026`) is used and the page shows "placeholder password in use"
+  under the role search. Set the variable, or change the placeholder, before
+  a cohort gets the link.
 - `POST /api/premium-login` checks the password in constant time and returns a
   signed token good for 30 days. The signing key is derived from the password,
   so changing the password signs everyone out.

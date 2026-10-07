@@ -10,8 +10,14 @@ import { createHmac, createHash, timingSafeEqual } from 'node:crypto';
 
 const TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
+// Placeholder so the page can be tried before PREMIUM_PASSWORD exists in
+// Vercel. The environment variable always wins when it is set. Change this
+// (or set the variable) before handing the page to a cohort.
+const PLACEHOLDER_PASSWORD = 'cloud2026';
+const currentPassword = () => process.env.PREMIUM_PASSWORD || PLACEHOLDER_PASSWORD;
+
 function secret() {
-  const pw = process.env.PREMIUM_PASSWORD;
+  const pw = currentPassword();
   if (!pw) return null;
   // Derive the signing key from the password so no second secret is needed.
   // Changing the password therefore also invalidates every issued token.
@@ -29,11 +35,15 @@ function safeEqual(a, b) {
 }
 
 export function isConfigured() {
-  return Boolean(process.env.PREMIUM_PASSWORD);
+  return Boolean(currentPassword());
+}
+
+export function usingPlaceholder() {
+  return !process.env.PREMIUM_PASSWORD;
 }
 
 export function checkPassword(candidate) {
-  const pw = process.env.PREMIUM_PASSWORD;
+  const pw = currentPassword();
   if (!pw || typeof candidate !== 'string') return false;
   return safeEqual(candidate, pw);
 }

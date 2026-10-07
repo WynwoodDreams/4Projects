@@ -9,6 +9,7 @@
 // `vite build` — it will not run in a sandboxed or offline environment.
 
 import { readIndexProjects } from './projects.mjs';
+import { ROLES } from '../premium-data/roles.mjs';
 
 const oembed = (id, isPlaylist) => {
   const target = isPlaylist
@@ -32,10 +33,13 @@ async function checkThumb(p, failures) {
   }
 }
 
-const projects = readIndexProjects();
+// The premium page's interview videos ride along as pseudo-projects so a
+// pulled or embed-disabled talk fails the same check as a catalog video.
+const premiumVideos = ROLES.flatMap(r => (r.videos || []).map(v => ({ id: `premium:${r.id}`, youtube: v.id, ytTitle: v.title })));
+const projects = [...readIndexProjects(), ...premiumVideos];
 const failures = [];
 
-console.log(`Checking ${projects.length} videos...\n`);
+console.log(`Checking ${projects.length} videos (${premiumVideos.length} premium)...\n`);
 
 for (const p of projects) {
   let res;

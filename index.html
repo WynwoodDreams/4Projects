@@ -3,18 +3,19 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>BuildersBench — Portfolio Project Guide</title>
-<meta name="description" content="67 portfolio projects across 8 tech career paths — AI, cloud, cybersecurity, data, and more. Each ships with a build roadmap, starter AI prompt, resume bullets, and interview pitch." />
+<title>Tech Portfolio Projects for AI, Cybersecurity &amp; Cloud | BuildersBench</title>
+<meta name="description" content="Build portfolio-ready tech projects across AI, cloud, cybersecurity, data, software, and IT. Follow guided roadmaps, choose tools, use AI prompts, and showcase your work." />
 <meta name="theme-color" content="#0C161B" />
-<link rel="canonical" href="https://4-projects.vercel.app/" />
+<link rel="canonical" href="https://www.buildersbench.dev/" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='none' stroke='%2300e676' stroke-width='2'/%3E%3Cpath d='M8 12l3 3 5-6' fill='none' stroke='%2300e676' stroke-width='2'/%3E%3C/svg%3E" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="BuildersBench — Portfolio Project Guide" />
-<meta property="og:description" content="67 portfolio projects across 8 tech career paths, each with a build roadmap, starter AI prompt, resume bullets, and interview pitch." />
-<meta property="og:url" content="https://4-projects.vercel.app/" />
+<meta property="og:title" content="Tech Portfolio Projects for AI, Cybersecurity &amp; Cloud | BuildersBench" />
+<meta property="og:description" content="Build portfolio-ready tech projects across AI, cloud, cybersecurity, data, software, and IT with guided roadmaps, AI prompts, and showcase tips." />
+<meta property="og:url" content="https://www.buildersbench.dev/" />
 <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="BuildersBench — Portfolio Project Guide" />
-<meta name="twitter:description" content="67 portfolio projects across 8 tech career paths, each with a build roadmap, starter AI prompt, resume bullets, and interview pitch." />
+<meta name="twitter:title" content="Tech Portfolio Projects for AI, Cybersecurity &amp; Cloud | BuildersBench" />
+<meta name="twitter:description" content="Build portfolio-ready tech projects across AI, cloud, cybersecurity, data, software, and IT with guided roadmaps and showcase tips." />
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"BuildersBench","url":"https://www.buildersbench.dev/","description":"Hands-on tech portfolio projects with guided roadmaps for AI, cloud, cybersecurity, data, software, and IT careers."}</script>
 <style id="self-hosted-fonts">
 @font-face { font-family: 'Inter'; font-style: normal; font-weight: 300; font-display: swap; src: url('/fonts/inter-300.woff2') format('woff2'); }
 @font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/inter-400.woff2') format('woff2'); }
@@ -2985,6 +2986,7 @@
     .path-tab { width: 78px; height: 88px; }
   }
 </style>
+<style id="seo-project-links">.project-title-link{color:inherit;text-decoration:none}.project-title-link:hover{color:var(--green);text-decoration:underline}.project-guide-link{color:var(--green);font-size:12px;font-weight:700;text-decoration:none;letter-spacing:.04em}.project-guide-link:hover{text-decoration:underline}</style>
 </head>
 <body>
 
@@ -3354,14 +3356,14 @@
       <div class="footer-col">
         <h5>Paths</h5>
         <ul class="footer-paths">
-          <li><a href="#path=ai" data-footer-path="ai">AI Engineer</a></li>
-          <li><a href="#path=cloud" data-footer-path="cloud">Cloud Computing</a></li>
-          <li><a href="#path=cs" data-footer-path="cs">Computer Science</a></li>
-          <li><a href="#path=cyber" data-footer-path="cyber">Cybersecurity</a></li>
-          <li><a href="#path=data" data-footer-path="data">Data Analyst</a></li>
-          <li><a href="#path=helpdesk" data-footer-path="helpdesk">Help Desk</a></li>
-          <li><a href="#path=swe" data-footer-path="swe">Software Engineer</a></li>
-          <li><a href="#path=tech-it" data-footer-path="tech-it">Tech / IT Support</a></li>
+          <li><a href="/paths/ai/">AI Engineer</a></li>
+          <li><a href="/paths/cloud/">Cloud Computing</a></li>
+          <li><a href="/paths/cs/">Computer Science</a></li>
+          <li><a href="/paths/cyber/">Cybersecurity</a></li>
+          <li><a href="/paths/data/">Data Analyst</a></li>
+          <li><a href="/paths/helpdesk/">Help Desk</a></li>
+          <li><a href="/paths/swe/">Software Engineer</a></li>
+          <li><a href="/paths/tech-it/">Tech / IT Support</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -5740,7 +5742,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     container.querySelectorAll('.project-card').forEach(card => {
       const id = card.dataset.id;
       card.addEventListener('click', (e) => {
-        if (e.target.closest('.bookmark-btn')) return;
+        if (e.target.closest('.bookmark-btn, .project-guide-link, .project-title-link')) return;
         openModal(id);
       });
       card.addEventListener('keydown', (e) => {
@@ -5776,7 +5778,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
           <span class="level-badge level-${p.level}">${meta.label}</span>
           <span class="time-badge">⏱ ${meta.time}</span>
         </div>
-        <h3>${p.title}</h3>
+        <h3><a class="project-title-link" href="/projects/${encodeURIComponent(p.id)}/">${p.title}</a></h3>
         <p class="summary">${p.summary}</p>
         <div class="tech-tags">
           ${p.tech.slice(0, 4).map(t => `<span class="tag">${t}</span>`).join('')}
@@ -5788,7 +5790,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
         </div>
         ` : ''}
         <div class="card-footer">
-          <span class="view-more">View details →</span>
+          <a class="project-guide-link" href="/projects/${encodeURIComponent(p.id)}/">Open full project guide →</a>
         </div>
       </article>
     `;

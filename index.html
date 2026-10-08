@@ -5745,13 +5745,6 @@ ${tags} #BuildingInPublic #OpenToWork`;
         if (e.target.closest('.bookmark-btn, .project-guide-link, .project-title-link')) return;
         openModal(id);
       });
-      card.addEventListener('keydown', (e) => {
-        if (e.target !== card) return;
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          openModal(id);
-        }
-      });
       const bm = card.querySelector('.bookmark-btn');
       bm.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -5770,7 +5763,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     const pct = total ? Math.round((done / total) * 100) : 0;
     const progressLabel = total === 0 ? '' : progress === 'done' ? 'Complete' : `${done}/${total} steps`;
     return `
-      <article class="project-card ${statusClass}" data-id="${p.id}" tabindex="0" role="button" aria-label="View details: ${p.title}">
+      <article class="project-card ${statusClass}" data-id="${p.id}">
         <button class="bookmark-btn ${isBookmarked ? 'active' : ''}" aria-label="Bookmark ${p.title}" aria-pressed="${isBookmarked}">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="${isBookmarked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
         </button>

@@ -3,6 +3,7 @@ import { fileURLToPath, URL } from 'node:url';
 import { validateProjects } from './scripts/projects.mjs';
 import { validateStyles } from './scripts/styles.mjs';
 import { validatePremium } from './scripts/premium.mjs';
+import { generateSeoPages } from './scripts/seo-pages.mjs';
 
 // This project keeps two things duplicated by hand — the project catalog
 // (index.html + match.html) and the stylesheet (an inline block in index.html +
@@ -18,10 +19,22 @@ const consistencyCheck = () => ({
   },
 });
 
+
+const seoPages = () => {
+  let isBuild = false;
+  return {
+    name: 'seo-pages',
+    configResolved(config) { isBuild = config.command === 'build'; },
+    async closeBundle() {
+      if (isBuild) await generateSeoPages();
+    },
+  };
+};
+
 // Multi-page build: every standalone HTML entry must be listed here, otherwise
 // `vite build` only emits index.html and the other pages 404 in production.
 export default defineConfig({
-  plugins: [consistencyCheck()],
+  plugins: [consistencyCheck(), seoPages()],
   build: {
     rollupOptions: {
       input: {

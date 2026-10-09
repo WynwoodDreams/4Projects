@@ -379,6 +379,7 @@
           <li><a href="#" data-mail="contact" data-mail-show="1">Contact</a></li>
           <li><a href="#" data-mail="suggest">Suggest a project</a></li>
           <li><a href="#" data-mail="feedback">Send feedback</a></li>
+          <li><a href="#" data-mail="support">Support</a></li>
         </ul>
       </div>
     </div>
@@ -796,15 +797,19 @@
 
   const MAIL_USER = ['hel', 'lo'].join(''), MAIL_DOMAIN = ['jobstatsmiami', 'com'].join('.');
   const MAIL_ADDR = MAIL_USER + String.fromCharCode(64) + MAIL_DOMAIN;
-  const MAIL_SUBJECTS = { suggest: 'Project Suggestion — buildersbench.dev', feedback: 'buildersbench.dev — Career Match feedback', contact: 'buildersbench.dev — Hello' };
+  const SUPPORT_ADDR = ['christian', 'jort'].join('') + String.fromCharCode(64) + ['gmail', 'com'].join('.');
+  const MAIL_SUBJECTS = { suggest: 'Project Suggestion — buildersbench.dev', feedback: 'buildersbench.dev — Career Match feedback', contact: 'buildersbench.dev — Hello', support: 'buildersbench.dev | Support' };
+  const MAIL_BODIES = { support: 'What happened:\n\nWhich page:\n\nDevice and browser:\n' };
   function wireMail() {
     document.querySelectorAll('a[data-mail]').forEach(a => {
       if (a.dataset.wired) return; a.dataset.wired = '1';
       const kind = a.dataset.mail; const params = new URLSearchParams();
       if (MAIL_SUBJECTS[kind]) params.set('subject', MAIL_SUBJECTS[kind]);
+      if (MAIL_BODIES[kind]) params.set('body', MAIL_BODIES[kind]);
       const qs = params.toString();
-      a.href = 'mailto:' + MAIL_ADDR + (qs ? '?' + qs : '');
-      if (a.dataset.mailShow && !a.textContent.trim()) a.textContent = MAIL_ADDR;
+      const addr = kind === 'support' ? SUPPORT_ADDR : MAIL_ADDR;
+      a.href = 'mailto:' + addr + (qs ? '?' + qs : '');
+      if (a.dataset.mailShow && !a.textContent.trim()) a.textContent = addr;
     });
   }
   wireMail();

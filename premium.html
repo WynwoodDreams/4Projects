@@ -56,6 +56,7 @@
   .gate-msg { margin-top: 10px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.04em; color: var(--ink-muted); min-height: 16px; }
   .gate-msg.err { color: var(--gold); }
   .gate-note { margin-top: 14px; font-size: 12px; color: var(--ink-muted); font-style: italic; }
+  .gate-note a { color: var(--green); font-style: normal; border-bottom: 1px solid var(--line-3); text-decoration: none; word-break: break-all; }
 
   /* Role search */
   .road-box { margin-top: 16px; max-width: 760px; }
@@ -209,7 +210,7 @@
         <button class="go-btn" id="gate-go" type="submit">Enter →</button>
       </div>
       <div class="gate-msg" id="gate-msg" role="status" aria-live="polite"></div>
-      <p class="gate-note">You get the password at a BuildersBench workshop. It stays signed in on this device for 30 days.</p>
+      <p class="gate-note">You get the password at a BuildersBench workshop. It stays signed in on this device for 30 days. Trouble signing in? Email <a href="#" data-mail="support" data-mail-show="1"></a>.</p>
     </form>
   </div>
 </section>
@@ -266,6 +267,7 @@
         <ul class="footer-connect">
           <li><a href="#" data-mail="contact" data-mail-show="1">Contact</a></li>
           <li><a href="#" data-mail="feedback">Send feedback</a></li>
+          <li><a href="#" data-mail="support">Support</a></li>
         </ul>
       </div>
     </div>
@@ -476,12 +478,16 @@
   // ===== Footer year + mail =====
   const yearEl = $('footer-year'); if (yearEl) yearEl.textContent = new Date().getFullYear();
   const MAIL_ADDR = ['hel', 'lo'].join('') + String.fromCharCode(64) + ['jobstatsmiami', 'com'].join('.');
-  const MAIL_SUBJECTS = { feedback: 'buildersbench.dev | Feedback', contact: 'buildersbench.dev | Hello' };
+  const SUPPORT_ADDR = ['christian', 'jort'].join('') + String.fromCharCode(64) + ['gmail', 'com'].join('.');
+  const MAIL_SUBJECTS = { feedback: 'buildersbench.dev | Feedback', contact: 'buildersbench.dev | Hello', support: 'buildersbench.dev | Members page support' };
+  const MAIL_BODIES = { support: 'What happened:\n\nWhich role or page:\n\nDevice and browser:\n' };
   document.querySelectorAll('a[data-mail]').forEach(a => {
     const kind = a.dataset.mail; const params = new URLSearchParams();
     if (MAIL_SUBJECTS[kind]) params.set('subject', MAIL_SUBJECTS[kind]);
-    a.href = 'mailto:' + MAIL_ADDR + '?' + params.toString();
-    if (a.dataset.mailShow && !a.textContent.trim()) a.textContent = MAIL_ADDR;
+    if (MAIL_BODIES[kind]) params.set('body', MAIL_BODIES[kind]);
+    const addr = kind === 'support' ? SUPPORT_ADDR : MAIL_ADDR;
+    a.href = 'mailto:' + addr + '?' + params.toString();
+    if (a.dataset.mailShow && !a.textContent.trim()) a.textContent = addr;
   });
 </script>
 </body>

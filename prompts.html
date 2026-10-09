@@ -267,6 +267,7 @@
           <li><a href="#" data-mail="contact" data-mail-show="1">Contact</a></li>
           <li><a href="#" data-mail="suggest">Suggest a prompt</a></li>
           <li><a href="#" data-mail="feedback">Send feedback</a></li>
+          <li><a href="#" data-mail="support">Support</a></li>
         </ul>
       </div>
     </div>
@@ -522,12 +523,15 @@
   const MAIL_USER = ['hel', 'lo'].join('');
   const MAIL_DOMAIN = ['jobstatsmiami', 'com'].join('.');
   const MAIL_ADDR = MAIL_USER + String.fromCharCode(64) + MAIL_DOMAIN;
+  const SUPPORT_ADDR = ['christian', 'jort'].join('') + String.fromCharCode(64) + ['gmail', 'com'].join('.');
   const MAIL_SUBJECTS = {
     suggest:  'Prompt Suggestion — buildersbench.dev',
     feedback: 'buildersbench.dev — Feedback',
-    contact:  'buildersbench.dev — Hello'
+    contact:  'buildersbench.dev — Hello',
+    support:  'buildersbench.dev | Support'
   };
   const MAIL_BODIES = {
+    support: 'What happened:\n\nWhich page:\n\nDevice and browser:\n',
     suggest: 'Prompt idea:\n\nWhat stage it helps with:\n\nThe prompt text:\n\nWhy it works:\n'
   };
   document.querySelectorAll('a[data-mail]').forEach(a => {
@@ -536,8 +540,9 @@
     if (MAIL_SUBJECTS[kind]) params.set('subject', MAIL_SUBJECTS[kind]);
     if (MAIL_BODIES[kind])   params.set('body',    MAIL_BODIES[kind]);
     const qs = params.toString();
-    a.href = 'mailto:' + MAIL_ADDR + (qs ? '?' + qs : '');
-    if (a.dataset.mailShow && !a.textContent.trim()) a.textContent = MAIL_ADDR;
+    const addr = kind === 'support' ? SUPPORT_ADDR : MAIL_ADDR;
+    a.href = 'mailto:' + addr + (qs ? '?' + qs : '');
+    if (a.dataset.mailShow && !a.textContent.trim()) a.textContent = addr;
   });
 
   // ===== Back to top =====

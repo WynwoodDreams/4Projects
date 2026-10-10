@@ -282,6 +282,16 @@
     display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
   }
   .promo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  /* The sister site, set below the BuildersBench cards as one full-width row */
+  .promo-eyebrow-sister { margin-top: 36px; }
+  .project-card.promo-wide { flex-direction: row; align-items: center; gap: 18px; min-height: 0; }
+  .promo-wide-body { flex: 1; min-width: 0; }
+  .promo-card.promo-wide .summary { margin-bottom: 0; }
+  .promo-card.promo-wide .view-more { margin: 0; white-space: nowrap; }
+  @media (max-width: 860px) {
+    .project-card.promo-wide { flex-wrap: wrap; align-items: flex-start; }
+    .promo-wide-body { flex-basis: 100%; }
+  }
   @media (max-width: 1080px) { .promo-grid { grid-template-columns: repeat(2, 1fr); } }
   .promo-card { text-decoration: none; color: inherit; min-height: 0; }
   .promo-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
@@ -1500,6 +1510,11 @@
     box-shadow: 0 0 10px var(--green-glow);
   }
   .path-role-chips { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+  .path-jobs {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em;
+    color: var(--green); text-decoration: none; border-bottom: 1px solid var(--line-3);
+  }
+  .path-jobs:hover, .path-jobs:focus-visible { border-bottom-color: var(--green); }
   .path-role-chip {
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
@@ -3204,6 +3219,15 @@
         <span class="view-more">View hosting →</span>
       </a>
     </div>
+    <div class="promo-eyebrow promo-eyebrow-sister"><span class="dot"></span>Also from Christian</div>
+    <a class="project-card promo-card promo-wide" href="https://cob-eta.vercel.app/" target="_blank" rel="noopener">
+      <span class="promo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 13h18"/></svg></span>
+      <div class="promo-wide-body">
+        <h3>Christian's Opportunity Board</h3>
+        <p class="summary">South Florida internships and entry-level cloud and tech jobs, with direct apply links. Find the role there, then build the project for it here.</p>
+      </div>
+      <span class="view-more">See open roles ↗</span>
+    </a>
   </div>
 </section>
 
@@ -3421,6 +3445,11 @@
     { id: 'tech-it', icon: '🛠', name: 'Tech / IT Support', short: 'IT Support', desc: 'Where hardware meets automation.',
       salary: '$60k – $100k', salaryRange: [60, 100], roles: ['IT Support Specialist', 'Systems Administrator', 'IT Automation Engineer'] }
   ];
+
+  // The Opportunity Board, the sister site of South Florida internships and entry-level
+  // jobs. Its filters live in the URL hash, so a path can open it on the matching area.
+  const BOARD_URL = 'https://cob-eta.vercel.app/';
+  const boardLink = pathId => BOARD_URL + '#area=' + encodeURIComponent(pathId === 'cloud' ? 'Cloud & DevOps' : 'Software, IT, Data & AI');
 
   // Lucide-style line icons (lucide.dev) — stroke-based, consistent 24x24 grid
   const SVG_OPEN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
@@ -5729,6 +5758,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
               <span class="path-meta-label">Roles</span>
               <span class="path-role-chips">${g.path.roles.map(r => `<span class="path-role-chip">${r}</span>`).join('')}</span>
             </div>
+            <a class="path-jobs" href="${boardLink(g.path.id)}" target="_blank" rel="noopener">Open roles in South Florida ↗</a>
           </div>
           ` : ''}
         </div>

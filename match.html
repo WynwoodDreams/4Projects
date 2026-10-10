@@ -117,6 +117,11 @@
     color: var(--green); border-bottom: 1px solid var(--line-3); cursor: pointer;
   }
   .alt-path button:hover, .alt-path button:focus-visible { border-bottom-color: var(--green); }
+  .result-jobs {
+    display: inline-block; margin-top: 14px; font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    color: var(--green); text-decoration: none; border-bottom: 1px solid var(--line-3);
+  }
+  .result-jobs:hover, .result-jobs:focus-visible { border-bottom-color: var(--green); }
   #match-output:focus { outline: none; }
   .match-kbd {
     display: inline-flex; align-items: center; gap: 4px; margin-left: auto;
@@ -418,6 +423,11 @@
     'tech-it': { name: 'Tech / IT Support',  salary: '$52k – $85k',   roles: 'IT Support Specialist · Systems Administrator · IT Automation Engineer', blurb: 'Where hardware meets automation — the operations backbone every team needs.' }
   };
 
+  // The Opportunity Board, the sister site of South Florida internships and entry-level
+  // jobs. Its filters live in the URL hash, so a path can open it on the matching area.
+  const BOARD_URL = 'https://cob-eta.vercel.app/';
+  const boardLink = pathId => BOARD_URL + '#area=' + encodeURIComponent(pathId === 'cloud' ? 'Cloud & DevOps' : 'Software, IT, Data & AI');
+
   // ===== CORE SKILLS PER ROLE (highlighted in the result) =====
   const CORE_SKILLS = {
     ai:        ['Python', 'LLMs & prompting', 'RAG & vector DBs', 'PyTorch / TensorFlow', 'APIs & tool use', 'ML fundamentals', 'AI agents', 'Evaluation'],
@@ -433,13 +443,13 @@
   // ===== PATH SIGNAL KEYWORDS (multi-word phrases score higher) =====
   const PATH_KEYWORDS = {
     ai:        ['artificial intelligence','machine learning','deep learning','large language model','natural language','computer vision','generative ai','gen ai','hugging face','prompt engineering','data scientist','neural network','ai','ml','llm','nlp','rag','langchain','pytorch','tensorflow','openai','genai','agentic','embeddings','fine-tuning','model'],
-    cloud:     ['google cloud','site reliability','platform engineer','infrastructure as code','aws','azure','gcp','kubernetes','docker','terraform','devops','serverless','lambda','cloudformation','ansible','helm','ci/cd','cicd','sre','ec2','microservices','containers'],
+    cloud:     ['google cloud','site reliability','platform engineer','infrastructure as code','aws','azure','gcp','kubernetes','docker','terraform','devops','serverless','lambda','cloudformation','ansible','helm','ci/cd','cicd','sre','ec2','microservices','containers','cloud','iac'],
     cs:        ['data structures','computer science','operating systems','distributed systems','algorithms','compiler','concurrency','low-level','embedded','c++','systems programming'],
-    cyber:     ['incident response','penetration testing','threat intelligence','vulnerability management','security operations','cybersecurity','information security','infosec','soc','siem','pentest','malware','owasp','firewall','splunk','blue team','red team','phishing','encryption','security'],
-    data:      ['data analyst','data analysis','business intelligence','power bi','data visualization','data warehouse','sql','tableau','excel','dashboard','dashboards','analytics','pandas','statistics','etl','looker','bigquery','reporting','kpi','spreadsheets'],
+    cyber:     ['incident response','penetration testing','threat intelligence','vulnerability management','security operations','cybersecurity','information security','infosec','soc','siem','pentest','malware','owasp','firewall','splunk','blue team','red team','phishing','encryption','security','cyber'],
+    data:      ['data analyst','data analysis','business intelligence','power bi','data visualization','data warehouse','sql','tableau','excel','dashboard','dashboards','analytics','pandas','statistics','etl','looker','bigquery','reporting','kpi','spreadsheets','data engineer','data intelligence'],
     helpdesk:  ['help desk','service desk','technical support','customer support','end user','call center','tier 1','tier 2','helpdesk','ticketing','zendesk','troubleshooting'],
-    swe:       ['software engineer','full stack','full-stack','back end','front end','web development','rest api','software developer','javascript','typescript','react','node','backend','frontend','java','golang','graphql','microservices','programming','spring','django','flask','api','databases'],
-    'tech-it': ['it support','active directory','system administrator','microsoft 365','office 365','desktop support','it specialist','help','hardware','networking','powershell','sysadmin','intune','vpn','dns','dhcp','imaging','windows server','servers']
+    swe:       ['software engineer','full stack','full-stack','back end','front end','web development','rest api','software developer','javascript','typescript','react','node','backend','frontend','java','golang','graphql','microservices','programming','spring','django','flask','api','databases','developer'],
+    'tech-it': ['it support','active directory','system administrator','microsoft 365','office 365','desktop support','it specialist','help','hardware','networking','powershell','sysadmin','intune','vpn','dns','dhcp','imaging','windows server','servers','support specialist','field service','infrastructure','network']
   };
 
   // ===== AI CERTS (with path affinity) =====
@@ -699,6 +709,7 @@
           </div>
         </div>
         ${hasAlt ? `<div class="alt-path">Also a fit: <button type="button" data-pick2="${second}">${esc(PATHS[second].name)} →</button></div>` : ''}
+        <a class="result-jobs" href="${esc(boardLink(top))}" target="_blank" rel="noopener">Open ${esc(path.name)} roles in South Florida ↗</a>
       </div>
 
       <div class="result-section-title sec-projects"><span class="num">01</span><span>Build these projects</span><span class="sec-rule"></span><a class="sec-link sec-link-projects" href="/index.html#path=${top}">All ${esc(path.name)} projects →</a></div>
@@ -790,6 +801,11 @@
     chip.onclick = () => { document.getElementById('match-input').value = chip.textContent.trim(); run(); };
   });
   render('');
+
+  // Deep link: match.html?q=<job title or description> fills the box and runs the match.
+  // The Opportunity Board's "Projects for this role" links land here this way.
+  const linkedQuery = (new URLSearchParams(location.search).get('q') || '').trim().slice(0, 2000);
+  if (linkedQuery) { document.getElementById('match-input').value = linkedQuery; run(); }
 
   // ===== Footer year + mail + back-to-top =====
   const yearEl = document.getElementById('footer-year');

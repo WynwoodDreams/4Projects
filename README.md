@@ -72,6 +72,12 @@ npm run test:match
 
 Each case asserts the path a posting routes to and a project that must appear. Add a case when you add a project that targets a distinct kind of role.
 
+`match.html?q=<text>` opens the matcher with the text filled in and runs it. The [Opportunity Board](https://cob-eta.vercel.app/) uses this for its "Projects for this role" links, sending the job's title, summary and requirements.
+
+### Linking to the Opportunity Board
+
+The Opportunity Board (South Florida internships and entry-level jobs, repo `WynwoodDreams/COB`) keeps its filters in the URL hash. Each career path header and each Career Match result links to it filtered to one area: Cloud opens `#area=Cloud & DevOps`, and every other path opens `#area=Software, IT, Data & AI`. That mapping is `boardLink` in `index.html` and `match.html`. The homepage also has an "Also from Christian" card under "More from BuildersBench".
+
 ### Styles
 
 `index.html` does **not** load `styles.css` — it has its own inline `<style id="glass-terminal-style">` block. `styles.css` serves `match.html`, `certifications.html`, and `prompts.html`.

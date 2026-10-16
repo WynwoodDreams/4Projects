@@ -193,6 +193,30 @@
     outline: 2px solid var(--green); outline-offset: 2px;
   }
 
+  /* ===== "Also from Christian" partner band (reciprocal to the BuildersBench strip on the Opportunity Board) ===== */
+  .partner-section { padding: 0 0 56px; }
+  .partner-card {
+    display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+    padding: 22px 26px; border-radius: 16px; text-decoration: none; color: inherit;
+    background: var(--glass); border: 1px solid var(--line);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+  }
+  .partner-card:hover { border-color: var(--line-3); box-shadow: 0 0 0 1px var(--line-3), 0 18px 40px rgba(0,0,0,0.35); transform: translateY(-2px); }
+  .partner-eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--ink-muted); display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+  }
+  .partner-eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green-glow); }
+  .partner-card h3 { font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 600; color: var(--ink); letter-spacing: -0.02em; line-height: 1.2; margin: 0 0 6px; padding: 0; }
+  .partner-card p { font-size: 13.5px; color: var(--ink-soft); line-height: 1.55; margin: 0; max-width: 62ch; }
+  .partner-cta {
+    flex-shrink: 0; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
+    color: var(--bg); background: var(--green); padding: 11px 18px; border-radius: 999px; white-space: nowrap;
+    box-shadow: 0 0 18px var(--green-glow);
+  }
+  @media (max-width: 640px) { .partner-card { padding: 18px; } .partner-cta { width: 100%; text-align: center; } }
+  @media (prefers-reduced-motion: reduce) { .partner-card { transition: none; } .partner-card:hover { transform: none; } }
+
   /* ===== HERO ===== */
   .hero {
     padding: 36px 0 24px;

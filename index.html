@@ -245,7 +245,7 @@
   a.nav-link2:hover { border-color: var(--green); box-shadow: 0 0 0 1px var(--green), 0 12px 30px -16px rgba(0,255,133,0.25); }
 
   /* ===== Hero CTA buttons (spotlight Certs + Prompts) ===== */
-  .hero-cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+  .hero-cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
   .hero-cta {
     display: inline-flex; align-items: center; gap: 9px;
     padding: 13px 22px; border-radius: 999px;
@@ -314,10 +314,19 @@
   }
   @media (max-width: 640px) { .partner-card { padding: 18px; } .partner-cta { width: 100%; text-align: center; } }
   @media (prefers-reduced-motion: reduce) { .partner-card { transition: none; } .partner-card:hover { transform: none; } }
+  /* Compact variant: sits directly under the hero on the home page */
+  .partner-section--hero { padding: 0 0 4px; }
+  .partner-card--inline { padding: 13px 18px 13px 22px; gap: 16px; }
+  .partner-copy { display: flex; align-items: center; gap: 14px 18px; flex-wrap: wrap; min-width: 0; }
+  .partner-card--inline .partner-eyebrow { margin: 0; }
+  .partner-card--inline h3 { font-size: 16px; margin: 0; }
+  .partner-card--inline p { font-size: 13px; }
+  .partner-card--inline .partner-cta { padding: 9px 16px; font-size: 11.5px; }
+  @media (max-width: 640px) { .partner-copy { display: block; } .partner-copy .partner-eyebrow { margin-bottom: 6px; } .partner-card--inline h3 { margin-bottom: 4px; } }
 
   /* ===== HERO ===== */
   .hero {
-    padding: 36px 0 24px;
+    padding: 28px 0 16px;
     position: relative;
   }
   .hero-grid {
@@ -331,7 +340,7 @@
                 radial-gradient(ellipse at 0% 0%, rgba(0,255,133,0.10), transparent 55%);
     border: 1px solid rgba(255,255,255,0.18);
     border-radius: 16px;
-    padding: 30px 32px;
+    padding: 24px 28px;
     position: relative;
     overflow: hidden;
   }
@@ -352,7 +361,7 @@
     text-transform: uppercase;
     color: var(--ink-muted);
     font-weight: 500;
-    margin-bottom: 22px;
+    margin-bottom: 14px;
     padding: 6px 12px;
     border: 1px solid var(--line);
     border-radius: 999px;
@@ -375,12 +384,12 @@
 
   .hero h1 {
     font-family: 'Inter', sans-serif;
-    font-size: clamp(32px, 4.8vw, 46px);
+    font-size: clamp(30px, 4.2vw, 40px);
     font-weight: 700;
     line-height: 1.05;
     letter-spacing: -0.04em;
     color: var(--ink);
-    margin-bottom: 14px;
+    margin-bottom: 10px;
   }
   .hero h1 .accent {
     color: var(--green);
@@ -421,7 +430,7 @@
                 radial-gradient(ellipse at 0% 0%, rgba(0,194,168,0.10), transparent 55%);
     border: 1px solid rgba(255,255,255,0.18);
     border-radius: 16px;
-    padding: 22px 22px 22px;
+    padding: 18px 20px;
     backdrop-filter: blur(6px);
     overflow: hidden;
     position: relative;
@@ -3124,6 +3133,20 @@
   </div>
 </section>
 
+<!-- ALSO FROM CHRISTIAN -->
+<section class="partner-section partner-section--hero" id="opportunity-board" aria-label="Also from Christian">
+  <div class="container">
+    <a class="partner-card partner-card--inline" href="https://cob-eta.vercel.app/" target="_blank" rel="noopener noreferrer">
+      <div class="partner-copy">
+        <div class="partner-eyebrow"><span class="dot"></span>Also from Christian</div>
+        <h3>Christian's Opportunity Board</h3>
+        <p>Open internships across Miami-Dade, Broward and Palm Beach. Filter by major, county and term, then apply straight to the employer.</p>
+      </div>
+      <span class="partner-cta">Browse internships →</span>
+    </a>
+  </div>
+</section>
+
 <!-- CONTROLS -->
 <section class="controls">
   <div class="container">
@@ -3228,20 +3251,6 @@
         <span class="view-more">View hosting →</span>
       </a>
     </div>
-  </div>
-</section>
-
-<!-- ALSO FROM CHRISTIAN -->
-<section class="partner-section" id="opportunity-board" aria-label="Also from Christian">
-  <div class="container">
-    <a class="partner-card" href="https://cob-eta.vercel.app/" target="_blank" rel="noopener noreferrer">
-      <div>
-        <div class="partner-eyebrow"><span class="dot"></span>Also from Christian</div>
-        <h3>Christian's Opportunity Board</h3>
-        <p>Open internships across Miami-Dade, Broward and Palm Beach. Filter by major, county and term, then apply straight to the employer.</p>
-      </div>
-      <span class="partner-cta">Browse internships →</span>
-    </a>
   </div>
 </section>
 

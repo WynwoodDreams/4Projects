@@ -3108,6 +3108,19 @@
     .path-tab { width: 78px; height: 88px; }
   }
 
+  /* ===== Stuck? panel ===== */
+  .stuck-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  .stuck-list li {
+    display: flex; flex-direction: column; gap: 4px;
+    padding: 12px 14px; border-radius: 10px;
+    background: rgba(var(--well-rgb),0.30); border: 1px solid var(--line); border-left: 3px solid var(--gold);
+  }
+  .stuck-list li strong { font-size: 13.5px; color: var(--ink); line-height: 1.4; }
+  .stuck-list li span { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+  .stuck-list li.stuck-generic { border-left-color: var(--teal); }
+  .stuck-note { margin-top: 12px; font-size: 12.5px; color: var(--ink-muted); }
+  .stuck-note a { color: var(--green); }
+
   /* ===== Starter kit (Ship tab) ===== */
   .kit-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
   .kit-actions .btn-secondary { text-decoration: none; }
@@ -5552,6 +5565,356 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
     }
   ];
 
+  // ===== STUCK? — the errors students hit most on each project, with the fix =====
+  // Keyed by project id. Every card needs at least three; the build checks.
+  const STUCK = {
+    'tech-it-0': [
+      { symptom: "Connect-MgGraph opens a browser and then the script says insufficient privileges", fix: "Pass the scopes you need: Connect-MgGraph -Scopes 'User.ReadWrite.All','Group.ReadWrite.All','Directory.ReadWrite.All'. Consent once as the tenant admin." },
+      { symptom: "New-MgUser fails with 'Property passwordProfile is required' or a licensing error", fix: "Build the user as a hashtable with PasswordProfile and UsageLocation set. Licenses cannot be assigned without a UsageLocation." },
+      { symptom: "The AI-generated script uses Set-MsolUser or Connect-AzureAD and nothing is found", fix: "Those modules are retired. Ask the AI to rewrite with the Microsoft.Graph module, then check each cmdlet name with Get-Command." }
+    ],
+    'it-1': [
+      { symptom: "The model's answer is not valid JSON and json.loads throws", fix: "Use the provider's structured output or JSON mode, strip code fences before parsing, and retry once with the error text appended to the prompt." },
+      { symptom: "Every request returns 429 rate limit after a few tickets", fix: "Add a short sleep between calls and exponential backoff on 429. New API keys have low limits for the first days." },
+      { symptom: "Flask works locally but the dashboard shows nothing when tickets are processed", fix: "The classifier writes to memory in one process and the dashboard reads another. Store results in SQLite or a CSV so both routes see them." }
+    ],
+    'it-2': [
+      { symptom: "Lambda times out after three seconds before the first URL finishes", fix: "Raise the timeout to 30 seconds in Configuration, and set a per-request timeout of five seconds in requests.get so one dead site does not eat the whole budget." },
+      { symptom: "Slack webhook returns 403 or invalid_payload", fix: "Send Content-Type application/json and a body of {\"text\": \"...\"}. Rotate the webhook if it was ever committed to Git." },
+      { symptom: "The schedule exists but CloudWatch shows no invocations", fix: "The EventBridge rule needs permission to invoke the function. Add the rule as a trigger from the Lambda console so the resource policy is created." }
+    ],
+    'it-3': [
+      { symptom: "nmap says 'requires root privileges' or finds no open ports on the target", fix: "Run with sudo for SYN scans, and confirm the target VM is on the same host-only network. Scan only machines you own." },
+      { symptom: "ReportLab PDF has overlapping text or a blank page", fix: "Use the Platypus layer (SimpleDocTemplate and Paragraph) instead of drawing at fixed coordinates. It handles wrapping and page breaks." },
+      { symptom: "The GitHub Actions job cannot scan anything because there is no target in CI", fix: "Scan a container you start in the same job, or run the parser and report step in CI against a saved scan.xml committed as a fixture." }
+    ],
+    'ai-1': [
+      { symptom: "Agents loop forever passing the task back and forth", fix: "Set max_iter on each agent and a hard cap on crew rounds. Give the Writer a clear 'done' condition in its task description." },
+      { symptom: "The search tool returns nothing or a 401", fix: "Export the Tavily or Serper key in your environment before starting Python, and print the first tool call result to confirm the key is read." },
+      { symptom: "A run costs several dollars and you cannot tell why", fix: "Log token usage per agent step. Use a smaller model for the Researcher and reserve the frontier model for the final Writer pass." }
+    ],
+    'ai-2': [
+      { symptom: "LlamaParse or Unstructured drops tables or returns them as garbled text", fix: "Export tables as Markdown or HTML, not plain text, and check one table by eye. Fall back to pdfplumber for simple grids." },
+      { symptom: "Pinecone rejects upserts with a dimension mismatch", fix: "The index dimension is fixed at creation. Check the embedding model's dimension and create a new index if it differs." },
+      { symptom: "RAGAS faithfulness is near zero for every answer", fix: "Your evaluator is seeing the wrong context field. Pass the exact retrieved chunks used for that answer, not the full document." }
+    ],
+    'ai-3': [
+      { symptom: "The workflow runs but posting a comment fails with 403 Resource not accessible", fix: "Add permissions: pull-requests: write to the job, and note that PRs from forks always get a read-only token." },
+      { symptom: "Review comment rejected with 'line must be part of the diff'", fix: "Compute positions from the diff hunks, not file line numbers, and skip findings on unchanged lines." },
+      { symptom: "The model reviews 2,000 lines and returns vague feedback", fix: "Chunk per file, cap each chunk around 300 lines, and ask for at most five findings per chunk with a line number each." }
+    ],
+    'da-1': [
+      { symptom: "read_excel takes minutes or runs out of memory", fix: "Convert the workbook to Parquet once with a script and load that. Keep only the columns you use." },
+      { symptom: "pd.qcut fails with 'Bin edges must be unique'", fix: "Many customers share a frequency of 1. Use rank(method='first') before cutting, or pass duplicates='drop' and accept fewer bins." },
+      { symptom: "Streamlit Cloud deploy fails on a missing module", fix: "Add a requirements.txt with pinned versions in the repo root. Streamlit installs only what is listed there." }
+    ],
+    'da-2': [
+      { symptom: "CoinGecko returns 429 after a minute of polling", fix: "The free tier allows roughly 10 to 30 calls a minute. Poll every 60 seconds and back off on 429." },
+      { symptom: "NewsAPI returns 426 or 'corsNotAllowed'", fix: "The developer plan blocks browser calls and production hosts. Call it from your backend only, and cache results." },
+      { symptom: "Pearson correlation is NaN", fix: "One series is constant in the window, often because sentiment has no new headlines. Require at least 10 points and non-zero variance before computing." }
+    ],
+    'da-3': [
+      { symptom: "Prophet install fails on cmdstan or pystan", fix: "Install the prophet package from pip in a fresh virtual environment with Python 3.10 or 3.11. Conda is the smoothest route on Windows." },
+      { symptom: "The forecast is flat or ignores seasonality", fix: "Prophet needs the columns named ds and y, and at least two full cycles of history. Enable yearly_seasonality explicitly." },
+      { symptom: "Power BI cannot connect to the local PostgreSQL", fix: "Install the Npgsql provider the connector asks for, or export the forecast tables to CSV and import those." }
+    ],
+    'sw-1': [
+      { symptom: "Redis connection refused in Docker Compose", fix: "Use the service name as the host, not localhost. Containers talk to each other by name on the Compose network." },
+      { symptom: "Two requests created the same short code", fix: "Make the column unique and handle the insert error by regenerating. Collision handling must be at the database, not in application logic." },
+      { symptom: "Prometheus shows the target as DOWN", fix: "The scrape config must reach the app by its container name and port, and /metrics must return plain text, not JSON." }
+    ],
+    'sw-2': [
+      { symptom: "Workers block each other and only one runs at a time", fix: "The claim query needs both FOR UPDATE and SKIP LOCKED, and the transaction must commit quickly after claiming." },
+      { symptom: "A killed worker leaves a job locked forever", fix: "Add a locked_at timeout. A sweeper marks jobs locked longer than N minutes as pending again." },
+      { symptom: "Retried jobs run in a tight loop with no delay", fix: "scheduled_at must be set to now plus the backoff before the status is reset to pending. Check the worker filters on scheduled_at <= now()." }
+    ],
+    'sw-3': [
+      { symptom: "Chunks lose their page and filename metadata", fix: "Attach metadata when you create each Document before splitting. The splitter copies metadata; it does not invent it." },
+      { symptom: "Pinecone upsert fails with 'vector dimension does not match'", fix: "The index was created for a different model. Delete it and create one matching your embedding size." },
+      { symptom: "The model answers from its own knowledge when retrieval finds nothing", fix: "Add 'If the context does not contain the answer, say you do not know' to the system prompt, and return early when the top score is below a threshold." }
+    ],
+    'hd-1': [
+      { symptom: "Uploaded articles are not used in answers", fix: "Knowledge indexing takes minutes after upload. Wait, then test with a question that only the article could answer." },
+      { symptom: "Zapier does not fire when the bot escalates", fix: "The free plan polls every 15 minutes. Test with the Run button in Zapier, then wait for the schedule." },
+      { symptom: "The bot invents a ticket number", fix: "Only speak the number the Zap returns. Set the message to use the returned field, not model text." }
+    ],
+    'hd-2': [
+      { symptom: "Power Automate shows 'The user does not have permission' on Create user", fix: "The flow runs as the maker. Sign in as a Global Admin or User Admin in the sandbox when creating the connection." },
+      { symptom: "Create user fails with 'Property mailNickname is invalid'", fix: "Build mailNickname from first and last name with spaces and punctuation removed. Apostrophes in names are the usual cause." },
+      { symptom: "Assign license fails with 'no available licenses'", fix: "Remove licenses from old test users, and check the SKU id with Get-MgSubscribedSku." }
+    ],
+    'hd-3': [
+      { symptom: "Snipe-IT Docker container exits with an app key error", fix: "Generate a key with php artisan key:generate inside the container, or set APP_KEY in the env file to a base64 value." },
+      { symptom: "The API returns 401 even with a token", fix: "Send it as Authorization: Bearer <token> and accept application/json. The web session cookie does not work for the API." },
+      { symptom: "Power BI refresh fails because the CSV path is local", fix: "Point the report at a OneDrive or SharePoint folder, or load the extract into a cloud database." }
+    ],
+    'cs-1': [
+      { symptom: "ChromaDB raises 'embedding dimension mismatch' after changing models", fix: "Delete the collection and re-index. A collection is tied to the embedding size it was created with." },
+      { symptom: "Reciprocal rank fusion returns the same results as vector search alone", fix: "Check that BM25 is actually tokenizing your chunks. Fusion over an empty sparse list changes nothing." },
+      { symptom: "The cross-encoder is slow enough to time out requests", fix: "Re-rank only the top 20 and run it on CPU with a small model such as MiniLM. Cache results per query during evaluation." }
+    ],
+    'cs-2': [
+      { symptom: "LangGraph raises 'InvalidUpdateError' when two nodes write the same key", fix: "Give list fields an Annotated reducer such as operator.add so updates append instead of conflict." },
+      { symptom: "The supervisor returns a node name that does not exist", fix: "Use structured output with a Literal of the valid node names. Validate before routing and default to FINISH." },
+      { symptom: "The graph never ends", fix: "Add a recursion_limit in the config and a counter in state. The supervisor must route to END after a set number of rounds." }
+    ],
+    'cs-3': [
+      { symptom: "Mosquitto refuses connections from other containers", fix: "Mosquitto 2 defaults to localhost only. Add listener 1883 and allow_anonymous true to a mosquitto.conf you mount in." },
+      { symptom: "The processor cannot import tflite_runtime", fix: "Install tflite-runtime matching your Python version, or use tensorflow's built-in Interpreter on a laptop and swap for the edge later." },
+      { symptom: "InfluxDB writes succeed but Grafana shows nothing", fix: "Check the bucket name and the org in the data source, and widen the time range. Timestamps in the wrong unit land years away." }
+    ],
+    'cl-1': [
+      { symptom: "Bedrock call returns AccessDeniedException", fix: "Model access must be requested per region and per model. Confirm Access granted in the Bedrock console for the region your Lambda runs in." },
+      { symptom: "Pre-signed upload fails in the browser with a CORS error", fix: "Add a CORS rule on the bucket allowing PUT from your origin with the Content-Type header." },
+      { symptom: "Lambda package exceeds the size limit with PyPDF2 and boto3", fix: "Do not bundle boto3; it is already in the runtime. Put PyPDF2 in a Lambda layer." }
+    ],
+    'cl-2': [
+      { symptom: "Cost Explorer API returns AccessDenied for your IAM user", fix: "Cost Explorer must be enabled in the billing console first, and the user needs ce:GetCostAndUsage. Only the root user can enable it the first time." },
+      { symptom: "Azure cost query returns an empty result", fix: "Costs appear with a day's lag and the scope string must match exactly. Query yesterday, not today, and use the subscription scope." },
+      { symptom: "Two clouds report in different currencies or units", fix: "Normalize to a single currency column and store the original. Azure amortized and AWS unblended costs are not the same thing; name the column honestly." }
+    ],
+    'cl-3': [
+      { symptom: "terraform apply fails creating the EKS cluster with a VPC or IAM error", fix: "Use the official terraform-aws-eks module rather than raw resources. It wires the IAM roles and subnets correctly." },
+      { symptom: "Pods stay Pending after Istio injection", fix: "The sidecar doubles memory per pod. Use larger nodes or reduce replicas; check kubectl describe pod for the resource message." },
+      { symptom: "ArgoCD shows OutOfSync forever", fix: "A mutating webhook or a default field is being added by the cluster. Add an ignoreDifferences entry for that field." }
+    ],
+    'it-4': [
+      { symptom: "scapy needs root and the capture container sees no packets", fix: "Run the capture container with network_mode: host and cap_add NET_RAW and NET_ADMIN." },
+      { symptom: "Isolation Forest flags everything as an anomaly", fix: "Scale features before fitting and set contamination to a small value such as 0.01. Train on normal traffic only." },
+      { symptom: "Feature extraction is too slow on live traffic", fix: "Aggregate per window with pandas groupby rather than per packet, and compute only the five features the model uses." }
+    ],
+    'it-5': [
+      { symptom: "The budget alert email never arrives", fix: "Confirm the subscription email in the console and check spam. Budgets evaluate a few times a day, not instantly." },
+      { symptom: "Cost Anomaly Detection shows no anomalies after a test spend", fix: "It needs about ten days of history and only flags unusual spend. A small, steady test does not qualify." },
+      { symptom: "The Lambda stops instances it should not", fix: "Filter by the cost-center tag in the describe call and dry-run first with a log of what it would stop." }
+    ],
+    'cs-4': [
+      { symptom: "Generated tests import a module path that does not exist", fix: "Give the model the real import path and the file's relative location. Reject any test that fails at import time before counting it." },
+      { symptom: "pytest runs the generated tests against the wrong Python environment", fix: "Run pytest with python -m pytest from the project's virtual environment so the target package resolves." },
+      { symptom: "Coverage does not change after adding tests", fix: "Run coverage with --source set to the package, and confirm the new test files are collected by pytest's naming rules." }
+    ],
+    'ai-4': [
+      { symptom: "The Google Form trigger never fires", fix: "Zapier and n8n poll on a schedule. Submit a response, then wait or use the manual test button." },
+      { symptom: "The agent always routes to a human", fix: "Your confidence threshold is too high or the field is missing. Log the raw confidence value for ten tickets and pick the threshold from those." },
+      { symptom: "Drafted replies ignore the tone guidelines", fix: "Put the guidelines inside the draft tool's prompt. Instructions at the agent level are not passed into tools." }
+    ],
+    'da-4': [
+      { symptom: "Power BI will not import the CSV because dates are text", fix: "Use a single ISO format such as 2026-03-01 in the generated data, then set the column type to Date in Power Query." },
+      { symptom: "Generated data has negative prices or dates in the future", fix: "Ask the model for ranges explicitly and validate with a quick pandas describe before importing." },
+      { symptom: "KPI cards show totals instead of the latest value", fix: "Create a measure with CALCULATE and LASTDATE, or filter the card to the latest period with a slicer." }
+    ],
+    'sw-4': [
+      { symptom: "The agent says it cannot use the tool", fix: "The agent's IAM role needs lambda:InvokeFunction on each tool. Check the agent's role, not your user." },
+      { symptom: "The agent calls the right tool but with empty arguments", fix: "The schema needs descriptions and required fields. The model reads them to fill arguments." },
+      { symptom: "API Gateway returns 502 Internal server error", fix: "Your Lambda returned a non-JSON body or the wrong shape. Return {statusCode, headers, body: JSON.stringify(...)}." }
+    ],
+    'cs-5': [
+      { symptom: "The loop sends the tool result but the model ignores it", fix: "Each provider needs the result in a specific message role and shape. Copy the tool-result example from the SDK docs exactly." },
+      { symptom: "The model keeps calling the same tool forever", fix: "Append the result to history before the next call and cap iterations at ten. A missing append causes the repeat." },
+      { symptom: "Context length error after a few turns", fix: "Trim history to the last N messages and never include tool schemas inside the conversation text." }
+    ],
+    'hd-4': [
+      { symptom: "The flow has no form fields to pick from", fix: "Add the 'Get response details' action right after the trigger. The trigger alone only carries the response id." },
+      { symptom: "The SharePoint 'Create item' step fails on a choice column", fix: "Choice columns expect the exact option text. Map the form answer to the list's choices, not a free-text value." },
+      { symptom: "Delay until keeps the flow running for days and it times out", fix: "Flow runs are limited to 30 days. Use a shorter SLA while testing, or switch to a scheduled flow that checks for overdue tickets." }
+    ],
+    'hd-5': [
+      { symptom: "Get-WindowsAutopilotInfo cannot be found", fix: "Install-Script Get-WindowsAutopilotInfo from PowerShell as admin, and run it with -Online to upload directly." },
+      { symptom: "The device is enrolled but the Autopilot profile never applies", fix: "Profile assignment needs a device group that contains the Autopilot device, and the device must be reset before the profile is used." },
+      { symptom: "ESP hangs at 'Identifying' or app install", fix: "An app without a detection rule blocks ESP forever. Add detection rules and set the ESP timeout." }
+    ],
+    'it-6': [
+      { symptom: "VLAN clients get no DHCP address", fix: "The VLAN interface must be enabled with DHCP on, and the switch port or virtual network must pass tagged frames. Untagged ports drop VLAN traffic." },
+      { symptom: "Rules are written but traffic still crosses VLANs", fix: "Rules apply to the interface where traffic enters. Put the block on the IoT interface tab, above any allow rule." },
+      { symptom: "Pi-hole blocks DNS for everything", fix: "Each VLAN needs a firewall rule allowing TCP and UDP 53 to the Pi-hole address before the block-all rule." }
+    ],
+    'cl-4': [
+      { symptom: "CloudFront returns AccessDenied from S3", fix: "The bucket policy must grant s3:GetObject to the CloudFront service principal with your distribution ARN as the source. Use the policy CloudFront offers to copy." },
+      { symptom: "The certificate does not appear in the CloudFront dropdown", fix: "It is in the wrong region. Request it again in us-east-1." },
+      { symptom: "Changes do not show after sync", fix: "CloudFront caches objects. Run an invalidation for /* or the changed paths after every deploy." }
+    ],
+    'da-5': [
+      { symptom: "dbt cannot find the profile", fix: "profiles.yml lives in ~/.dbt by default. Set DBT_PROFILES_DIR or pass --profiles-dir to point at the project." },
+      { symptom: "Airflow DAG does not appear in the UI", fix: "The file must be in the dags folder the container mounts, and import errors hide the DAG. Check the Import Errors banner." },
+      { symptom: "The dbt task runs but Airflow marks it success even when tests fail", fix: "Run dbt with --fail-fast and let a non-zero exit fail the BashOperator. Do not wrap it in a shell that swallows the exit code." }
+    ],
+    'it-7': [
+      { symptom: "Connect-MgGraph with the app returns 'insufficient privileges' on devices", fix: "Grant DeviceManagementManagedDevices.Read.All as an application permission and click Grant admin consent." },
+      { symptom: "Only 100 devices come back", fix: "Follow @odata.nextLink in a loop or use the -All switch on the Get-Mg cmdlet." },
+      { symptom: "The Azure Automation runbook fails to import Microsoft.Graph", fix: "Add the module from the gallery to the Automation account, matching the runtime version, before running." }
+    ],
+    'sw-5': [
+      { symptom: "Storybook does not pick up Tailwind or your global CSS", fix: "Import the stylesheet in .storybook/preview.ts. Storybook does not load your app's entry file." },
+      { symptom: "axe reports color-contrast on every story", fix: "The test runs before fonts and styles load. Wait for network idle or a specific selector before scanning." },
+      { symptom: "Playwright snapshots fail only in CI", fix: "Fonts and antialiasing differ by OS. Generate snapshots in the CI container or set a threshold." }
+    ],
+    'hd-6': [
+      { symptom: "SLA clocks show 'no SLA' on new tickets", fix: "The SLA goal must match the ticket's priority and request type JQL. Check the start condition is 'Issue Created'." },
+      { symptom: "The automation rule does not run", fix: "Rule scope must include the project and the actor needs permission. Check the audit log on the rule for the reason." },
+      { symptom: "Queues are empty for the agent account", fix: "The agent must be added to the project's agent role. Customers cannot see queues." }
+    ],
+    'hd-7': [
+      { symptom: "The developer instance was reclaimed", fix: "Instances expire after ten days idle. Request a new one and restore from an update set you exported." },
+      { symptom: "The approval never triggers in Flow Designer", fix: "The flow must be activated and the trigger condition must match the catalog item. Test with the flow's Test button and read the context." },
+      { symptom: "Catalog variables do not appear on the request", fix: "Variables need the item mapped and the variable set attached; check the 'Order' and 'Active' fields on each." }
+    ],
+    'ai-5': [
+      { symptom: "Claude Desktop shows the server as failed", fix: "Open the MCP log file in the Claude logs folder. A print to stdout or a relative path in the config is the usual cause." },
+      { symptom: "The tool is listed but Claude never calls it", fix: "The description must say when to use the tool. Rewrite it as 'Use this when the user asks about ...'." },
+      { symptom: "ModuleNotFoundError when Claude starts the server", fix: "The config must call the Python inside your virtual environment, with the full absolute path." }
+    ],
+    'ai-6': [
+      { symptom: "LiteLLM raises an authentication error for one provider", fix: "Each provider needs its own key in the environment. Check the model string prefix matches the provider." },
+      { symptom: "Cost per request is zero in the log", fix: "Your model name is not in LiteLLM's price map. Add a custom cost entry or compute from the token counts yourself." },
+      { symptom: "The judge gives every answer a 5", fix: "Add a rubric with concrete criteria and a short example of a 2 and a 4. Score the baseline and the router in the same call to force a comparison." }
+    ],
+    'ai-7': [
+      { symptom: "Spans appear but inputs and outputs are empty", fix: "Content capture is off by default in most SDKs. Enable it in the instrumentation config and redact secrets." },
+      { symptom: "The eval suite passes locally and fails in CI", fix: "CI has no API key or uses a different model. Pass the key as a secret and pin the model id." },
+      { symptom: "LLM-judge scores change between runs", fix: "Set temperature to zero, fix the model version, and run each case three times, taking the median." }
+    ],
+    'cl-5': [
+      { symptom: "The ECS task starts and stops in a loop", fix: "Check the task's stopped reason in the console. Usually the image is the wrong architecture or the health check path is wrong." },
+      { symptom: "GitHub Actions cannot assume the role: 'Not authorized to perform sts:AssumeRoleWithWebIdentity'", fix: "The trust policy's sub condition must match repo:ORG/REPO:ref:refs/heads/main exactly, and the audience must be sts.amazonaws.com." },
+      { symptom: "terraform plan in CI wants to recreate everything", fix: "CI is using a different state. Configure the S3 backend with locking and use the same key locally and in CI." }
+    ],
+    'cl-6': [
+      { symptom: "The Collector logs 'no exporter configured' or drops data", fix: "Every pipeline needs receivers, processors, and exporters listed under service.pipelines. A pipeline defined but not listed does nothing." },
+      { symptom: "Tempo shows traces but no service graph", fix: "The service graph needs the metrics generator enabled in Tempo and a Prometheus remote write target." },
+      { symptom: "Loki rejects logs with 'entry too far behind'", fix: "Timestamps are old or out of order. Use the current time in the log pipeline and enable out-of-order writes in Loki." }
+    ],
+    'cl-7': [
+      { symptom: "Backstage cannot read the catalog file from GitHub", fix: "The integration needs a token with repo read scope in app-config, and the URL must point at the raw file path." },
+      { symptom: "Crossplane claim stays Pending with no events", fix: "Check the composition's compositeTypeRef matches the XRD and the provider is healthy with kubectl get providers." },
+      { symptom: "Kyverno blocks ArgoCD itself", fix: "Scope policies with a namespace selector that excludes argocd and kyverno, and start in Audit mode." }
+    ],
+    'cs-6': [
+      { symptom: "Recovery reads garbage after a crash", fix: "Read the length prefix, then verify the checksum before trusting the record. Stop at the first bad record and truncate." },
+      { symptom: "Writes are fast but data is lost on power loss", fix: "flush only hands data to the OS. Call os.fsync on the file descriptor after each write, or batch and sync per batch." },
+      { symptom: "Compaction corrupts the store when interrupted", fix: "Write to a temp file, fsync it, then os.replace it over the old log. Never modify the live log in place." }
+    ],
+    'cs-7': [
+      { symptom: "wat2wasm fails with 'type mismatch'", fix: "Every WebAssembly instruction leaves values on the stack. An if that produces a value needs a result type, and statements must drop unused values." },
+      { symptom: "Your binary encoder output fails wasm-validate with a bad section size", fix: "Section sizes are LEB128 and must be computed after encoding the body. Encode the body first, then prefix its length." },
+      { symptom: "Loops never exit", fix: "br_if jumps to the loop start when targeting a loop label. To exit, branch to the enclosing block label instead." }
+    ],
+    'cs-8': [
+      { symptom: "Two leaders exist at the same time", fix: "A node must step down when it sees a higher term in any RPC. Check term handling on both request and response paths." },
+      { symptom: "Followers never catch up after restart", fix: "The leader's nextIndex must decrement on failed AppendEntries until the logs match. Persist the log before replying." },
+      { symptom: "The partition test passes sometimes and fails sometimes", fix: "You are acknowledging writes before a majority commits. Only apply and reply once commitIndex covers the entry." }
+    ],
+    'da-6': [
+      { symptom: "DuckDB read_csv guesses the wrong types", fix: "Pass types explicitly or use sample_size=-1 so DuckDB scans the whole file before guessing." },
+      { symptom: "Parquet queries are slower than expected", fix: "Thousands of small partition files cost more than they save. Partition by month at most and check the file count." },
+      { symptom: "Streamlit Cloud runs out of memory loading the data", fix: "Precompute the small metric tables locally and commit those. The app should never read the raw million rows." }
+    ],
+    'da-7': [
+      { symptom: "dbt contract error on a column you did not change", fix: "Contracts require every column declared with a data type. Add the missing ones to the YAML." },
+      { symptom: "mf query fails with 'no time spine'", fix: "Create a metricflow_time_spine model with a daily date column and reference it in the project config." },
+      { symptom: "The LLM picks a metric that does not exist", fix: "Give it the list of metric names as an enum in structured output, and reject anything outside the list before compiling." }
+    ],
+    'da-8': [
+      { symptom: "Kafka clients connect and then hang", fix: "Redpanda's advertised listener must be an address the client can reach. Set it to localhost for host clients and the service name for containers." },
+      { symptom: "Iceberg sink writes files but DuckDB sees no table", fix: "DuckDB reads Iceberg through the catalog or a metadata path. Point it at the latest metadata.json, not the data folder." },
+      { symptom: "Queries slow down after a few hours", fix: "Every commit adds files. Run compaction or increase the commit interval, and record the file count with the lag." }
+    ],
+    'hd-8': [
+      { symptom: "The agent says it has no information even though the article exists", fix: "SharePoint indexing can take up to an hour, and the agent's user must have read access to the library. Check both." },
+      { symptom: "The Power Automate action returns nothing to the agent", fix: "The flow must end with a 'Respond to Copilot' action that includes the ticket number as an output." },
+      { symptom: "Teams does not show the agent", fix: "Publishing to Teams requires the app to be approved or installed for yourself from the Copilot Studio channels page." }
+    ],
+    'hd-9': [
+      { symptom: "Every role sees nothing in the list", fix: "Table permissions default to deny. Create a permission with the right scope and assign it to the web role." },
+      { symptom: "Entra sign-in loops back to the login page", fix: "The redirect URI in the app registration must match the portal URL exactly, including the trailing slash." },
+      { symptom: "The approval flow fires twice", fix: "A flow that updates the row it was triggered by retriggers itself. Add a filter so it only runs when the status changes to Pending." }
+    ],
+    'sw-6': [
+      { symptom: "The mock server returns 500 for every route", fix: "Each response needs an example or a schema it can generate from. Add examples to every 200 response." },
+      { symptom: "Schemathesis reports failures on every endpoint", fix: "The server returns a field not in the spec, or the spec says a field is required and the server omits it. Fix the spec or the server, not the test." },
+      { symptom: "The generated SDK cannot reach the server", fix: "Set the base URL in the client config. Generated clients default to the spec's servers entry, which is often a placeholder." }
+    ],
+    'sw-7': [
+      { symptom: "Two windows do not sync", fix: "Both must join the same room name on the same provider. Open the network tab and confirm a WebSocket or WebRTC connection." },
+      { symptom: "Text duplicates after reconnect", fix: "You are loading the document from IndexedDB and from the network into two separate Y.Doc instances. Use one doc and attach both providers to it." },
+      { symptom: "OPFS or SQLite-Wasm fails with a SharedArrayBuffer error", fix: "Serve with Cross-Origin-Opener-Policy same-origin and Cross-Origin-Embedder-Policy require-corp headers, and run it in a worker." }
+    ],
+    'sw-8': [
+      { symptom: "Debezium does not pick up outbox rows", fix: "Postgres needs wal_level=logical, and the connector needs a publication covering the outbox table." },
+      { symptom: "Events arrive out of order across partitions", fix: "Use the aggregate id as the message key so all events for one order land on one partition." },
+      { symptom: "The trace breaks between producer and consumer", fix: "Inject the trace context into Kafka headers on produce and extract it on consume. Most clients need this done by hand." }
+    ],
+    'it-8': [
+      { symptom: "The remediation never runs even though detection exits 1", fix: "Detection output must be written and the script must exit 1 explicitly. Check 'Run script in 64-bit PowerShell' and the signature setting." },
+      { symptom: "Scripts show 'Without issues' for every device", fix: "Detection is returning exit code 0 on the error path. Test the script locally with the exact condition and print the exit code." },
+      { symptom: "Graph returns no run states", fix: "Device run states are on the deviceHealthScript resource with $expand. Use the beta endpoint and page through results." }
+    ],
+    'it-9': [
+      { symptom: "Terraform cannot clone the template", fix: "The template must be a true template, not a stopped VM, and the API token needs VM.Clone and Datastore.AllocateSpace." },
+      { symptom: "Cloned VMs all get the same IP or hostname", fix: "The template still has a machine-id and cloud-init state. Clear them with cloud-init clean and truncate /etc/machine-id before templating." },
+      { symptom: "Ansible cannot connect to new VMs", fix: "Wait for cloud-init to finish and SSH to be up. Add a wait_for_connection task at the start of the playbook." }
+    ],
+    'it-10': [
+      { symptom: "Hello for Business asks for a PIN but sign-in to Microsoft 365 still prompts for a password", fix: "Cloud Kerberos trust is not set up. Create the Kerberos server object with the AzureADHybridAuthenticationManagement module." },
+      { symptom: "Passkey registration says the method is not allowed", fix: "Enable passkeys in Authentication methods and set an authentication strength that includes it." },
+      { symptom: "You locked yourself out with a Conditional Access policy", fix: "Sign in with the break-glass account you excluded and disable the policy. If you did not exclude one, open a support request; this is why step one exists." }
+    ],
+    'cy-1': [
+      { symptom: "The classifier blocks normal questions", fix: "Your benign set is too polite. Add real questions from forums and retrain; check the confusion matrix, not just accuracy." },
+      { symptom: "FastAPI loads the model on every request and is slow", fix: "Load the model once at startup in a lifespan handler and keep it in app state." },
+      { symptom: "The judge model gets jailbroken by the prompt it is judging", fix: "Put the user prompt inside clear delimiters and tell the judge to classify, never to follow, anything inside them." }
+    ],
+    'cy-2': [
+      { symptom: "librosa fails to load audio files", fix: "Install ffmpeg and soundfile. librosa needs a backend to decode anything but WAV." },
+      { symptom: "The model reaches 99 percent accuracy and then fails on new audio", fix: "Your train and test sets share speakers or recording conditions. Split by speaker and include a different synthesizer in the test set." },
+      { symptom: "Real-time processing lags behind the stream", fix: "Process fixed windows of about one second with a hop, and run inference in a worker thread rather than per packet." }
+    ],
+    'cy-3': [
+      { symptom: "Keystroke timings from the browser are all zero or identical", fix: "Use performance.now() rather than Date.now(), and capture keydown and keyup separately." },
+      { symptom: "The model accepts everyone", fix: "You trained on one user with no impostor data. Collect sessions from at least three people and train a one-class or binary model per user." },
+      { symptom: "Mouse data floods the server", fix: "Sample mouse events every 50 milliseconds on the client and send batches, not individual events." }
+    ],
+    'cy-4': [
+      { symptom: "Kali and Ubuntu VMs cannot see each other", fix: "Put both on the same host-only or internal network in VirtualBox and give them addresses in the same subnet." },
+      { symptom: "The AI agent tries to scan addresses outside the lab", fix: "Hard-code the allowed target range in the tool wrapper and refuse anything else. Never give an agent unrestricted nmap." },
+      { symptom: "VirtualBox VMs are painfully slow", fix: "Enable virtualization in BIOS, give each VM two cores and 4 GB, and install Guest Additions." }
+    ],
+    'cy-5': [
+      { symptom: "Wazuh agents show Disconnected", fix: "Open ports 1514 and 1515 on the manager, and check the agent's manager address. Register the agent before starting it." },
+      { symptom: "Sysmon events do not reach Wazuh", fix: "Enable the Sysmon channel in the agent's ossec.conf localfile section and restart the agent." },
+      { symptom: "Your custom rule never fires", fix: "Test with wazuh-logtest against a real event. Rule ids must be unique and above 100000, and the parent rule must match first." }
+    ],
+    'cy-6': [
+      { symptom: "Registration fails with 'origin mismatch' or 'rpId mismatch'", fix: "The relying party id must be the exact hostname and the origin must include the scheme and port. localhost works; 127.0.0.1 does not match localhost." },
+      { symptom: "The browser says no passkey is available on sign-in", fix: "Store the credential id from registration and pass it in allowCredentials, or use discoverable credentials with residentKey required." },
+      { symptom: "Verification fails on counter or signature", fix: "Store the public key and counter exactly as returned, as bytes, not as a string. Base64url encoding mistakes are the usual cause." }
+    ],
+    'cy-7': [
+      { symptom: "Ollama is running but Garak cannot connect", fix: "Garak's ollama generator needs the base URL and model name, and the model must already be pulled." },
+      { symptom: "Scans take hours", fix: "Pick a few probe families per run rather than the full suite, and use a small model such as a 3B parameter one." },
+      { symptom: "Promptfoo shows all tests passing", fix: "Your assertions are too loose. Use specific assertions such as not-contains for the secret you planted, not just a pass on any response." }
+    ],
+    'cy-8': [
+      { symptom: "Cosign sign fails in CI with no identity", fix: "The job needs id-token: write permission for keyless signing, and the OIDC provider must be reachable." },
+      { symptom: "The SLSA provenance step says the image digest is missing", fix: "Pass the digest output from the build step, not the tag. Provenance binds to a digest." },
+      { symptom: "Kyverno allows an unsigned image", fix: "The policy's image reference pattern must match your registry path, and verification must be set to enforce. Check the policy report." }
+    ],
+    'cy-9': [
+      { symptom: "OpenSearch refuses to start in Docker", fix: "Set vm.max_map_count to 262144 on the host and give the container at least 2 GB of memory." },
+      { symptom: "Sigma rules import but never match", fix: "Field names in your logs must match the rule's field mapping. Check the detector's log type mapping and your index field names." },
+      { symptom: "Synthetic logs all look the same and nothing is anomalous", fix: "Build a baseline of normal sessions first, then inject attack sequences at a low rate so detections have contrast." }
+    ]
+  };
+
+  // Generic snags by stack, appended after the project-specific ones.
+  const STACK_STUCK = [
+    { test: /python|fastapi|flask|django|pandas|streamlit|scikit|langchain/i, symptom: 'ModuleNotFoundError even though pip install worked', fix: 'The package went into a different Python. Activate the virtual environment first, then run python -m pip install, and run scripts with that same python.' },
+    { test: /docker|compose|kubernetes|k8s/i, symptom: 'A container exits immediately with no useful message', fix: 'Run docker compose logs <service> and docker compose ps. Nine times out of ten it is a missing environment variable or a port already in use.' },
+    { test: /aws|lambda|s3|ec2|bedrock|terraform/i, symptom: 'AccessDenied on a call that worked in the console', fix: 'The CLI is using a different profile or region than the console. Run aws sts get-caller-identity and check AWS_REGION before touching IAM.' },
+    { test: /node|react|next|typescript|express|vite/i, symptom: 'npm install succeeds but the dev server crashes on a missing module', fix: 'Delete node_modules and package-lock.json, then npm install again. Check the Node version matches the engines field or the .nvmrc.' },
+    { test: /power automate|power pages|sharepoint|entra|intune|microsoft 365|copilot studio/i, symptom: 'A connector action fails with a permission error for the account you are signed in with', fix: 'Flows and agents run as the maker. Sign in as a user with the right admin role in the sandbox, and re-create the connection after changing roles.' },
+    { test: /openai|claude|anthropic|llm|gpt|gemini|bedrock/i, symptom: 'The model returns something different every run and tests are flaky', fix: 'Set temperature to zero, pin the exact model id, and assert on structure or key facts rather than exact wording.' }
+  ];
+
   // ===== STATE =====
   const STORAGE_KEY = 'tech_portfolio_state_v1';
   let state = {
@@ -5977,6 +6340,33 @@ SOFTWARE.
     a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     toast('Starter kit downloaded — unzip it into your repo folder');
+  }
+
+
+  // ===== Stuck? panel =====
+  function stuckItems(p) {
+    const own = STUCK[p.id] || [];
+    const stack = p.tech.join(' ');
+    const seen = new Set(own.map(i => i.symptom));
+    const generic = STACK_STUCK.filter(g => g.test.test(stack) && !seen.has(g.symptom)).slice(0, 2);
+    return own.concat(generic.map(g => ({ symptom: g.symptom, fix: g.fix, generic: true })));
+  }
+  function debugPrompt(p) {
+    return `I am building "${p.title}" (${p.tech.slice(0, 4).join(', ')}) as a portfolio project and I am stuck.
+
+What I am trying to do:
+[one sentence]
+
+What I ran:
+[command or action]
+
+What happened (exact error text):
+[paste here]
+
+What I already tried:
+[one or two things]
+
+Act as a senior engineer pairing with me. First explain what the error means in one sentence. Then give me the single most likely cause and the exact change to make. If you need more information, ask me one question at a time. Do not rewrite the whole project.`;
   }
 
   function linkedinTemplate(p) {
@@ -6683,6 +7073,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
   const MODAL_TABS = [
     { id: 'overview',  label: 'Overview' },
     { id: 'build',     label: 'Build' },
+    { id: 'stuck',     label: 'Stuck?' },
     { id: 'interview', label: 'Interview' },
     { id: 'ship',      label: 'Ship' }
   ];
@@ -6876,6 +7267,26 @@ ${tags} #BuildingInPublic #OpenToWork`;
       </div>
       `)}
 
+      ${panel('stuck', `
+      <div class="modal-section">
+        <h4>When You Get Stuck</h4>
+        <p style="margin-bottom:14px;">The errors students hit most on this build, with the fix. Check here before you lose an evening to it.</p>
+        <ul class="stuck-list">
+          ${stuckItems(p).map(i => `<li${i.generic ? ' class="stuck-generic"' : ''}><strong>${escapeText(i.symptom)}</strong><span>${escapeText(i.fix)}</span></li>`).join('')}
+        </ul>
+      </div>
+
+      <div class="modal-section">
+        <h4>Debugging Prompt</h4>
+        <p style="margin-bottom:10px;">Still stuck? Fill in the brackets and paste this into Claude, ChatGPT, or Cursor. The structure gets you a precise answer instead of a rewrite.</p>
+        <div class="template-box">
+          <button class="copy-template-btn" data-copy="debug">Copy</button>
+          <pre><code id="tpl-debug"></code></pre>
+        </div>
+        <p class="stuck-note">Not listed here? <a href="#" data-mail="feedback" data-stuck-report>Tell us what broke</a> and we will add it for the next student.</p>
+      </div>
+      `)}
+
       ${panel('interview', `
       <div class="modal-section">
         <h4>Resume Bullets (STAR-ready)</h4>
@@ -7059,6 +7470,8 @@ ${tags} #BuildingInPublic #OpenToWork`;
 
     // ===== Ship-It Toolkit =====
     const readmeText = readmeTemplate(p);
+    const debugText = debugPrompt(p);
+    document.getElementById('tpl-debug').textContent = debugText;
     const firstPushText = firstPushCommands(p);
     document.getElementById('tpl-firstpush').textContent = firstPushText;
     document.getElementById('kit-download').onclick = () => downloadStarterKit(p);
@@ -7070,7 +7483,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
       `<li><strong>${s.step}</strong><span>${s.desc}</span></li>`
     ).join('');
 
-    const toolkitContent = { readme: readmeText, linkedin: linkedinText, resume: resumeText, firstpush: firstPushText };
+    const toolkitContent = { readme: readmeText, linkedin: linkedinText, resume: resumeText, firstpush: firstPushText, debug: debugText };
     modal.querySelectorAll('.toolkit-tab').forEach(tab => {
       tab.onclick = () => {
         const target = tab.dataset.tab;
@@ -7090,7 +7503,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
             btn.classList.remove('copied');
             btn.textContent = 'Copy';
           }, 2000);
-          const labels = { readme: 'README', linkedin: 'LinkedIn post', resume: 'Resume bullets', firstpush: 'First-push commands' };
+          const labels = { readme: 'README', linkedin: 'LinkedIn post', resume: 'Resume bullets', firstpush: 'First-push commands', debug: 'Debugging prompt' };
           toast((labels[key] || 'Template') + ' copied to clipboard');
         });
       };

@@ -13,6 +13,7 @@ A curated portfolio project guide for students chasing internships, first roles,
   - A 6-step build roadmap, each step with a "done when" bar, a time estimate, and a watch-out
   - A starter AI prompt for vibe-coding
   - Resume bullets in STAR format
+  - A "Stuck?" tab: the three to five errors students hit most on that build, each with the fix, plus a fill-in debugging prompt
   - A 60-second interview pitch
   - Likely follow-up interview questions
   - Showcase tips for GitHub, LinkedIn, and resumes
@@ -40,6 +41,8 @@ Vite serves the site at the printed local URL.
 ### Adding a project
 
 Every card ships with a video — that's a product requirement, not a nice-to-have. Source the video first, then write the card around it.
+
+Every project also needs at least three entries in the `STUCK` object that follows the catalog (keyed by project id, each `{ symptom, fix }`); the build fails without them. Generic snags per stack live in `STACK_STUCK` and are appended automatically.
 
 Every roadmap step needs `doneWhen`, `time`, and `watchOut` alongside `title` and `desc`; the build fails without them.
 

@@ -33,10 +33,21 @@ export function readMatchProjects() {
   return JSON.parse(src.slice(start + MARKER.length, end + 1));
 }
 
+// The Stuck? panel's content lives in a STUCK object right after the catalog.
+export function readStuck() {
+  const src = readFileSync(resolve('index.html'), 'utf8');
+  const marker = 'const STUCK = ';
+  const start = src.indexOf(marker + '{');
+  if (start === -1) throw new Error('index.html: STUCK object not found');
+  const end = src.indexOf('\n  };', start);
+  return new Function(`return ${src.slice(start + marker.length, end + 4)}`)();
+}
+
 // Returns a list of human-readable problems; empty means the catalog is sound.
 export function validateProjects() {
   const errors = [];
   const projects = readIndexProjects();
+  const stuck = readStuck();
 
   const seen = new Set();
   for (const p of projects) {
@@ -78,6 +89,11 @@ export function validateProjects() {
     }
 
     if (!p.path) errors.push(`${where} has no path.`);
+
+    // Every card has a Stuck? panel with at least three real snags.
+    const snags = stuck[p.id] || [];
+    if (snags.length < 3) errors.push(`${where} has ${snags.length} STUCK entries; needs at least 3.`);
+    snags.forEach((sn, i) => { if (!sn.symptom || !sn.fix) errors.push(`${where} STUCK entry ${i + 1} needs symptom and fix.`); });
 
     // Every roadmap step carries a "done when" bar, a time estimate, and a
     // watch-out. A step without them is a to-do list item, not a roadmap.

@@ -3105,6 +3105,12 @@
     .path-tab { width: 78px; height: 88px; }
   }
 
+  /* ===== Starter kit (Ship tab) ===== */
+  .kit-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .kit-actions .btn-secondary { text-decoration: none; }
+  .kit-note { margin: 14px 0 0; font-size: 13px; color: var(--ink-soft); }
+  .kit-section code { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--green); }
+
   /* ===== Suggest-a-project dialog ===== */
   .suggest-dialog {
     border: 1px solid var(--line-strong); border-radius: 18px; padding: 0;
@@ -5743,6 +5749,233 @@ MIT
 `;
   }
 
+
+  // ===== Starter kit =====
+  // A zip built in the browser (no template repos to host) plus a prefilled
+  // GitHub "new repository" link, so a student has a real repo in minutes.
+  function repoSlug(p) {
+    return p.title.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60).replace(/-+$/, '');
+  }
+  function githubNewUrl(p) {
+    const q = new URLSearchParams({ name: repoSlug(p), description: p.summary.slice(0, 300) });
+    return 'https://github.com/new?' + q.toString();
+  }
+  function firstPushCommands(p) {
+    const slug = repoSlug(p);
+    return `cd ${slug}
+git init
+git add .
+git commit -m "Scaffold ${slug} from the BuildersBench starter kit"
+git branch -M main
+git remote add origin https://github.com/YOUR_USERNAME/${slug}.git
+git push -u origin main`;
+  }
+
+  function gitignoreFor(p) {
+    const stack = p.tech.join(' ').toLowerCase();
+    const parts = ['# Secrets and local config', '.env', '.env.*', '!.env.example', '*.pem', '*.key', '', '# OS and editors', '.DS_Store', 'Thumbs.db', '.idea/', '.vscode/', '*.swp', '', '# Build output and logs', 'dist/', 'build/', 'out/', '*.log', 'logs/', 'tmp/'];
+    if (/python|fastapi|flask|django|pandas|streamlit|jupyter|scikit|pytorch|langchain|notebook/.test(stack)) parts.push('', '# Python', '__pycache__/', '*.pyc', '.venv/', 'venv/', '.pytest_cache/', '.mypy_cache/', '.ipynb_checkpoints/', '*.egg-info/');
+    if (/node|react|next|express|typescript|javascript|vite|vue|svelte/.test(stack)) parts.push('', '# Node', 'node_modules/', '.next/', '.turbo/', 'coverage/', '.cache/', 'npm-debug.log*');
+    if (/terraform/.test(stack)) parts.push('', '# Terraform', '.terraform/', '*.tfstate', '*.tfstate.*', 'crash.log', '*.tfvars', '!example.tfvars');
+    if (/go\b|golang/.test(stack)) parts.push('', '# Go', 'bin/', '*.test', '*.out');
+    if (/rust|cargo/.test(stack)) parts.push('', '# Rust', 'target/');
+    if (/java|spring|kotlin/.test(stack)) parts.push('', '# Java', 'target/', '*.class', '.gradle/');
+    if (/docker/.test(stack)) parts.push('', '# Docker', 'docker-compose.override.yml');
+    if (/sqlite/.test(stack)) parts.push('', '# Local databases', '*.db', '*.sqlite', '*.sqlite3');
+    if (/csv|parquet|dataset|pandas|duckdb|power bi|tableau|excel/.test(stack)) parts.push('', '# Large data — keep a small sample in data/sample/ and ignore the rest', 'data/raw/', 'data/processed/', '*.parquet');
+    return parts.join('\n') + '\n';
+  }
+
+  function envExampleFor(p) {
+    const stack = p.tech.join(' ').toLowerCase() + ' ' + (p.aiAssist || '').toLowerCase();
+    const lines = ['# Copy to .env and fill in. Never commit .env.', ''];
+    if (/openai|gpt/.test(stack)) lines.push('OPENAI_API_KEY=');
+    if (/claude|anthropic/.test(stack)) lines.push('ANTHROPIC_API_KEY=');
+    if (/gemini|google ai/.test(stack)) lines.push('GOOGLE_API_KEY=');
+    if (/aws|lambda|s3|ec2|fargate|ecs/.test(stack)) lines.push('AWS_REGION=us-east-1', 'AWS_PROFILE=default');
+    if (/azure|entra|microsoft 365|intune|power/.test(stack)) lines.push('AZURE_TENANT_ID=', 'AZURE_CLIENT_ID=', 'AZURE_CLIENT_SECRET=');
+    if (/postgres|supabase|prisma|mysql/.test(stack)) lines.push('DATABASE_URL=postgresql://user:password@localhost:5432/app');
+    if (/redis/.test(stack)) lines.push('REDIS_URL=redis://localhost:6379');
+    if (/jira|zendesk|servicenow|slack|discord|github api|webhook/.test(stack)) lines.push('API_TOKEN=');
+    if (lines.length === 2) lines.push('# No secrets needed yet — add them here as you integrate services.', 'APP_ENV=development');
+    return lines.join('\n') + '\n';
+  }
+
+  function starterKitFiles(p) {
+    const slug = repoSlug(p);
+    const year = new Date().getFullYear();
+    const pitch = interviewPitch(p);
+    const steps = p.steps || [];
+    // README from the Ship tab, with the roadmap turned into a checklist.
+    const readme = readmeTemplate(p).replace(/^(\d+)\. \*\*/gm, '- [ ] **');
+    const roadmap = `# Roadmap — ${p.title}
+
+Check steps off here or in the README. "Done when" is the bar for each step; stop when you meet it.
+
+${steps.map((s, i) => `## ${i + 1}. ${s.title}
+
+${s.desc}
+${s.doneWhen ? `\n- **Done when:** ${s.doneWhen}` : ''}${s.time ? `\n- **Time:** ${s.time}` : ''}${s.watchOut ? `\n- **Watch out:** ${s.watchOut}` : ''}
+`).join('\n')}
+## Bonus
+
+${p.bonus}
+`;
+    const decisions = `# Decisions log
+
+One entry per decision a reviewer might ask about. Interviewers ask "why did you pick X" — this file is the answer.
+
+## 0001 — Chose ${p.tech[0] || 'the main stack'} for the core
+
+- **Date:** ${new Date().toISOString().slice(0, 10)}
+- **Context:** ${firstClause(p.useCase)}.
+- **Options considered:** ${p.tech.slice(0, 3).join(', ')} — plus one alternative you looked at.
+- **Decision:** (what you went with)
+- **Consequences:** (what gets easier, what gets harder)
+
+## 0002 — (next decision)
+`;
+    const demo = `# Demo script — ${p.title}
+
+## 60-second pitch (STAR)
+
+**Situation.** ${pitch.situation}
+
+**Task.** ${pitch.task}
+
+**Action.** ${pitch.action}
+
+**Result.** ${pitch.result}
+
+**Close.** ${pitch.closing}
+
+## Screen recording shot list (under 90 seconds)
+
+1. Title card: project name and the one-line summary.
+2. The problem in one sentence — show the input.
+3. The build doing its job — show the output.
+4. One thing that surprised you or broke, and how you fixed it.
+5. Repo URL and live demo URL on screen for the last 5 seconds.
+
+## LinkedIn post draft
+
+${linkedinTemplate(p)}
+`;
+    const srcReadme = `# src/
+
+Application code goes here. Keep the first commit small: one file that proves the core idea works end to end, then grow it step by step with the roadmap in ../docs/ROADMAP.md.
+`;
+    const testsReadme = `# tests/
+
+Add at least one test per roadmap step that has a "done when" line — the test is the proof. Name tests after the behaviour they check, not the function they call.
+`;
+    const dataReadme = `# data/
+
+- \`sample/\` — a small, committed sample so anyone can run the project.
+- \`raw/\` and \`processed/\` — ignored by git. Document how to regenerate them in the README.
+`;
+    const license = `MIT License
+
+Copyright (c) ${year} YOUR NAME
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+`;
+    const files = {
+      'README.md': readme,
+      '.gitignore': gitignoreFor(p),
+      '.env.example': envExampleFor(p),
+      'LICENSE': license,
+      'docs/ROADMAP.md': roadmap,
+      'docs/DECISIONS.md': decisions,
+      'docs/DEMO_SCRIPT.md': demo,
+      'src/README.md': srcReadme,
+      'tests/README.md': testsReadme,
+    };
+    if (/csv|parquet|dataset|pandas|duckdb|power bi|tableau|excel|sql/.test(p.tech.join(' ').toLowerCase())) {
+      files['data/README.md'] = dataReadme;
+      files['data/sample/.gitkeep'] = '';
+    }
+    return Object.fromEntries(Object.entries(files).map(([k, v]) => [`${slug}/${k}`, v]));
+  }
+
+  // Minimal zip writer (store only, no compression). Enough for a few text
+  // files and avoids shipping a zip library for one button.
+  const crcTable = (() => {
+    const t = new Uint32Array(256);
+    for (let n = 0; n < 256; n++) {
+      let c = n;
+      for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1;
+      t[n] = c >>> 0;
+    }
+    return t;
+  })();
+  function crc32(bytes) {
+    let c = 0xFFFFFFFF;
+    for (let i = 0; i < bytes.length; i++) c = crcTable[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+  function makeZip(files) {
+    const enc = new TextEncoder();
+    const now = new Date();
+    const dosTime = ((now.getHours() << 11) | (now.getMinutes() << 5) | (now.getSeconds() >> 1)) & 0xFFFF;
+    const dosDate = (((now.getFullYear() - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate()) & 0xFFFF;
+    const local = [], central = [];
+    let offset = 0;
+    const u16 = v => [v & 0xFF, (v >>> 8) & 0xFF];
+    const u32 = v => [v & 0xFF, (v >>> 8) & 0xFF, (v >>> 16) & 0xFF, (v >>> 24) & 0xFF];
+    for (const [name, content] of Object.entries(files)) {
+      const nameB = enc.encode(name);
+      const data = enc.encode(content);
+      const crc = crc32(data);
+      const head = new Uint8Array([
+        ...u32(0x04034B50), ...u16(20), ...u16(0x0800), ...u16(0), ...u16(dosTime), ...u16(dosDate),
+        ...u32(crc), ...u32(data.length), ...u32(data.length), ...u16(nameB.length), ...u16(0)
+      ]);
+      local.push(head, nameB, data);
+      central.push(new Uint8Array([
+        ...u32(0x02014B50), ...u16(20), ...u16(20), ...u16(0x0800), ...u16(0), ...u16(dosTime), ...u16(dosDate),
+        ...u32(crc), ...u32(data.length), ...u32(data.length), ...u16(nameB.length), ...u16(0), ...u16(0),
+        ...u16(0), ...u16(0), ...u32(0), ...u32(offset)
+      ]), nameB);
+      offset += head.length + nameB.length + data.length;
+    }
+    const centralSize = central.reduce((n, b) => n + b.length, 0);
+    const end = new Uint8Array([
+      ...u32(0x06054B50), ...u16(0), ...u16(0), ...u16(Object.keys(files).length), ...u16(Object.keys(files).length),
+      ...u32(centralSize), ...u32(offset), ...u16(0)
+    ]);
+    return new Blob([...local, ...central, end], { type: 'application/zip' });
+  }
+
+  function downloadStarterKit(p) {
+    const blob = makeZip(starterKitFiles(p));
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${repoSlug(p)}-starter-kit.zip`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    toast('Starter kit downloaded — unzip it into your repo folder');
+  }
+
   function linkedinTemplate(p) {
     const firstSkill = p.skills.split(',')[0].trim();
     const techShort = p.tech.slice(0, 3).join(', ');
@@ -6672,6 +6905,26 @@ ${tags} #BuildingInPublic #OpenToWork`;
         </ul>
       </div>
 
+      <div class="modal-section kit-section">
+        <h4>Starter Kit</h4>
+        <p style="margin-bottom:14px;">Skip the blank folder. The kit is a zip with a README (roadmap as a checklist), a <code>.gitignore</code> for this stack, an <code>.env.example</code>, a decisions log, a demo script, and <code>src/</code>, <code>tests/</code> and <code>docs/</code> ready to fill.</p>
+        <div class="kit-actions">
+          <button class="btn-primary" id="kit-download">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 19h16"/></svg>
+            Download starter kit (.zip)
+          </button>
+          <a class="btn-secondary" id="kit-github" href="${githubNewUrl(p)}" target="_blank" rel="noopener noreferrer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.12 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.7 5.39-5.27 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"/></svg>
+            Create the repo on GitHub
+          </a>
+        </div>
+        <p class="kit-note">Then unzip the kit into the empty repo folder and run:</p>
+        <div class="template-box">
+          <button class="copy-template-btn" data-copy="firstpush">Copy</button>
+          <pre><code id="tpl-firstpush"></code></pre>
+        </div>
+      </div>
+
       <div class="modal-section">
         <h4>Ship-It Toolkit</h4>
         <p style="margin-bottom:14px;">Copy-paste starters to move from "it works on my laptop" to "recruiters can click it."</p>
@@ -6803,6 +7056,9 @@ ${tags} #BuildingInPublic #OpenToWork`;
 
     // ===== Ship-It Toolkit =====
     const readmeText = readmeTemplate(p);
+    const firstPushText = firstPushCommands(p);
+    document.getElementById('tpl-firstpush').textContent = firstPushText;
+    document.getElementById('kit-download').onclick = () => downloadStarterKit(p);
     const linkedinText = linkedinTemplate(p);
     const deploySteps = deployChecklist(p);
     document.getElementById('tpl-readme').textContent = readmeText;
@@ -6811,7 +7067,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
       `<li><strong>${s.step}</strong><span>${s.desc}</span></li>`
     ).join('');
 
-    const toolkitContent = { readme: readmeText, linkedin: linkedinText, resume: resumeText };
+    const toolkitContent = { readme: readmeText, linkedin: linkedinText, resume: resumeText, firstpush: firstPushText };
     modal.querySelectorAll('.toolkit-tab').forEach(tab => {
       tab.onclick = () => {
         const target = tab.dataset.tab;
@@ -6831,7 +7087,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
             btn.classList.remove('copied');
             btn.textContent = 'Copy';
           }, 2000);
-          const labels = { readme: 'README', linkedin: 'LinkedIn post', resume: 'Resume bullets' };
+          const labels = { readme: 'README', linkedin: 'LinkedIn post', resume: 'Resume bullets', firstpush: 'First-push commands' };
           toast((labels[key] || 'Template') + ' copied to clipboard');
         });
       };

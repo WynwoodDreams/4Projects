@@ -1,5 +1,10 @@
 # Project Suggestions — September 2026
 
+> **Status (October 2026):** all 24 cards below are in the catalog (67 projects
+> total), every path has at least 2 projects per level, and the weekly video
+> check passed on 19 October 2026. The tables are kept as the record of why
+> each card was added.
+
 Twenty-four candidate cards for the BuildersBench catalog, chosen to fill the thinnest path/level cells and to track what 2026 job postings and hiring guides actually ask for: agents and MCP, evals and observability, passkeys and passwordless, platform engineering, the lakehouse stack, Copilot agents in Microsoft 365, and systems fundamentals compiled to WebAssembly.
 
 Every card needs a video. The video IDs below came from search results and **have not been verified** from this sandbox (YouTube is blocked). Run `npm run check:videos` in GitHub Actions before merging any of them.

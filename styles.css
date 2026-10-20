@@ -50,6 +50,7 @@
     --teal-rgb:  0,194,168;
     --gold-rgb:  255,200,87;
     --on-accent: #02110A;
+    --brand-core: #FFFFFF;   /* logo node centres */
     --bg-rgb:    12,22,27;      /* translucent chrome: header, controls, menus */
     --well-rgb:  0,0,0;         /* sunken wells: inputs, code, prompt boxes */
     --deep:      #0A1512;       /* deepest surface behind code */
@@ -96,8 +97,9 @@
     --teal-rgb:  0,121,106;
     --gold-rgb:  138,91,0;
     --on-accent: #FFFFFF;
+    --brand-core: #F3F6F7;
     --bg-rgb:    243,246,247;
-    --well-rgb:  12,22,27;
+    --well-rgb:  182,196,202;  /* soft gray so 40–55% wells read as light slabs */
     --deep:      #E8EEF0;
     --deep-rgb:  225,238,232;
     --deep-grad: linear-gradient(160deg, #DCEEE4 0%, #E8EEF0 60%, #F3F6F7 100%);
@@ -253,6 +255,7 @@
   }
   .stat-pill {
     display: inline-flex;
+    text-decoration: none;
     align-items: center;
     gap: 7px;
     padding: 6px 12px;

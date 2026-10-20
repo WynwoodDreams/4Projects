@@ -84,8 +84,9 @@ dialog; "Save as PDF" there gives students a handout for advisors.
 ### Light mode
 
 `public/theme.js` runs as a blocking script in every page's `<head>` and sets
-`data-theme` on `<html>` from the saved choice (`localStorage` key `bb-theme`),
-else the OS preference. The header toggle flips it. Light values live in the
+`data-theme` on `<html>`. Dark is the default; light is used only when the
+visitor chose it with the header toggle (`localStorage` key `bb-theme`). The
+OS preference is ignored so the site always opens in its own look. Light values live in the
 `html[data-theme="light"]` block right after `:root` in both stylesheets.
 
 Colours in the stylesheets are written against channel variables so one block

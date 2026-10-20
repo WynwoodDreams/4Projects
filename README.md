@@ -10,7 +10,7 @@ A curated portfolio project guide for students chasing internships, first roles,
 
 - **67 projects** across 8 career paths — AI Engineer, Cloud, Computer Science, Cybersecurity, Data Analyst, Help Desk, Software Engineer, IT Support
 - Each project ships with:
-  - A 6-step build roadmap
+  - A 6-step build roadmap, each step with a "done when" bar, a time estimate, and a watch-out
   - A starter AI prompt for vibe-coding
   - Resume bullets in STAR format
   - A 60-second interview pitch
@@ -40,6 +40,8 @@ Vite serves the site at the printed local URL.
 ### Adding a project
 
 Every card ships with a video — that's a product requirement, not a nice-to-have. Source the video first, then write the card around it.
+
+Every roadmap step needs `doneWhen`, `time`, and `watchOut` alongside `title` and `desc`; the build fails without them.
 
 Projects live in the `PROJECTS` array in `index.html`, with a trimmed mirror in `match.html` that the job matcher reads. **Both must be updated.** `npm run build` fails if they drift apart, or if any project is missing `youtube` / `ytTitle`.
 

@@ -78,6 +78,14 @@ export function validateProjects() {
     }
 
     if (!p.path) errors.push(`${where} has no path.`);
+
+    // Every roadmap step carries a "done when" bar, a time estimate, and a
+    // watch-out. A step without them is a to-do list item, not a roadmap.
+    (p.steps || []).forEach((s, i) => {
+      for (const key of ['doneWhen', 'time', 'watchOut']) {
+        if (!s[key]) errors.push(`${where} step ${i + 1} ("${s.title}") is missing ${key}.`);
+      }
+    });
     if (!p.level) errors.push(`${where} has no level.`);
     if (!Array.isArray(p.steps) || p.steps.length === 0) {
       errors.push(`${where} has no build steps.`);

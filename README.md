@@ -62,6 +62,37 @@ npm run check:videos
 
 This also runs weekly in CI and on any pull request that touches the catalog, since it needs network access to YouTube that a local sandbox may not have.
 
+### Suggestion form
+
+The "Suggest a project" button opens a form (title, path, level, stack, YouTube
+link, why it matters). It posts to `api/suggest.js`, which forwards the
+suggestion to the URL in the `SUGGEST_WEBHOOK_URL` environment variable
+(Vercel → Settings → Environment Variables). A Slack or Discord incoming
+webhook works as-is; any endpoint that accepts JSON gets the fields under
+`suggestion`. Until the variable is set the endpoint answers 503 and the form
+falls back to a pre-filled email, so nothing is lost.
+
+### Print / save as PDF
+
+Every project modal has a "Print / save PDF" button. It fills `#print-sheet`
+with the roadmap (steps with done-when, time and watch-outs, resume bullets,
+the interview pitch, follow-up questions, showcase tips) and opens the print
+dialog; "Save as PDF" there gives students a handout for advisors.
+
+### Light mode
+
+`public/theme.js` runs as a blocking script in every page's `<head>` and sets
+`data-theme` on `<html>` from the saved choice (`localStorage` key `bb-theme`),
+else the OS preference. The header toggle flips it. Light values live in the
+`html[data-theme="light"]` block right after `:root` in both stylesheets.
+
+Colours in the stylesheets are written against channel variables so one block
+can retheme them: `rgba(var(--w-rgb),0.14)` for the white-alpha glass lines,
+`rgba(var(--green-rgb),0.45)` for neon tints, `rgba(var(--bg-rgb),…)` for
+translucent chrome, `rgba(var(--well-rgb),…)` for sunken wells, and
+`var(--on-accent)` for text on green buttons. Write new styles the same way
+rather than with literal `rgba(255,255,255,…)` or `#00FF85`.
+
 ### Job matcher
 
 `match.html` maps a pasted job description to a career path, then ranks projects and certs against it. Ranking quality is easy to break without noticing, so it has a regression suite:

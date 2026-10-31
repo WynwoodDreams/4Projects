@@ -200,6 +200,37 @@
     .hero h1.is-typing .type-w { opacity: 1; }
   }
 
+
+  /* ===== MOTION, PHASE TWO ===== */
+
+  /* Vertex: the logo as a creature. Moods are set on <html data-vertex> by
+     motion.js for a moment at a time; idle is the plain logo. */
+  .brand-icon circle { transform-box: fill-box; transform-origin: center; }
+  html[data-vertex="think"] .brand-icon line { animation: vertex-lines 600ms ease-in-out infinite; }
+  html[data-vertex="think"] .brand-icon circle { animation: vertex-jitter 420ms ease-in-out infinite; }
+  html[data-vertex="think"] .brand-icon circle:nth-child(2n) { animation-delay: 140ms; }
+  html[data-vertex="think"] .brand-icon circle:nth-child(3n) { animation-delay: 280ms; }
+  html[data-vertex="nod"] .brand-icon svg { animation: vertex-nod 520ms cubic-bezier(.2,.8,.2,1) 1; }
+  html[data-vertex="celebrate"] .brand-icon svg { animation: brand-icon-spin 900ms cubic-bezier(.2,.8,.2,1) 1; }
+  html[data-vertex="celebrate"] .brand-icon circle { animation: vertex-burst 900ms cubic-bezier(.2,.8,.2,1) 1; }
+  html[data-vertex="celebrate"] .brand-icon { filter: drop-shadow(0 0 12px var(--green)); }
+  @keyframes vertex-lines { 0%, 100% { opacity: .9; } 50% { opacity: .35; } }
+  @keyframes vertex-jitter { 0%, 100% { transform: translate(0, 0); } 33% { transform: translate(.5px, -.4px); } 66% { transform: translate(-.4px, .5px); } }
+  @keyframes vertex-nod { 0%, 100% { transform: translateY(0); } 35% { transform: translateY(2px) scaleY(.9); } 70% { transform: translateY(-1px); } }
+  @keyframes vertex-burst { 0% { transform: scale(1); } 40% { transform: scale(1.7); } 100% { transform: scale(1); } }
+
+  /* Salary bar fills as the path header scrolls into view. Pure CSS; a
+     browser without scroll timelines shows the bar already full. */
+  @supports (animation-timeline: view()) {
+    .path-salary-fill { transform-origin: left center; animation: salary-fill linear both; animation-timeline: view(); animation-range: entry 10% entry 70%; }
+  }
+  @keyframes salary-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    html[data-vertex] .brand-icon svg, html[data-vertex] .brand-icon circle, html[data-vertex] .brand-icon line { animation: none !important; }
+    .path-salary-fill { animation: none !important; transform: none !important; }
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
@@ -3199,6 +3230,36 @@
     .build-step.is-charged::after, .build-step.is-charged .build-step-check, .modal-status-badge.is-lit, .project-card.is-lit { animation: none !important; }
   }
 
+  /* Your build constellation: lives behind the hero copy. The five logo nodes
+     are the seed; every started project adds a dim node, every finished one a
+     lit node with a line back into the graph. */
+  .constellation {
+    position: absolute; right: -5%; top: 50%; width: 54%; max-width: 440px; aspect-ratio: 5 / 3;
+    transform: translateY(-50%); pointer-events: none; z-index: 0; opacity: .85;
+    color: var(--green);
+  }
+  .hero > .container > .hero-grid > div:first-child > :not(.constellation):not(.constellation-label) { position: relative; z-index: 1; }
+  .constellation line { stroke: currentColor; stroke-width: 1; stroke-linecap: round; opacity: .28; }
+  .constellation .c-seed-line { opacity: .22; }
+  .constellation circle { fill: currentColor; }
+  .constellation .c-seed { opacity: .35; }
+  .constellation .c-started { opacity: .45; animation: pulse 2.6s ease-in-out infinite; }
+  .constellation .c-done { opacity: 1; filter: drop-shadow(0 0 6px var(--green-glow)); }
+  .constellation .c-core { fill: var(--brand-core, #fff); }
+  .constellation line.is-new { stroke-dasharray: 400; stroke-dashoffset: 400; animation: c-draw 700ms cubic-bezier(.2,.8,.2,1) both; }
+  .constellation circle.is-new { transform-box: fill-box; transform-origin: center; animation: c-pop 700ms 500ms cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes c-draw { to { stroke-dashoffset: 0; } }
+  @keyframes c-pop { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.6); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+  .constellation-label {
+    position: absolute; right: 16px; bottom: 12px; z-index: 1;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-muted);
+  }
+  .constellation-label b { color: var(--green); font-weight: 600; }
+  @media (max-width: 900px) { .constellation { width: 70%; right: -12%; opacity: .5; } .constellation-label { display: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .constellation .c-started, .constellation line.is-new, .constellation circle.is-new { animation: none !important; stroke-dashoffset: 0; transform: none; opacity: 1; }
+  }
+
   /* ===== Stuck? panel ===== */
   .stuck-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
   .stuck-list li {
@@ -3381,6 +3442,8 @@
   <div class="container">
     <div class="hero-grid">
       <div>
+        <svg class="constellation" id="constellation" viewBox="0 0 400 240" aria-hidden="true"></svg>
+        <div class="constellation-label" id="constellation-label" hidden></div>
         <div class="hero-eyebrow"><span class="dot"></span>The Career Path Guide</div>
         <h1>Build projects <span class="serif">that</span> <span class="accent">actually</span> get you hired.</h1>
         <p class="hero-lede">
@@ -7279,8 +7342,68 @@ ${tags} #BuildingInPublic #OpenToWork`;
     });
   }
 
+
+  // ===== Your build constellation =====
+  // Every project has a fixed home in the graph: a sector per career path,
+  // spread by its order within the path, so the same progress always draws
+  // the same shape. Seed nodes are the logo. Started projects are dim and
+  // breathing; finished ones are lit and wired back into the graph.
+  const C_CX = 305, C_CY = 118; // graph centre sits in the right half of the panel, clear of the headline
+  const CONSTELLATION_SEED = [[5, 5], [21, 7], [12, 12], [18, 16], [9, 20]].map(([x, y]) => [C_CX + (x - 13) * 4.2, C_CY + (y - 12) * 4.2]);
+  const constellationSeen = new Set();
+  function constellationPos(p) {
+    const paths = PATHS.filter(x => x.id !== 'all');
+    const pi = Math.max(0, paths.findIndex(x => x.id === p.path));
+    const siblings = PROJECTS.filter(x => x.path === p.path);
+    const k = siblings.indexOf(p);
+    const sector = (Math.PI * 2) / paths.length;
+    const angle = -Math.PI / 2 + pi * sector + sector * ((k % 3) + 1) / 4;
+    const radius = 48 + Math.floor(k / 3) * 22 + (k % 2) * 8;
+    return [C_CX + Math.cos(angle) * radius * 1.35, C_CY + Math.sin(angle) * radius];
+  }
+  function renderConstellation() {
+    const svg = document.getElementById('constellation');
+    if (!svg) return;
+    const active = PROJECTS.filter(p => state.progress[p.id] === 'done' || state.progress[p.id] === 'started');
+    const doneCount = active.filter(p => state.progress[p.id] === 'done').length;
+    const firstDraw = constellationSeen.size === 0;
+    const nodes = CONSTELLATION_SEED.map(([x, y]) => ({ x, y, seed: true }));
+    let out = '';
+    // seed lines mirror the logo
+    const seedEdges = [[0, 1], [0, 2], [0, 3], [0, 4], [2, 1], [2, 3], [2, 4], [3, 4], [1, 3]];
+    for (const [a, b] of seedEdges) out += `<line class="c-seed-line" x1="${nodes[a].x}" y1="${nodes[a].y}" x2="${nodes[b].x}" y2="${nodes[b].y}"/>`;
+    const placed = [];
+    for (const p of active) {
+      const [x, y] = constellationPos(p);
+      const done = state.progress[p.id] === 'done';
+      // wire to the nearest node already in the graph (seed or earlier project)
+      const pool = nodes.concat(placed);
+      let best = pool[0], bd = Infinity;
+      for (const n of pool) { const d = (n.x - x) ** 2 + (n.y - y) ** 2; if (d < bd) { bd = d; best = n; } }
+      const fresh = !firstDraw && !constellationSeen.has(p.id + ':' + (done ? 'done' : 'started'));
+      const cls = fresh ? ' is-new' : '';
+      out += `<line class="${done ? 'c-line' : 'c-line c-line-dim'}${cls}" x1="${best.x}" y1="${best.y}" x2="${x}" y2="${y}"/>`;
+      placed.push({ x, y, done, cls, id: p.id });
+    }
+    for (const n of nodes) out += `<circle class="c-seed" cx="${n.x}" cy="${n.y}" r="3.2"/><circle class="c-core" cx="${n.x}" cy="${n.y}" r="1.1"/>`;
+    for (const n of placed) {
+      out += n.done
+        ? `<circle class="c-done${n.cls}" cx="${n.x}" cy="${n.y}" r="4"/><circle class="c-core${n.cls}" cx="${n.x}" cy="${n.y}" r="1.4"/>`
+        : `<circle class="c-started${n.cls}" cx="${n.x}" cy="${n.y}" r="3"/>`;
+    }
+    svg.innerHTML = out;
+    for (const p of active) constellationSeen.add(p.id + ':' + (state.progress[p.id] === 'done' ? 'done' : 'started'));
+    if (firstDraw) constellationSeen.add('__drawn');
+    const label = document.getElementById('constellation-label');
+    if (label) {
+      label.hidden = !active.length;
+      label.innerHTML = `your constellation · <b>${doneCount}</b> built${active.length - doneCount ? ` · ${active.length - doneCount} in progress` : ''}`;
+    }
+  }
+
   function renderStats() {
     document.getElementById('bookmark-count').textContent = state.bookmarks.length;
+    renderConstellation();
     const doneCount = Object.values(state.progress).filter(v => v === 'done').length;
     document.getElementById('done-count').textContent = doneCount;
     refreshBackupButtons();

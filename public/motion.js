@@ -95,9 +95,23 @@
       if (e.key === '/' && !isTypingTarget(document.activeElement) && !reduce) pulse(blink, 'blink-lean', 520);
     }, true);
 
+    // Vertex, the logo creature: a mood on <html> for a moment.
+    var html = document.documentElement, vertexTimer;
+    function vertex(mood, ms) {
+      clearTimeout(vertexTimer);
+      html.removeAttribute('data-vertex');
+      void html.offsetWidth;
+      html.setAttribute('data-vertex', mood);
+      if (ms) vertexTimer = setTimeout(function () { if (html.getAttribute('data-vertex') === mood) html.removeAttribute('data-vertex'); }, ms);
+    }
+
     document.addEventListener('bb:motion', function (e) {
       var d = (e.detail || {});
       if (reduce) return;
+      if (d.type === 'step-done') vertex('nod', 600);
+      else if (d.type === 'project-done') vertex('celebrate', 1000);
+      else if (d.type === 'thinking') vertex('think');
+      else if (d.type === 'results') vertex('nod', 600);
       if (d.type === 'step-done') {
         pulse(blink, 'blink-nod', 600);
         // The roadmap re-renders synchronously after the event; charge the

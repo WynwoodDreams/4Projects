@@ -132,6 +132,57 @@
   html[data-theme="light"] .theme-toggle .icon-sun { display: none; }
   html[data-theme="light"] .theme-toggle .icon-moon { display: block; }
 
+
+  /* ===== MOTION, PHASE ONE =====
+     Transform and opacity only. Everything stops under reduced motion. */
+
+  /* Cross-page navigation: the header stays put, the page body slides. Chrome
+     and Safari animate; Firefox loads the page normally. */
+  @view-transition { navigation: auto; }
+  header { view-transition-name: bb-header; }
+  ::view-transition-group(bb-header) { animation-duration: 0s; }
+  ::view-transition-old(root) { animation: 150ms ease-out both vt-leave; }
+  ::view-transition-new(root) { animation: 220ms cubic-bezier(.2,.8,.2,1) both vt-enter; }
+  @keyframes vt-leave { to { opacity: 0; transform: translateY(-6px); } }
+  @keyframes vt-enter { from { opacity: 0; transform: translateY(8px); } }
+  @keyframes vt-fade-out { to { opacity: 0; } }
+  @keyframes vt-fade-in { from { opacity: 0; } }
+
+  /* Logo: one turn on load, spins again on hover. Not forever. */
+  .brand-icon:hover svg { animation: brand-icon-spin 1.6s linear infinite; }
+
+  /* Blink, the cursor. A real element so it can move and react; the
+     CSS-only ::after cursor remains for pages without the script. */
+  .hero h1.has-blink::after { display: none; }
+  .blink {
+    display: inline-block; width: .5ch; height: .86em; margin-left: .12em; vertical-align: -0.08em;
+    background: var(--green); box-shadow: 0 0 14px var(--green-glow);
+    animation: cursorBlink 1.1s steps(2, end) infinite;
+    transform-origin: 50% 100%;
+  }
+  .blink.blink-lean { animation: blink-lean 520ms cubic-bezier(.2,.8,.2,1) both; }
+  .blink.blink-nod { animation: blink-nod 600ms cubic-bezier(.2,.8,.2,1) both; }
+  .blink.blink-jump { animation: blink-jump 900ms cubic-bezier(.2,.8,.2,1) both; }
+  .blink.blink-think { animation: blink-think 320ms steps(2, end) infinite; }
+  @keyframes blink-lean { 0% { transform: none; } 40% { transform: translateX(.6ch) skewX(-14deg); } 100% { transform: none; } }
+  @keyframes blink-nod { 0%, 100% { transform: none; } 30% { transform: scaleY(.55); } 60% { transform: scaleY(1.15); } }
+  @keyframes blink-jump {
+    0% { transform: none; } 20% { transform: scaleY(.6) scaleX(1.3); }
+    45% { transform: translateY(-.9em) scaleY(1.1); } 70% { transform: translateY(0) scaleY(.8) scaleX(1.2); } 100% { transform: none; }
+  }
+  @keyframes blink-think { 0% { opacity: 1; transform: translateX(0); } 50% { opacity: .35; transform: translateX(.25ch); } 100% { opacity: 1; transform: translateX(0); } }
+
+  /* Headline typed word by word on first visit; words are hidden until on. */
+  .hero h1.is-typing .type-w { opacity: 0; }
+  .hero h1 .type-w.is-on { opacity: 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    @view-transition { navigation: none; }
+    ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+    .blink, .brand-icon:hover svg { animation: none !important; transform: none !important; }
+    .hero h1.is-typing .type-w { opacity: 1; }
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
@@ -222,7 +273,7 @@
     width: 100%;
     height: 100%;
     overflow: visible;
-    animation: brand-icon-spin 12s linear infinite;
+    animation: brand-icon-spin 1.4s cubic-bezier(.2,.8,.2,1) 1;
     transform-origin: 50% 50%;
   }
   @keyframes brand-icon-spin {

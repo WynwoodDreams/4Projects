@@ -7,6 +7,8 @@
 <meta name="description" content="Build portfolio-ready tech projects across AI, cloud, cybersecurity, data, software, and IT. Follow guided roadmaps, choose tools, use AI prompts, and showcase your work." />
 <meta name="theme-color" content="#0C161B" />
 <script src="/theme.js"></script>
+<script src="/motion.js" defer></script>
+<script type="speculationrules">{"prerender":[{"urls":["/match.html","/certifications.html","/prompts.html"],"eagerness":"moderate"}]}</script>
 <link rel="canonical" href="https://www.buildersbench.dev/" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='none' stroke='%2300e676' stroke-width='2'/%3E%3Cpath d='M8 12l3 3 5-6' fill='none' stroke='%2300e676' stroke-width='2'/%3E%3C/svg%3E" />
 <meta property="og:type" content="website" />
@@ -147,6 +149,57 @@
   html[data-theme="light"] .theme-toggle .icon-sun { display: none; }
   html[data-theme="light"] .theme-toggle .icon-moon { display: block; }
 
+
+  /* ===== MOTION, PHASE ONE =====
+     Transform and opacity only. Everything stops under reduced motion. */
+
+  /* Cross-page navigation: the header stays put, the page body slides. Chrome
+     and Safari animate; Firefox loads the page normally. */
+  @view-transition { navigation: auto; }
+  header { view-transition-name: bb-header; }
+  ::view-transition-group(bb-header) { animation-duration: 0s; }
+  ::view-transition-old(root) { animation: 150ms ease-out both vt-leave; }
+  ::view-transition-new(root) { animation: 220ms cubic-bezier(.2,.8,.2,1) both vt-enter; }
+  @keyframes vt-leave { to { opacity: 0; transform: translateY(-6px); } }
+  @keyframes vt-enter { from { opacity: 0; transform: translateY(8px); } }
+  @keyframes vt-fade-out { to { opacity: 0; } }
+  @keyframes vt-fade-in { from { opacity: 0; } }
+
+  /* Logo: one turn on load, spins again on hover. Not forever. */
+  .brand-icon:hover svg { animation: brand-icon-spin 1.6s linear infinite; }
+
+  /* Blink, the cursor. A real element so it can move and react; the
+     CSS-only ::after cursor remains for pages without the script. */
+  .hero h1.has-blink::after { display: none; }
+  .blink {
+    display: inline-block; width: .5ch; height: .86em; margin-left: .12em; vertical-align: -0.08em;
+    background: var(--green); box-shadow: 0 0 14px var(--green-glow);
+    animation: cursorBlink 1.1s steps(2, end) infinite;
+    transform-origin: 50% 100%;
+  }
+  .blink.blink-lean { animation: blink-lean 520ms cubic-bezier(.2,.8,.2,1) both; }
+  .blink.blink-nod { animation: blink-nod 600ms cubic-bezier(.2,.8,.2,1) both; }
+  .blink.blink-jump { animation: blink-jump 900ms cubic-bezier(.2,.8,.2,1) both; }
+  .blink.blink-think { animation: blink-think 320ms steps(2, end) infinite; }
+  @keyframes blink-lean { 0% { transform: none; } 40% { transform: translateX(.6ch) skewX(-14deg); } 100% { transform: none; } }
+  @keyframes blink-nod { 0%, 100% { transform: none; } 30% { transform: scaleY(.55); } 60% { transform: scaleY(1.15); } }
+  @keyframes blink-jump {
+    0% { transform: none; } 20% { transform: scaleY(.6) scaleX(1.3); }
+    45% { transform: translateY(-.9em) scaleY(1.1); } 70% { transform: translateY(0) scaleY(.8) scaleX(1.2); } 100% { transform: none; }
+  }
+  @keyframes blink-think { 0% { opacity: 1; transform: translateX(0); } 50% { opacity: .35; transform: translateX(.25ch); } 100% { opacity: 1; transform: translateX(0); } }
+
+  /* Headline typed word by word on first visit; words are hidden until on. */
+  .hero h1.is-typing .type-w { opacity: 0; }
+  .hero h1 .type-w.is-on { opacity: 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    @view-transition { navigation: none; }
+    ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+    .blink, .brand-icon:hover svg { animation: none !important; transform: none !important; }
+    .hero h1.is-typing .type-w { opacity: 1; }
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
@@ -237,7 +290,7 @@
     width: 100%;
     height: 100%;
     overflow: visible;
-    animation: brand-icon-spin 12s linear infinite;
+    animation: brand-icon-spin 1.4s cubic-bezier(.2,.8,.2,1) 1;
     transform-origin: 50% 50%;
   }
   @keyframes brand-icon-spin {
@@ -3112,6 +3165,39 @@
   .learn-links, .metrics-list { margin: 10px 0 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.5; }
   .learn-links a { color: var(--green); text-decoration: none; }
   .learn-links a:hover { text-decoration: underline; }
+
+  /* Card-to-modal morph (same-document view transition). The clicked card and
+     the modal share one name for the duration; the html.vt-modal flag turns
+     off the modal's own entrance so the two do not fight. */
+  html.vt-modal .modal-backdrop.open, html.vt-modal .modal { animation: none; }
+  html.vt-modal::view-transition-old(root) { animation: 180ms ease both vt-fade-out; }
+  html.vt-modal::view-transition-new(root) { animation: 180ms ease both vt-fade-in; }
+  ::view-transition-group(bb-modal) { animation-duration: 340ms; animation-timing-function: cubic-bezier(.2,.8,.2,1); }
+  ::view-transition-image-pair(bb-modal) { overflow: hidden; border-radius: 16px; }
+  ::view-transition-old(bb-modal) { animation: 140ms ease-out both vt-fade-out; }
+  ::view-transition-new(bb-modal) { animation: 200ms 80ms ease-in both vt-fade-in; }
+
+  /* Progress you can feel: a charge runs down the connector when a step is
+     ticked, and the node pops. Completing a project lights the badge and card. */
+  .build-step::after {
+    content: ''; position: absolute; left: 16px; top: 32px; width: 1px; height: 0;
+    background: var(--green); box-shadow: 0 0 10px var(--green-glow); opacity: 0; pointer-events: none;
+  }
+  .build-step.is-charged:not(:last-child)::after { animation: step-charge 900ms cubic-bezier(.2,.8,.2,1) both; }
+  .build-step.is-charged .build-step-check { animation: step-pop 500ms cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes step-charge { 0% { height: 0; opacity: 1; } 70% { height: calc(100% - 32px); opacity: 1; } 100% { height: calc(100% - 32px); opacity: 0; } }
+  @keyframes step-pop { 0% { transform: scale(1); } 40% { transform: scale(1.25); } 100% { transform: scale(1); } }
+  .modal-status-badge.is-lit { animation: node-lit 1.4s cubic-bezier(.2,.8,.2,1) both; }
+  .project-card.is-lit { animation: node-lit 1.4s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes node-lit { 0% { box-shadow: 0 0 0 0 rgba(var(--green-rgb),0.55); } 60% { box-shadow: 0 0 0 10px rgba(var(--green-rgb),0); } 100% { box-shadow: 0 0 0 0 rgba(var(--green-rgb),0); } }
+
+  /* Blink in the Stuck? tab */
+  .blink-say { display: flex; align-items: center; gap: 8px; margin: -4px 0 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green); }
+  .blink-say .blink { width: 7px; height: 13px; margin: 0; vertical-align: middle; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .build-step.is-charged::after, .build-step.is-charged .build-step-check, .modal-status-badge.is-lit, .project-card.is-lit { animation: none !important; }
+  }
 
   /* ===== Stuck? panel ===== */
   .stuck-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
@@ -6189,6 +6275,8 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
     state.stepProgress[id] = arr;
     syncStepDates(id);
     const status = recomputeStatus(id);
+    if (arr[index]) document.dispatchEvent(new CustomEvent('bb:motion', { detail: { type: 'step-done', index } }));
+    if (status === 'done') document.dispatchEvent(new CustomEvent('bb:motion', { detail: { type: 'project-done', id } }));
     saveState();
     renderStats();
     renderProjects();
@@ -6202,7 +6290,8 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
     if (!p || !p.steps) return;
     state.stepProgress[id] = new Array(p.steps.length).fill(value);
     syncStepDates(id);
-    recomputeStatus(id);
+    const status = recomputeStatus(id);
+    if (status === 'done') document.dispatchEvent(new CustomEvent('bb:motion', { detail: { type: 'project-done', id } }));
     saveState();
     renderStats();
     renderProjects();
@@ -6892,7 +6981,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
       const id = card.dataset.id;
       card.addEventListener('click', (e) => {
         if (e.target.closest('.bookmark-btn, .project-guide-link, .project-title-link')) return;
-        openModal(id);
+        openModal(id, { from: card });
       });
       const bm = card.querySelector('.bookmark-btn');
       bm.addEventListener('click', (e) => {
@@ -7092,7 +7181,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
       </div>
     `;
     strip.querySelectorAll('.bench-focus-card').forEach(card => {
-      card.addEventListener('click', () => openModal(card.dataset.id));
+      card.addEventListener('click', () => openModal(card.dataset.id, { from: card }));
       card.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(card.dataset.id); }
       });
@@ -7137,7 +7226,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
       const id = card.dataset.id;
       card.addEventListener('click', (e) => {
         if (e.target.closest('.bench-card-remove') || e.target.closest('.bench-move-btn') || e.target.closest('.bench-card-focus')) return;
-        openModal(id);
+        openModal(id, { from: card });
       });
       card.addEventListener('keydown', (e) => {
         if (e.target !== card) return;
@@ -7261,7 +7350,36 @@ ${tags} #BuildingInPublic #OpenToWork`;
   }
 
   // opts.tab forces a panel (the hero Continue pill opens straight onto Build).
+  const reducedMotion = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Opening from a card morphs the card into the modal with a same-document
+  // view transition where the browser supports it. Re-renders and openings
+  // from a link or the hash render in place as before.
   function openModal(id, opts = {}) {
+    const backdrop = document.getElementById('modal-backdrop');
+    const wasOpen = backdrop ? backdrop.classList.contains('open') : false;
+    const from = opts.from;
+    if (!wasOpen && from && document.startViewTransition && !reducedMotion()) {
+      from.style.viewTransitionName = 'bb-modal';
+      document.documentElement.classList.add('vt-modal');
+      const vt = document.startViewTransition(() => {
+        from.style.viewTransitionName = '';
+        renderModal(id, opts);
+        const m = document.getElementById('modal');
+        if (m) m.style.viewTransitionName = 'bb-modal';
+      });
+      vt.finished.finally(() => {
+        const m = document.getElementById('modal');
+        if (m) m.style.viewTransitionName = '';
+        from.style.viewTransitionName = '';
+        document.documentElement.classList.remove('vt-modal');
+      });
+      return;
+    }
+    renderModal(id, opts);
+  }
+
+  function renderModal(id, opts = {}) {
     const p = PROJECTS.find(x => x.id === id);
     if (!p) return;
     const backdrop = document.getElementById('modal-backdrop');
@@ -7445,6 +7563,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
       ${panel('stuck', `
       <div class="modal-section">
         <h4>When You Get Stuck</h4>
+        <p class="blink-say"><span class="blink" aria-hidden="true"></span>here's what usually breaks</p>
         <p style="margin-bottom:14px;">The errors students hit most on this build, with the fix. Check here before you lose an evening to it.</p>
         <ul class="stuck-list">
           ${stuckItems(p).map(i => `<li${i.generic ? ' class="stuck-generic"' : ''}><strong>${escapeText(i.symptom)}</strong><span>${escapeText(i.fix)}</span></li>`).join('')}
@@ -7718,6 +7837,23 @@ ${tags} #BuildingInPublic #OpenToWork`;
   }
   let lastFocusedBeforeModal = null;
   function closeModal() {
+    const card = modalTabProject && document.querySelector(`.project-card[data-id="${modalTabProject}"]`);
+    const modalEl = document.getElementById('modal');
+    const onScreen = card && (() => { const r = card.getBoundingClientRect(); return r.bottom > 0 && r.top < window.innerHeight; })();
+    if (onScreen && modalEl && document.startViewTransition && !reducedMotion() && !document.documentElement.classList.contains('vt-modal')) {
+      modalEl.style.viewTransitionName = 'bb-modal';
+      document.documentElement.classList.add('vt-modal');
+      const vt = document.startViewTransition(() => {
+        modalEl.style.viewTransitionName = '';
+        finishClose();
+        card.style.viewTransitionName = 'bb-modal';
+      });
+      vt.finished.finally(() => { card.style.viewTransitionName = ''; document.documentElement.classList.remove('vt-modal'); });
+      return;
+    }
+    finishClose();
+  }
+  function finishClose() {
     document.getElementById('modal-backdrop')?.classList.remove('open');
     document.getElementById('modal-top')?.classList.remove('visible');
     document.body.classList.remove('modal-open');

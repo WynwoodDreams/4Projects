@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath, URL } from 'node:url';
 import { readIndexProjects } from './projects.mjs';
 
@@ -73,6 +73,17 @@ const shorten = (value, max) => {
 };
 const jsonLd = value => JSON.stringify(value).replace(/</g, '\\u003c');
 
+// Vite fingerprints styles.css (e.g. /assets/styles-0o2WSZq5.css), so a
+// hard-coded /styles.css 404s and the guide pages render as unstyled white
+// pages. The real path is read from a built page before any guide is written.
+let STYLESHEET = null;
+async function resolveStylesheet() {
+  const built = await readFile(new URL('match.html', 'file://' + DIST), 'utf8');
+  const m = built.match(/<link rel="stylesheet"[^>]*href="(\/assets\/[^"]+\.css)"/);
+  if (!m) throw new Error('seo-pages: could not find the built stylesheet in dist/match.html');
+  return m[1];
+}
+
 function pageShell({ title, description, url, body, schema }) {
   const safeTitle = escapeHtml(title);
   const safeDescription = escapeHtml(description);
@@ -84,7 +95,7 @@ function pageShell({ title, description, url, body, schema }) {
     '<meta property="og:type" content="article"><meta property="og:site_name" content="BuildersBench">\n' +
     '<meta property="og:title" content="' + safeTitle + '"><meta property="og:description" content="' + safeDescription + '"><meta property="og:url" content="' + safeUrl + '">\n' +
     '<meta name="twitter:card" content="summary"><meta name="twitter:title" content="' + safeTitle + '"><meta name="twitter:description" content="' + safeDescription + '">\n' +
-    '<meta name="theme-color" content="#0C161B"><link rel="stylesheet" href="/styles.css">\n' +
+    '<meta name="theme-color" content="#0C161B"><script src="/theme.js"></script><link rel="stylesheet" href="' + STYLESHEET + '">\n' +
     '<script type="application/ld+json">' + jsonLd(schema) + '</script>\n' +
     '<style>.seo-page{max-width:900px;margin:0 auto;padding:36px 22px 80px;color:var(--ink,#E6F1F3)}.seo-page a{color:var(--green,#00FF85)}.seo-page .crumbs{font-size:13px;color:var(--ink-muted,#7A8A90);margin-bottom:24px}.seo-page h1{font-size:clamp(2rem,5vw,3.2rem);line-height:1.08;margin:10px 0 18px}.seo-page h2{font-size:1.35rem;margin:32px 0 10px}.seo-page p,.seo-page li{line-height:1.7;color:var(--ink-soft,#B7C5CB)}.seo-page .lead{font-size:1.15rem;max-width:72ch}.seo-page .chips{display:flex;flex-wrap:wrap;gap:8px;padding:0;list-style:none}.seo-page .chips li{border:1px solid var(--line,rgba(255,255,255,.14));border-radius:999px;padding:5px 10px;font-size:.85rem}.seo-page .roadmap li{margin:12px 0}.seo-page .project-list{display:grid;gap:12px;padding:0;list-style:none}.seo-page .project-list li{border:1px solid var(--line,rgba(255,255,255,.14));border-radius:12px;padding:16px;background:var(--glass,rgba(255,255,255,.04))}.seo-page .project-list a{text-decoration:none;font-weight:700}.seo-page .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}.seo-page .actions a{border:1px solid var(--line-3,rgba(0,255,133,.32));border-radius:999px;padding:10px 15px;text-decoration:none}.seo-page .muted{font-size:.9rem}.seo-page footer{border-top:1px solid var(--line,rgba(255,255,255,.14));margin-top:48px;padding-top:20px}</style>\n' +
     '</head><body><main class="seo-page">' + body + '</main></body></html>\n';
@@ -173,6 +184,7 @@ function renderPath(pathId, projects) {
 }
 
 export async function generateSeoPages() {
+  STYLESHEET = await resolveStylesheet();
   const projects = readIndexProjects();
   const pages = [];
   for (const project of projects) {

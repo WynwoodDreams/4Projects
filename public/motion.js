@@ -95,23 +95,9 @@
       if (e.key === '/' && !isTypingTarget(document.activeElement) && !reduce) pulse(blink, 'blink-lean', 520);
     }, true);
 
-    // Vertex, the logo creature: a mood on <html> for a moment.
-    var html = document.documentElement, vertexTimer;
-    function vertex(mood, ms) {
-      clearTimeout(vertexTimer);
-      html.removeAttribute('data-vertex');
-      void html.offsetWidth;
-      html.setAttribute('data-vertex', mood);
-      if (ms) vertexTimer = setTimeout(function () { if (html.getAttribute('data-vertex') === mood) html.removeAttribute('data-vertex'); }, ms);
-    }
-
     document.addEventListener('bb:motion', function (e) {
       var d = (e.detail || {});
       if (reduce) return;
-      if (d.type === 'step-done') vertex('nod', 600);
-      else if (d.type === 'project-done') vertex('celebrate', 1000);
-      else if (d.type === 'thinking') vertex('think');
-      else if (d.type === 'results') vertex('nod', 600);
       if (d.type === 'step-done') {
         pulse(blink, 'blink-nod', 600);
         // The roadmap re-renders synchronously after the event; charge the
@@ -226,6 +212,126 @@
     document.addEventListener('visibilitychange', function () { if (document.hidden) halt(); else start(); });
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { init(); initTabGlide(); });
-  else { init(); initTabGlide(); }
+  // Constellation float. The hero's node graph drops in from above the panel,
+  // bounces to rest on the floor, then drifts slowly around inside the panel,
+  // bouncing off its edges while it turns. It treats the graph as a circle so
+  // a rotating shape never pokes out. Stops off screen and in background
+  // tabs; with reduced motion the graph stays where the stylesheet puts it.
+  var FLOAT_GRAVITY = 520;    // px/s^2 while falling
+  var FLOAT_BOUNCE = 0.5;     // energy kept per floor bounce
+  var FLOAT_DRIFT = 16;       // px/s once it has settled into drifting
+  var FLOAT_SPIN = 7;         // degrees per second
+
+  function initConstellationFloat() {
+    var svg = document.getElementById('constellation');
+    var box = svg && svg.parentElement;
+    if (!svg || !box || reduce || !('IntersectionObserver' in window)) return;
+
+    var size = 0, x = 0, y = 0, vx = 0, vy = 0, angle = 0;
+    var mode = 'fall', raf = 0, last = 0, visible = false, ready = false;
+
+    // Fit the viewBox to whatever the graph currently holds and size the
+    // element from it: a seed of five nodes is small; a big constellation
+    // grows, capped so it always has room to move.
+    function fit() {
+      var bb;
+      try { bb = svg.getBBox(); } catch (e) { return false; }
+      if (!bb || !bb.width) return false;
+      var pad = 10, side = Math.max(bb.width, bb.height) + pad * 2;
+      var cx = bb.x + bb.width / 2, cy = bb.y + bb.height / 2;
+      svg.setAttribute('viewBox', (cx - side / 2) + ' ' + (cy - side / 2) + ' ' + side + ' ' + side);
+      var panel = box.getBoundingClientRect();
+      size = Math.round(Math.min(side * 1.55, panel.height * 0.62, panel.width * 0.45, 260));
+      svg.style.width = svg.style.height = size + 'px';
+      return true;
+    }
+
+    function bounds() {
+      var r = box.getBoundingClientRect();
+      // Circle of the rotated square, slightly forgiving at the corners.
+      var rad = size * 0.62;
+      return { minX: rad - size / 2, maxX: r.width - rad - size / 2, minY: rad - size / 2, maxY: r.height - rad - size / 2 };
+    }
+
+    function place() { svg.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px) rotate(' + angle.toFixed(2) + 'deg)'; }
+
+    function drift() {
+      mode = 'drift';
+      var a = (Math.random() * 0.8 + 0.1) * Math.PI * (Math.random() < 0.5 ? 1 : -1);
+      vx = Math.cos(a) * FLOAT_DRIFT; vy = Math.sin(a) * FLOAT_DRIFT;
+      if (Math.abs(vy) < 5) vy = vy < 0 ? -5 : 5;
+    }
+
+    function frame(now) {
+      raf = 0;
+      if (!visible) return;
+      var dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016;
+      last = now;
+      var b = bounds();
+      if (b.maxX < b.minX || b.maxY < b.minY) { raf = requestAnimationFrame(frame); return; }
+
+      if (mode === 'fall') {
+        vy += FLOAT_GRAVITY * dt;
+        x += vx * dt; y += vy * dt;
+        if (y >= b.maxY) {
+          y = b.maxY;
+          vy = -vy * FLOAT_BOUNCE;
+          vx *= 0.8;
+          if (Math.abs(vy) < 40) drift();
+        }
+        angle += FLOAT_SPIN * 2.2 * dt;
+      } else {
+        x += vx * dt; y += vy * dt;
+        if (x <= b.minX) { x = b.minX; vx = Math.abs(vx); }
+        else if (x >= b.maxX) { x = b.maxX; vx = -Math.abs(vx); }
+        if (y <= b.minY) { y = b.minY; vy = Math.abs(vy); }
+        else if (y >= b.maxY) { y = b.maxY; vy = -Math.abs(vy); }
+        angle += FLOAT_SPIN * dt;
+      }
+      if (x < b.minX) x = b.minX; if (x > b.maxX) x = b.maxX;
+      place();
+      raf = requestAnimationFrame(frame);
+    }
+
+    function start() { if (!raf && visible && ready) { last = 0; raf = requestAnimationFrame(frame); } }
+    function halt() { if (raf) cancelAnimationFrame(raf); raf = 0; }
+
+    function launch() {
+      if (!fit()) return;
+      svg.classList.add('is-floating');
+      var b = bounds();
+      // Drop from above the panel, toward the right where the copy is thinner.
+      x = b.minX + (b.maxX - b.minX) * (0.55 + Math.random() * 0.35);
+      y = -size;
+      vx = (Math.random() < 0.5 ? -1 : 1) * (14 + Math.random() * 10);
+      vy = 0;
+      angle = Math.random() * 360;
+      mode = 'fall';
+      place();
+      ready = true;
+      start();
+    }
+
+    // renderConstellation() rewrites the SVG on every save or step; refit it
+    // in place so a growing graph keeps moving without a restart.
+    new MutationObserver(function () {
+      if (!ready) { launch(); return; }
+      fit();
+      var b = bounds();
+      x = Math.min(Math.max(x, b.minX), b.maxX);
+      y = Math.min(Math.max(y, mode === 'fall' ? -size : b.minY), b.maxY);
+    }).observe(svg, { childList: true });
+
+    new IntersectionObserver(function (entries) {
+      visible = entries.some(function (e) { return e.isIntersecting; });
+      if (visible) start(); else halt();
+    }, { threshold: 0.1 }).observe(box);
+    document.addEventListener('visibilitychange', function () { if (document.hidden) halt(); else start(); });
+    window.addEventListener('resize', function () { if (ready) fit(); });
+
+    if (svg.childNodes.length) launch();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { init(); initTabGlide(); initConstellationFloat(); });
+  else { init(); initTabGlide(); initConstellationFloat(); }
 })();

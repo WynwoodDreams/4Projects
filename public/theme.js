@@ -28,6 +28,10 @@
 
   apply(resolve());
 
+  // A page prerendered on hover may have been rendered before the visitor
+  // toggled the theme; re-apply when it is actually shown.
+  document.addEventListener('prerenderingchange', function () { apply(resolve()); });
+
   document.addEventListener('DOMContentLoaded', function () {
     apply(resolve());
     var btn = document.getElementById('theme-toggle');

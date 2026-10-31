@@ -137,6 +137,60 @@
     });
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-  else init();
+  // Path tab glide. When the career-path row first comes into view and it is
+  // wider than the screen (phones and narrow windows), it drifts slowly left
+  // to right to show every path, pauses at the end, eases back to where it
+  // started, and stops for good. Once per tab session. Any touch, wheel,
+  // click, or key on the row stops it on the spot and leaves it where it is.
+  function initTabGlide() {
+    var row = document.getElementById('path-tabs');
+    if (!row || reduce || !('IntersectionObserver' in window)) return;
+    try { if (sessionStorage.getItem('bb-tabglide')) return; } catch (e) { return; }
+
+    var raf = 0, stopped = false;
+    function stop() {
+      stopped = true;
+      cancelAnimationFrame(raf);
+      row.classList.remove('is-gliding');
+      ['pointerdown', 'touchstart', 'wheel', 'keydown'].forEach(function (t) { row.removeEventListener(t, stop); });
+    }
+    ['pointerdown', 'touchstart', 'wheel', 'keydown'].forEach(function (t) { row.addEventListener(t, stop, { passive: true }); });
+
+    function tween(from, to, ms, done) {
+      var start = performance.now();
+      var ease = function (t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; };
+      (function frame(now) {
+        if (stopped) return;
+        var t = Math.min(1, (now - start) / ms);
+        row.scrollLeft = from + (to - from) * ease(t);
+        if (t < 1) raf = requestAnimationFrame(frame);
+        else if (done) done();
+      })(start);
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+      if (!entries.some(function (e) { return e.isIntersecting; })) return;
+      io.disconnect();
+      var max = row.scrollWidth - row.clientWidth;
+      if (max < 24) return stop(); // everything already fits
+      try { sessionStorage.setItem('bb-tabglide', '1'); } catch (e) {}
+      var home = row.scrollLeft;
+      setTimeout(function () {
+        if (stopped) return;
+        row.classList.add('is-gliding');
+        // About 7ms per pixel: slow enough to read each tab, capped at 6s.
+        var out = Math.max(2400, Math.min(6000, (max - home) * 7));
+        tween(home, max, out, function () {
+          setTimeout(function () {
+            if (stopped) return;
+            tween(max, home, 900, stop);
+          }, 900);
+        });
+      }, 450);
+    }, { threshold: 0.75 });
+    io.observe(row);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { init(); initTabGlide(); });
+  else { init(); initTabGlide(); }
 })();

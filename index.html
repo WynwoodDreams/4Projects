@@ -3108,6 +3108,11 @@
     .path-tab { width: 78px; height: 88px; }
   }
 
+  /* ===== Optional card sections: learning links, success metrics ===== */
+  .learn-links, .metrics-list { margin: 10px 0 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; font-size: 13.5px; color: var(--ink-soft); line-height: 1.5; }
+  .learn-links a { color: var(--green); text-decoration: none; }
+  .learn-links a:hover { text-decoration: underline; }
+
   /* ===== Stuck? panel ===== */
   .stuck-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
   .stuck-list li {
@@ -5562,7 +5567,48 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         { title: 'Enforce and test the edges', desc: 'Turn the policies on. Test a password-only sign-in, a legacy client, a new device, and the break-glass account. Document every result.', doneWhen: "A password-only sign-in is blocked, legacy auth is blocked, a new device prompts correctly, and break-glass still works.", time: "4 to 6 hours", watchOut: "Test the break-glass account last and from a clean browser. If it fails, fix that before anything else." },
         { title: 'Write the rollout plan', desc: 'Phases, communications, success metrics, and the break-glass runbook. Present it as the document you would hand a CIO before go-live.', doneWhen: "A rollout document covers phases, comms, metrics, and the break-glass runbook, and reads like a plan for a real company.", time: "4 to 6 hours", watchOut: "Write the rollback step for each phase. A plan without a way back is not a plan a CIO signs." }
       ]
-    }
+    },
+    {
+      id: 'ai-8', path: 'ai', level: 'beginner',
+      title: 'AI Experiment Lab: Compare Prompts and Models on Real Job Posts',
+      summary: 'A small, repeatable experiment that runs several prompts and models against the same set of job descriptions, checks whether each one correctly spots real entry-level roles, and reports which did best on accuracy, speed, and cost. Inspired by the experiment loop in Andrej Karpathy\'s autoresearch: change one thing, measure it, keep what works.',
+      tech: ['Python', 'Claude or OpenAI API', 'Ollama (free local model)', 'pandas', 'Streamlit', 'CSV / JSON', 'Git / GitHub'],
+      skills: 'Experiment Design, Prompt Engineering, Evaluation Metrics, Model Comparison, Cost and Latency Measurement, Data Labeling, Python',
+      why: 'Teams that use AI at work do not pick a prompt or a model by feel. They test options against the same task, measure, and keep the winner. This project proves you can run that loop: define a task, build a small labeled set, compare fairly, and explain a result with numbers. That is the skill behind every "we improved accuracy by 12%" line on an AI engineer\'s resume, and it needs no training from scratch.',
+      useCase: 'A college career office receives hundreds of job posts a week and wants to flag the ones that are genuinely entry-level before sharing them with students. Before anyone trusts an AI to do that, the lab shows which prompt and model gets it right most often, how fast, and at what cost.',
+      bonus: 'Follow-up challenges, in order of difficulty: (1) Add a second task, such as extracting required years of experience, and see whether the same prompt still wins. (2) Let the lab run a prompt against itself by asking the model to rewrite the prompt, test the rewrite, and keep it only if the score improves, the way autoresearch keeps a change only when the metric goes up. (3) Add a third judge: have a second model grade the answers and measure how often it agrees with your hand labels. (4) Swap in a tiny local model through Ollama and document exactly where it falls short.',
+      aiAssist: 'Use Claude Code or Cursor to scaffold the experiment runner and the scoring script, generate a realistic mix of job descriptions for the labeled set, and draft the Streamlit results page. Do the hand labeling yourself; that is the part that makes the results mean something.',
+      prompt: 'Act as a senior ML engineer helping a beginner build an experiment runner in Python. I have a CSV of job descriptions with a column I filled in by hand: is_entry_level (yes/no). Write a script that: 1. Loads the CSV. 2. Takes a list of prompt templates and a list of model names from a config file. 3. For every combination of prompt and model, asks the model whether each job is entry-level and records the answer, the response time in seconds, and the token counts. 4. Compares answers to my hand labels and reports accuracy, precision, and recall per combination. 5. Estimates cost per combination from a price table I provide. 6. Writes everything to results.json. Keep it under 150 lines, use only the official API client and pandas, and include a dry-run mode that uses canned answers so I can test without spending money.',
+      showcase: {
+        github: 'README with a results table (accuracy, median response time, estimated cost per 100 posts) for every prompt-and-model pair, the labeled CSV, the config file, and a one-paragraph "what I learned" note. Keep the dry-run mode so reviewers can run it without keys.',
+        linkedin: 'Post the results table as an image with one sentence on the surprise, for example "the cheaper model matched the expensive one on this task," and a link to the repo.',
+        resume: 'Focus on "experiment design", "evaluation metrics", and "model comparison". Quote the best accuracy and the cost difference you measured.'
+      },
+      inspiredBy: 'This project borrows the experiment loop from Andrej Karpathy\'s autoresearch repo: run a baseline, change one thing, measure, and keep the change only if the number improves. You are not installing autoresearch or training a model from scratch. You are applying the same discipline to prompts and models you can call today. The other repos listed below are optional reading if you want to understand what is happening inside the model you are testing.',
+      links: [
+        { label: 'autoresearch — the experiment loop this project is modeled on', url: 'https://github.com/karpathy/autoresearch' },
+        { label: 'micrograd — a tiny neural network engine, if you want to see learning from the inside', url: 'https://github.com/karpathy/micrograd' },
+        { label: 'Neural Networks: Zero to Hero — the video course that builds up to a language model', url: 'https://github.com/karpathy/nn-zero-to-hero' },
+        { label: 'minBPE — how text becomes tokens, which is what you are paying for', url: 'https://github.com/karpathy/minbpe' },
+        { label: 'nanochat — a full small chat model pipeline, to see what training really involves', url: 'https://github.com/karpathy/nanochat' }
+      ],
+      metrics: [
+        'Accuracy, precision, and recall for each prompt-and-model pair against your hand labels, on at least 40 job posts you did not use while writing the prompts.',
+        'Median and worst-case response time per pair, measured in your own script, not quoted from a vendor page.',
+        'Estimated cost per 100 posts per pair, computed from the token counts you logged and the provider\'s current price table. Note the date you checked prices.',
+        'A review sheet where you marked every model answer right or wrong by hand, with at least five cases where the model was wrong and a note on why.',
+        'A dry-run test that runs the whole pipeline on canned answers in under five seconds, so the code can be checked without an API key.'
+      ],
+      youtube: 'zjkBMFhNj_g', ytTitle: 'Intro to Large Language Models — Andrej Karpathy',
+      steps: [
+        { title: 'Build a small labeled set', desc: 'Collect 50 to 80 real job descriptions from public postings across a few fields. For each one, decide by hand whether it is truly entry-level and record yes or no in a CSV with a one-line reason. This is your ground truth, and nothing you measure later is better than it.', doneWhen: "A jobs.csv has at least 50 rows with title, description, is_entry_level, and reason, and a second person agrees with your label on a sample of 10.", time: "2 hours", watchOut: "Do not let a model label the set for you. If the model writes the answer key, the experiment can only agree with itself." },
+        { title: 'Write the baseline runner', desc: 'A Python script that reads the CSV, sends each description to one model with one plain prompt ("Is this an entry-level job? Answer yes or no."), and saves the answer, response time, and token counts. Include a dry-run mode with canned answers so you can test the plumbing for free.', doneWhen: "python run.py --dry-run finishes in seconds and writes results.json; a real run on 10 posts returns yes or no for each with a time and token count.", time: "2 hours", watchOut: "Put the API key in a .env file and load it; never paste it into the script. Start with 10 posts, not 80, until the output looks right." },
+        { title: 'Score the results', desc: 'Compare each answer to your hand label and compute accuracy, precision, and recall. Print a small table. Then open the results side by side with the descriptions and mark each one right or wrong yourself to confirm the script scored it correctly.', doneWhen: "A score.py prints accuracy, precision, and recall for the baseline, and your manual check of 20 rows matches the script's right/wrong column.", time: "1 to 2 hours", watchOut: "Models answer 'Yes.' or 'yes, because...' as often as 'yes'. Normalize the answer before comparing, or your accuracy will be wrong for the wrong reason." },
+        { title: 'Add prompt variants, one change at a time', desc: 'Write three more prompts: one with a clear definition of entry-level, one with two labeled examples, and one that asks for a reason before the answer. Run each against the same model and set. Change only the prompt between runs so you know what caused any difference.', doneWhen: "A prompts.yaml holds four prompts, the runner loops over them, and the results table shows one row per prompt with accuracy, median time, and estimated cost.", time: "2 hours", watchOut: "This is the autoresearch idea: one variable per experiment. If you change the prompt and the model together, you learn nothing." },
+        { title: 'Add a second and third model', desc: 'Run the best prompt against a cheaper hosted model and a free local one through Ollama. Record time and cost for each. Build the cost estimate from your logged token counts and the provider price table, and write down the date you checked prices.', doneWhen: "The results table has at least six rows (prompts by models), each with accuracy, median response time, and estimated cost per 100 posts.", time: "2 hours", watchOut: "Hosted models cost real money; a full run on 80 posts across three models is usually under a dollar, but check before running it in a loop. Local models are free but may be noticeably worse. Report what you measured, not what you expected." },
+        { title: 'Build the results page and write it up', desc: 'A one-page Streamlit app that shows the results table, a chart of accuracy against cost, and a review view where you can click any job and see every model\'s answer next to your label. Write a README with the winner, the surprise, and what you would test next.', doneWhen: "The Streamlit page runs locally, the README names the best prompt-and-model pair with its numbers, and at least five wrong answers are shown with your notes on why the model missed.", time: "2 to 3 hours", watchOut: "Do not claim the winner is 'accurate'. Say it scored X% on your 80 posts, labeled by you, on this date. That honest sentence is worth more in an interview than a big number." }
+      ]
+    },
   ];
 
   // ===== STUCK? — the errors students hit most on each project, with the fix =====
@@ -5902,6 +5948,12 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
       { symptom: "OpenSearch refuses to start in Docker", fix: "Set vm.max_map_count to 262144 on the host and give the container at least 2 GB of memory." },
       { symptom: "Sigma rules import but never match", fix: "Field names in your logs must match the rule's field mapping. Check the detector's log type mapping and your index field names." },
       { symptom: "Synthetic logs all look the same and nothing is anomalous", fix: "Build a baseline of normal sessions first, then inject attack sequences at a low rate so detections have contrast." }
+    ],
+    'ai-8': [
+      { symptom: "Accuracy is 100% on the first run and you do not believe it", fix: "You probably wrote the prompt while looking at the same posts you are scoring. Hold out at least 40 posts you never read while writing prompts, and score on those." },
+      { symptom: "The script says every answer is wrong even though the model clearly said yes", fix: "The model answered 'Yes.' or 'Yes, this is entry-level' and you compared the raw string. Lowercase it, strip punctuation, and take the first word before comparing." },
+      { symptom: "Ollama returns an error or the local model answers in paragraphs", fix: "Run ollama pull for the model first and check ollama list. Small local models ignore 'answer yes or no' unless you also set a low max tokens and put the instruction last." },
+      { symptom: "Cost estimates do not match the provider's bill", fix: "You are counting only output tokens or using an old price. Log prompt and completion tokens separately from the API response and recompute from the price table you dated in the README." }
     ]
   };
 
@@ -6564,6 +6616,8 @@ ${tags} #BuildingInPublic #OpenToWork`;
         </div>
       </div>
 
+      ${(p.metrics && p.metrics.length) ? `<h2>Tests and success metrics</h2><ul>${p.metrics.map(m => `<li>${e(m)}</li>`).join('')}</ul>` : ''}
+
       <h2>Resume bullets</h2>
       <ul>${resumeBullets(p).map(b => `<li>${e(b)}</li>`).join('')}</ul>
 
@@ -7163,6 +7217,12 @@ ${tags} #BuildingInPublic #OpenToWork`;
         <p>${p.why}</p>
       </div>
 
+      ${p.inspiredBy ? `
+      <div class="modal-section">
+        <h4>Where This Comes From</h4>
+        <p>${p.inspiredBy}</p>
+      </div>` : ''}
+
       ${p.youtube ? (() => {
         // Thumbnails are only served for video ids, so a playlist card falls back
         // to ytThumb (a representative video from the series) and, failing that,
@@ -7194,6 +7254,14 @@ ${tags} #BuildingInPublic #OpenToWork`;
         </div>
         <p style="margin-top:12px;font-size:13px;"><strong style="color:var(--ink);">Skills gained:</strong> ${p.skills}</p>
       </div>
+
+      ${p.links && p.links.length ? `
+      <div class="modal-section">
+        <h4>Learn From</h4>
+        <ul class="learn-links">
+          ${p.links.map(l => `<li><a href="${escapeText(l.url)}" target="_blank" rel="noopener noreferrer">${escapeText(l.label)}</a></li>`).join('')}
+        </ul>
+      </div>` : ''}
 
       <div class="modal-grid-2">
         <div class="modal-card">
@@ -7252,6 +7320,15 @@ ${tags} #BuildingInPublic #OpenToWork`;
         </div>
       </div>
       ` : ''}
+
+      ${p.metrics && p.metrics.length ? `
+      <div class="modal-section">
+        <h4>Tests &amp; Success Metrics</h4>
+        <p style="margin-bottom:10px;">What "working" means for this build. Put these numbers in the README.</p>
+        <ul class="metrics-list">
+          ${p.metrics.map(m => `<li>${escapeText(m)}</li>`).join('')}
+        </ul>
+      </div>` : ''}
 
       <div class="modal-section">
         <h4>How to Use AI Coding Assistants</h4>

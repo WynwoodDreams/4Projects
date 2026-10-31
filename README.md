@@ -8,7 +8,7 @@ A curated portfolio project guide for students chasing internships, first roles,
 
 ## What's inside
 
-- **67 projects** across 8 career paths — AI Engineer, Cloud, Computer Science, Cybersecurity, Data Analyst, Help Desk, Software Engineer, IT Support
+- **68 projects** across 8 career paths — AI Engineer, Cloud, Computer Science, Cybersecurity, Data Analyst, Help Desk, Software Engineer, IT Support
 - Each project ships with:
   - A 6-step build roadmap, each step with a "done when" bar, a time estimate, and a watch-out
   - A starter AI prompt for vibe-coding

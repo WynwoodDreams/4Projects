@@ -37,6 +37,12 @@ const CASES = [
     expect: 'tech-it-0',   // M365 user management
   },
   {
+    name: 'AI Evaluation Engineer',
+    jd: 'Junior AI Engineer. Evaluate prompts and LLM models, build evals and benchmarks, measure accuracy, latency and cost. Python, pandas.',
+    path: 'ai',
+    expect: 'ai-8',   // the prompt-and-model experiment lab
+  },
+  {
     name: 'Cloud Engineer',
     jd: 'Cloud Engineer. AWS, Terraform, Kubernetes, CI/CD pipelines. Build infrastructure as code and manage EKS clusters.',
     path: 'cloud',

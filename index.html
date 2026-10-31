@@ -165,8 +165,7 @@
   @keyframes vt-fade-out { to { opacity: 0; } }
   @keyframes vt-fade-in { from { opacity: 0; } }
 
-  /* Logo: one turn on load, spins again on hover. Not forever. */
-  .brand-icon:hover svg { animation: brand-icon-spin 1.6s linear infinite; }
+  /* The header logo stays still. */
 
   /* Blink, the cursor. A real element so it can move and react; the
      CSS-only ::after cursor remains for pages without the script. */
@@ -196,28 +195,13 @@
   @media (prefers-reduced-motion: reduce) {
     @view-transition { navigation: none; }
     ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
-    .blink, .brand-icon:hover svg { animation: none !important; transform: none !important; }
+    .blink { animation: none !important; transform: none !important; }
     .hero h1.is-typing .type-w { opacity: 1; }
   }
 
 
   /* ===== MOTION, PHASE TWO ===== */
 
-  /* Vertex: the logo as a creature. Moods are set on <html data-vertex> by
-     motion.js for a moment at a time; idle is the plain logo. */
-  .brand-icon circle { transform-box: fill-box; transform-origin: center; }
-  html[data-vertex="think"] .brand-icon line { animation: vertex-lines 600ms ease-in-out infinite; }
-  html[data-vertex="think"] .brand-icon circle { animation: vertex-jitter 420ms ease-in-out infinite; }
-  html[data-vertex="think"] .brand-icon circle:nth-child(2n) { animation-delay: 140ms; }
-  html[data-vertex="think"] .brand-icon circle:nth-child(3n) { animation-delay: 280ms; }
-  html[data-vertex="nod"] .brand-icon svg { animation: vertex-nod 520ms cubic-bezier(.2,.8,.2,1) 1; }
-  html[data-vertex="celebrate"] .brand-icon svg { animation: brand-icon-spin 900ms cubic-bezier(.2,.8,.2,1) 1; }
-  html[data-vertex="celebrate"] .brand-icon circle { animation: vertex-burst 900ms cubic-bezier(.2,.8,.2,1) 1; }
-  html[data-vertex="celebrate"] .brand-icon { filter: drop-shadow(0 0 12px var(--green)); }
-  @keyframes vertex-lines { 0%, 100% { opacity: .9; } 50% { opacity: .35; } }
-  @keyframes vertex-jitter { 0%, 100% { transform: translate(0, 0); } 33% { transform: translate(.5px, -.4px); } 66% { transform: translate(-.4px, .5px); } }
-  @keyframes vertex-nod { 0%, 100% { transform: translateY(0); } 35% { transform: translateY(2px) scaleY(.9); } 70% { transform: translateY(-1px); } }
-  @keyframes vertex-burst { 0% { transform: scale(1); } 40% { transform: scale(1.7); } 100% { transform: scale(1); } }
 
   /* Salary bar fills as the path header scrolls into view. Pure CSS; a
      browser without scroll timelines shows the bar already full. */
@@ -227,7 +211,6 @@
   @keyframes salary-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
   @media (prefers-reduced-motion: reduce) {
-    html[data-vertex] .brand-icon svg, html[data-vertex] .brand-icon circle, html[data-vertex] .brand-icon line { animation: none !important; }
     .path-salary-fill { animation: none !important; transform: none !important; }
   }
 
@@ -321,11 +304,7 @@
     width: 100%;
     height: 100%;
     overflow: visible;
-    animation: brand-icon-spin 1.4s cubic-bezier(.2,.8,.2,1) 1;
     transform-origin: 50% 50%;
-  }
-  @keyframes brand-icon-spin {
-    to { transform: rotate(360deg); }
   }
   @media (prefers-reduced-motion: reduce) {
     .brand-icon svg { animation: none; }
@@ -3227,6 +3206,10 @@
     color: var(--green);
   }
   .hero > .container > .hero-grid > div:first-child > :not(.constellation):not(.constellation-label) { position: relative; z-index: 1; }
+  /* motion.js takes over: the graph becomes a free body that falls into the
+     panel, bounces, then drifts and turns inside it. Size and position are
+     set inline; without the script it stays put as above. */
+  .constellation.is-floating { right: auto; left: 0; top: 0; aspect-ratio: auto; max-width: none; will-change: transform; overflow: visible; }
   .constellation line { stroke: currentColor; stroke-width: 1; stroke-linecap: round; opacity: .28; }
   .constellation .c-seed-line { opacity: .22; }
   .constellation circle { fill: currentColor; }

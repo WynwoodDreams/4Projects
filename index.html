@@ -3903,6 +3903,13 @@
         linkedin: 'Post a video demonstrating a "before and after" scenario where your system neutralizes a complex jailbreak attempt.',
         resume: 'Focus on AI Security, LLM firewall, and adversarial ML experience.'
       },
+      metrics: [
+        "Precision, recall, and F1 on a held-out test set of at least 100 prompts, half malicious and half benign.",
+        "False-positive rate on 50 ordinary user questions pulled from forums, not written by you.",
+        "Gateway latency added per request, p50 and p95, with the model loaded once at startup.",
+        "Ten jailbreaks the classifier missed that the judge layer caught, and the combined block rate.",
+        "The judge itself resists injection: five attempts to make it approve a known attack, all blocked."
+      ],
       youtube: 'Ny-6hvSwpv4', ytTitle: 'How to detect prompt injections - Jasper Schwenzow, deepset.ai',
       steps: [
         { title: 'Study the attack landscape', desc: "Read OWASP's LLM Top 10. Collect real jailbreak examples from DAN, prompt injection databases, and academic papers.", doneWhen: "A notes file lists at least 30 real attack examples sorted into four or more categories.", time: "2 to 3 hours", watchOut: "Collecting attacks is not the project. Timebox it, or you will spend a week reading and ship nothing." },
@@ -3982,6 +3989,13 @@
         linkedin: 'Video demo of agents collaborating in real-time.',
         resume: 'Focus on "Autonomous Agentic Workflows".'
       },
+      metrics: [
+        "A full run from topic to finished report completes without manual steps, in under 10 minutes, with no agent exceeding its iteration cap.",
+        "Every factual claim in the final report traces to a source the Researcher fetched; count the claims and the ones with a source, and report the ratio.",
+        "Cost per report in tokens and dollars, logged per agent, with the Researcher on a cheaper model than the Writer.",
+        "At least one revision round where the Fact-Checker changed the draft, visible in the trace or logs.",
+        "A second run on a new topic produces a usable report with no code changes."
+      ],
       youtube: 'mRkLvqFMkyI', ytTitle: 'LangGraph Tutorial: Building a Multi-Agent AI Research Assistant',
       steps: [
         { title: 'Pick your framework', desc: 'CrewAI is beginner-friendly; LangGraph gives you more control. Start with CrewAI for your first build.', doneWhen: "CrewAI is installed, the quick-start example runs, and you can explain what an agent, a task, and a crew are.", time: "1 to 2 hours", watchOut: "Do not learn both frameworks at once. Ship with CrewAI first; switching to LangGraph later is a good second project." },
@@ -4008,6 +4022,13 @@
         linkedin: 'Post a side-by-side video: the system answering a question about a chart inside a PDF, with the cited page + region highlighted in real time.',
         resume: 'Highlight production RAG and citation accuracy.'
       },
+      metrics: [
+        "Faithfulness and context recall from RAGAS on 50 questions, with a target of faithfulness above 0.8 and both numbers in the README.",
+        "Table and image questions answered with a page citation; report the hit rate separately for text, table, and image chunks.",
+        "Median query time end to end, retrieval plus generation, under 10 seconds.",
+        "Cost per query in tokens, with the top-k and chunk size that produced it.",
+        "Ten questions the system should refuse because the corpus does not cover them; count how many it refused."
+      ],
       youtube: 'Ni1P8TITtE8', ytTitle: 'How to Build a production-ready RAG AI agent',
       steps: [
         { title: 'Source messy enterprise-style docs', desc: 'Grab SEC 10-Ks, research papers, or technical manuals — anything with tables, charts, and text mixed together.', doneWhen: "A folder holds at least 20 documents mixing tables, charts, and text, and you have opened each to know what is inside.", time: "1 to 2 hours", watchOut: "Check the license on anything you redistribute. SEC filings are public; many research papers are not." },
@@ -4034,6 +4055,13 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         linkedin: 'Share a video demonstrating the bot in action, highlighting its ability to catch errors and suggest improvements.',
         resume: 'Focus on CI/CD + AI integration.'
       },
+      metrics: [
+        "The bot catches a planted bug (off-by-one, missing null check, hardcoded secret) in a real PR, with the review screenshot in the README.",
+        "Precision on 20 findings reviewed by hand: how many were real problems versus noise. Aim for at least 70 percent real.",
+        "Workflow runtime under 3 minutes on a PR touching 10 files.",
+        "Cost per PR in tokens, with the per-file chunk cap that keeps it there.",
+        "Zero rejected comments: every finding maps to a line that is actually in the diff."
+      ],
       youtube: 'XgAZBRZ7yy0', ytTitle: 'Automate GitHub PR Reviews with AI (Claude & GitHub Actions)',
       steps: [
         { title: 'Create the GitHub Action skeleton', desc: 'New repo with a workflow that triggers on pull_request. Have it print the PR number first so you know the trigger and permissions work before adding anything clever.', doneWhen: "Opening a pull request runs the workflow and the log prints the PR number.", time: "1 hour", watchOut: "Workflows from forks run with read-only tokens. Test with branches in your own repo." },
@@ -4192,6 +4220,13 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         linkedin: 'Video demo showing the system citing specific lines from a technical manual.',
         resume: 'Focus on RAG, vector DBs, and accuracy evaluation.'
       },
+      metrics: [
+        "Top-1 retrieval hit rate on 20 known question-and-chunk pairs.",
+        "Exact identifiers (function names, version numbers) found by the keyword fallback when embeddings miss them; list five examples.",
+        "Every answer carries citations that resolve to real chunks, and an off-topic question returns a refusal.",
+        "Median time from question to first token under 3 seconds.",
+        "Re-uploading a document costs zero embedding calls, shown in the cache log."
+      ],
       youtube: 'sVcwVQRHIc8', ytTitle: 'Learn RAG From Scratch - Python AI Tutorial',
       steps: [
         { title: 'Build the ingestion pipeline', desc: 'Accept PDF and Markdown uploads and split them with RecursiveCharacterTextSplitter at roughly 500 tokens with 50 overlap. Keep filename, page, and section as metadata on every chunk.', doneWhen: "Uploading a PDF prints the number of chunks and the first chunk's metadata shows file, page, and section.", time: "3 to 4 hours", watchOut: "Chunk size is a trade-off, not a constant. Keep it configurable because you will tune it in step four." },
@@ -4298,6 +4333,13 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         linkedin: 'Video demo showing the "Source Attribution" feature in action.',
         resume: 'Highlight production RAG + evaluation metrics.'
       },
+      metrics: [
+        "Precision at 5 with and without the re-ranker on your test questions; both numbers in the README.",
+        "RAGAS faithfulness, answer relevancy, and context recall on 50 questions, with at least 10 written by hand.",
+        "Every citation resolves to exact character offsets that highlight the right passage.",
+        "Median retrieval time under 2 seconds for 20 candidates re-ranked to 5.",
+        "A comparison table of at least two chunking strategies and two retrieval configurations, one variable changed per row."
+      ],
       youtube: 'gcqp3Fbv4_o', ytTitle: 'Build a Simple RAG Pipeline in 30 Minutes',
       steps: [
         { title: 'Set up the base RAG', desc: 'LangChain + ChromaDB for local speed. Ingest a sample corpus (e.g., legal filings, research papers).', doneWhen: "A question about the corpus returns an answer that quotes a real passage from it.", time: "2 to 3 hours", watchOut: "Start with 20 documents, not 2,000. You will re-index many times before you are done." },
@@ -4324,6 +4366,13 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         linkedin: 'Video showing the agents collaborating live.',
         resume: '"Architected a multi-agent system using LangGraph that reduced research time by 80%."'
       },
+      metrics: [
+        "A run completes with the supervisor routing through every node at least once and ending within the recursion limit.",
+        "A forced tool failure triggers a retry, and the Redis log replays the run step by step.",
+        "The human-in-the-loop checkpoint pauses, survives a process restart, and resumes with the approver's note included.",
+        "Cost and token count per run, split by node.",
+        "Two runs on the same topic produce reports with the same structure, showing the graph is stable."
+      ],
       youtube: 'B_0TNuYi56w', ytTitle: 'Hierarchical multi-agent systems with LangGraph',
       steps: [
         { title: 'Design the agent graph', desc: 'Draw it in Mermaid first: Supervisor → (Researcher | Writer | Fact-Checker) → Supervisor. Decide on routing logic.', doneWhen: "A Mermaid diagram of the graph is in the README and every edge has a stated routing condition.", time: "2 hours", watchOut: "Decide the stop condition now. Graphs without a clear end state loop forever." },
@@ -4509,6 +4558,13 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         linkedin: 'Video of the agent generating tests for an open-source repo and catching a real bug.',
         resume: 'Focus on "Agentic QA" and "Autonomous code analysis".'
       },
+      metrics: [
+        "Coverage before and after the agent runs on the target repo, as two percentages.",
+        "Share of generated tests that pass on the first run, and after one repair round.",
+        "Zero generated tests that assert an existing bug as correct behavior, confirmed by reading each passing test.",
+        "Runtime of the GitHub Actions job on a 10-function PR.",
+        "One real PR with agent-written tests accepted or reviewed by a maintainer, linked from the README."
+      ],
       youtube: 'qCBreTfjFHQ', ytTitle: 'Vibe coding to production: AI agents, testing & CI/CD with Gemini CLI',
       steps: [
         { title: 'Pick the target codebase', desc: 'Use a small open-source Python repo (or one of your own) with under 70% test coverage as your testbed.', doneWhen: "A repo is cloned, its tests run, and the coverage report shows the baseline percentage.", time: "1 hour", watchOut: "Pick a repo with pure functions. Heavy I/O or network code produces tests that cannot run in a sandbox." },
@@ -4562,6 +4618,13 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         linkedin: 'Post a 60-second video of the agent triaging a real-looking ticket, including the routing decision.',
         resume: 'Focus on "AI Agents", "Workflow automation", and "End-to-end LLM integration".'
       },
+      metrics: [
+        "Correct-routing rate on 20 labeled test tickets, with the expected route written before the run.",
+        "Deflection rate: tickets answered without a human, and the confidence threshold that produced it.",
+        "Zero auto-replies on the ticket categories you marked as always-human (refunds over a limit, legal, angry customers).",
+        "Median time from ticket arrival to draft, including the platform's polling delay.",
+        "Three drafted replies you edited, with a note on what the model got wrong."
+      ],
       youtube: 'cXnPxN06boY', ytTitle: 'AI Agents Made Simple: Beginner AI Automation Tutorial (Step-by-Step)',
       steps: [
         { title: 'Pick your platform', desc: 'OpenAI Agent Builder is the simplest. n8n if you want self-hosted; Zapier if you want zero-config. Pick one and create a free account.', doneWhen: "An account exists and a hello-world agent answers one message.", time: "1 hour", watchOut: "Free tiers cap runs per month. Check the number before planning 500 test tickets." },
@@ -4640,6 +4703,13 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         linkedin: 'A 90-second video where you ask the agent a question that requires 2 tool calls and narrate what\'s happening internally.',
         resume: 'Focus on "Python programming", "Agent architectures", and "From-scratch LLM integration".'
       },
+      metrics: [
+        "The agent answers a question that needs both tools in the right order, shown in a recording.",
+        "The loop always ends: a cap of 10 iterations is enforced and a test proves it stops.",
+        "Token count per conversation stays flat after the history cap kicks in.",
+        "A tool call with bad arguments returns an error the model recovers from in the next turn.",
+        "A diagram of the loop in the README that a non-engineer can follow."
+      ],
       youtube: 'bTMPwUgLZf0', ytTitle: 'Build an AI Agent From Scratch in Python - Tutorial for Beginners',
       steps: [
         { title: 'Set up the environment', desc: 'Create a virtualenv. Install openai (or anthropic). Get an API key. Test a basic chat completion call to confirm everything works.', doneWhen: "A script sends one message and prints the reply, with the key loaded from the environment.", time: "30 minutes", watchOut: "Add .env to .gitignore before your first commit, not after." },
@@ -4936,6 +5006,13 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         linkedin: 'Record a 45-second clip: ask Claude a question it cannot answer alone, watch it call your tool, and get the right answer back.',
         resume: 'Lead with "MCP server development", "LLM tool integration", and "schema design for AI tool calling".'
       },
+      metrics: [
+        "Claude Desktop lists every tool and calls the right one for five test questions without being told the tool name.",
+        "Each tool answers in under one second on a database of 30 rows.",
+        "Bad input (missing id, empty string, wrong type) returns a clear error message, never a stack trace, and Claude recovers in the next turn.",
+        "A fresh machine installs the server from the README and connects in under 10 minutes.",
+        "No print to stdout anywhere in the server; the inspector shows clean protocol messages."
+      ],
       youtube: 'vzGkSn59rDU',
       ytTitle: 'Build an MCP Server in 20 Minutes (with Python)',
       steps: [
@@ -4963,6 +5040,13 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         linkedin: 'Post the one chart that matters: total cost with and without routing, with the quality score line flat across both.',
         resume: 'Quantify it: "Reduced LLM inference cost by X% across N requests while holding answer quality within 2 points."'
       },
+      metrics: [
+        "Cost of the router versus a frontier-only baseline on the same 300 requests, as a percentage saved.",
+        "Judge quality score for router versus baseline, within your stated tolerance (for example, no more than 0.2 points lower on a 5-point scale).",
+        "Classifier latency under 50 milliseconds and end-to-end p50 and p95 latency per route.",
+        "Classifier accuracy against your difficulty labels on a held-out 20 percent.",
+        "Judge calibration: agreement with your 20 hand-scored answers of at least 80 percent."
+      ],
       youtube: 'cmetUBIdmvM',
       ytTitle: 'Stop Wasting Money on LLMs: Smart Routing Changes Everything',
       steps: [
@@ -4990,6 +5074,13 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         linkedin: 'Show a trace waterfall of one agent run with a tool call highlighted, next to the eval summary that scored it.',
         resume: 'Frame it as reliability engineering: "Built an agent evaluation and tracing harness gating deploys on a 200-case golden set."'
       },
+      metrics: [
+        "Pass rate per evaluator on the golden set, recorded as a committed baseline.",
+        "Judge agreement with 20 hand-scored cases of at least 80 percent before the judge is trusted.",
+        "A deliberately broken prompt fails CI, with the pass-rate drop named in the job output.",
+        "Suite runtime and cost per CI run, kept small enough that it runs on every pull request.",
+        "One real bug found by tracing a failed case, described in the README."
+      ],
       youtube: 'oSjAbx67f0k',
       ytTitle: 'How to Debug, Evaluate, and Ship Reliable AI Agents with LangSmith',
       steps: [
@@ -5206,6 +5297,13 @@ id: 'ai-3', path: 'ai', level: 'intermediate',
         linkedin: 'Post the summary table: probe categories, attack success rate before and after guardrails. That before/after is the story.',
         resume: 'Use the industry vocabulary: "Conducted structured LLM red-team assessments using Garak, PyRIT, and Promptfoo, mapped findings to OWASP LLM Top 10."'
       },
+      metrics: [
+        "Number of probes run per tool and the share that produced a flagged response, per model.",
+        "Findings report with severity ratings, at least five findings, and a proposed mitigation for each.",
+        "Promptfoo assertions that fail on the planted secret and pass after the mitigation.",
+        "Total scan time and the probe families you chose, so the run is repeatable.",
+        "One comparison between two models on the same probe set, with the difference explained."
+      ],
       youtube: 'A6BhGdttz9k',
       ytTitle: 'Red Teaming with Garak, PyRIT, and Promptfoo',
       steps: [

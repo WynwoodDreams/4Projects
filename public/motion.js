@@ -137,58 +137,93 @@
     });
   }
 
-  // Path tab glide. When the career-path row first comes into view and it is
-  // wider than the screen (phones and narrow windows), it drifts slowly left
-  // to right to show every path, pauses at the end, eases back to where it
-  // started, and stops for good. Once per tab session. Any touch, wheel,
-  // click, or key on the row stops it on the spot and leaves it where it is.
+  // Path tab stroll. When the career-path row is wider than the screen
+  // (phones and narrow windows), it drifts slowly back and forth for as long
+  // as it is on screen: left to right, a short rest at the end, then back.
+  // A tap on the row pauses it; another tap resumes it. A swipe still scrolls
+  // the row by hand, and the stroll picks up from wherever it was left.
+  // Off screen it idles; with reduced motion it never moves.
+  var STROLL_SPEED = 55;   // pixels per second
+  var STROLL_REST = 1400;  // ms paused at each end
+  var STROLL_RAMP = 700;   // ms to ease up to speed after a rest or a resume
+
   function initTabGlide() {
     var row = document.getElementById('path-tabs');
     if (!row || reduce || !('IntersectionObserver' in window)) return;
-    try { if (sessionStorage.getItem('bb-tabglide')) return; } catch (e) { return; }
 
-    var raf = 0, stopped = false;
-    function stop() {
-      stopped = true;
-      cancelAnimationFrame(raf);
-      row.classList.remove('is-gliding');
-      ['pointerdown', 'touchstart', 'wheel', 'keydown'].forEach(function (t) { row.removeEventListener(t, stop); });
+    var pos = row.scrollLeft, dir = 1, raf = 0, last = 0;
+    var visible = false, paused = false, holding = false;
+    var restUntil = 0, rampFrom = 0, written = -1, settleUntil = 0;
+
+    function max() { return row.scrollWidth - row.clientWidth; }
+
+    function frame(now) {
+      raf = 0;
+      if (!visible || paused) return;
+      var dt = last ? Math.min(64, now - last) : 16;
+      last = now;
+      var m = max();
+      if (m < 24) return; // everything fits: nothing to show
+      raf = requestAnimationFrame(frame);
+
+      // Someone else moved the row (a swipe, momentum, a wheel): adopt their
+      // position and let it settle before moving again.
+      if (written >= 0 && Math.abs(row.scrollLeft - written) > 2) {
+        pos = row.scrollLeft;
+        settleUntil = now + 900;
+        rampFrom = settleUntil;
+      }
+      if (holding || now < settleUntil || now < restUntil) { written = row.scrollLeft; return; }
+
+      var ramp = Math.max(0, Math.min(1, (now - rampFrom) / STROLL_RAMP));
+      ramp = ramp * ramp * (3 - 2 * ramp); // smoothstep
+      pos += dir * STROLL_SPEED * ramp * dt / 1000;
+      if (pos >= m) { pos = m; dir = -1; restUntil = now + STROLL_REST; rampFrom = restUntil; }
+      else if (pos <= 0) { pos = 0; dir = 1; restUntil = now + STROLL_REST; rampFrom = restUntil; }
+      row.scrollLeft = pos;
+      written = row.scrollLeft;
     }
-    ['pointerdown', 'touchstart', 'wheel', 'keydown'].forEach(function (t) { row.addEventListener(t, stop, { passive: true }); });
 
-    function tween(from, to, ms, done) {
-      var start = performance.now();
-      var ease = function (t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; };
-      (function frame(now) {
-        if (stopped) return;
-        var t = Math.min(1, (now - start) / ms);
-        row.scrollLeft = from + (to - from) * ease(t);
-        if (t < 1) raf = requestAnimationFrame(frame);
-        else if (done) done();
-      })(start);
+    function start() {
+      if (raf || !visible || paused) return;
+      last = 0;
+      pos = row.scrollLeft;
+      written = -1;
+      rampFrom = performance.now();
+      raf = requestAnimationFrame(frame);
     }
+    function halt() { if (raf) cancelAnimationFrame(raf); raf = 0; }
 
-    var io = new IntersectionObserver(function (entries) {
-      if (!entries.some(function (e) { return e.isIntersecting; })) return;
-      io.disconnect();
-      var max = row.scrollWidth - row.clientWidth;
-      if (max < 24) return stop(); // everything already fits
-      try { sessionStorage.setItem('bb-tabglide', '1'); } catch (e) {}
-      var home = row.scrollLeft;
-      setTimeout(function () {
-        if (stopped) return;
-        row.classList.add('is-gliding');
-        // About 7ms per pixel: slow enough to read each tab, capped at 6s.
-        var out = Math.max(2400, Math.min(6000, (max - home) * 7));
-        tween(home, max, out, function () {
-          setTimeout(function () {
-            if (stopped) return;
-            tween(max, home, 900, stop);
-          }, 900);
-        });
-      }, 450);
-    }, { threshold: 0.75 });
-    io.observe(row);
+    // Tap toggles; a drag is a manual scroll, not a tap.
+    var downX = 0, downY = 0, downT = 0, moved = false;
+    row.addEventListener('pointerdown', function (e) {
+      downX = e.clientX; downY = e.clientY; downT = performance.now(); moved = false; holding = true;
+    }, { passive: true });
+    row.addEventListener('pointermove', function (e) {
+      if (holding && (Math.abs(e.clientX - downX) > 8 || Math.abs(e.clientY - downY) > 8)) moved = true;
+    }, { passive: true });
+    row.addEventListener('pointercancel', function () { holding = false; moved = true; }, { passive: true });
+    row.addEventListener('pointerup', function () {
+      holding = false;
+      if (moved || performance.now() - downT > 500) return;
+      paused = !paused;
+      row.classList.toggle('is-paused', paused);
+      if (paused) halt(); else start();
+    }, { passive: true });
+
+    // Keyboard users get a still row while they are tabbing through it.
+    row.addEventListener('focusin', function (e) { if (e.target.matches(':focus-visible')) { paused = true; halt(); } });
+    row.addEventListener('focusout', function () {
+      if (row.classList.contains('is-paused')) return;
+      paused = false; start();
+    });
+
+    new IntersectionObserver(function (entries) {
+      visible = entries.some(function (e) { return e.isIntersecting; });
+      if (visible) start(); else halt();
+    }, { threshold: 0.5 }).observe(row);
+
+    document.addEventListener('visibilitychange', function () { if (document.hidden) halt(); else start(); });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { init(); initTabGlide(); });

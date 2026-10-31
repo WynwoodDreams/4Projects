@@ -109,6 +109,28 @@ npm run test:match
 
 Each case asserts the path a posting routes to and a project that must appear. Add a case when you add a project that targets a distinct kind of role.
 
+### Talk instead of type
+
+The project search on the home page and the Career Match box each have a mic button.
+`public/voice.js` wires up every `.voice-mic` button: the browser's own speech
+recognition writes what the visitor says into the field named by `data-voice-for`, and a
+status line (`data-voice-note`) says what is happening or what went wrong. Nothing is
+submitted for them; they check the words and search or press "Find my plan" themselves.
+
+- The search needs every word to match, so `data-voice-keywords` keeps only the words that
+  carry meaning: "show me cloud projects with Python" searches for `cloud python`. The
+  filler list is `FILLER` in `voice.js`.
+- Career Match takes the whole sentence as spoken.
+- Recognition runs in English, or in Spanish when the browser's language is Spanish.
+- The button stays hidden where the browser has no speech recognition (Firefox, for one), so
+  typing always works.
+- `vercel.json` allows `microphone=(self)` for this. In Chrome the recognition may run on
+  Google's servers rather than on the device; nothing is sent to BuildersBench.
+
+Career Match also reads a job from its link: `match.html?q=<text>` (or `#q=`) fills the
+box and runs the match on load. The Opportunity Board's "Projects for this role" links use
+this.
+
 ### Styles
 
 `index.html` does **not** load `styles.css` — it has its own inline `<style id="glass-terminal-style">` block. `styles.css` serves `match.html`, `certifications.html`, and `prompts.html`.
@@ -122,6 +144,7 @@ Shared component styles therefore exist twice, and editing the wrong copy change
 - Email addresses obfuscated and assembled at runtime to prevent scraping
 - No backend, no accounts, no PII collected
 - Bookmarks and progress live in `localStorage` only — never transmitted
+- Microphone: only when the visitor taps a mic button, and only through the browser's own speech recognition (see "Talk instead of type")
 - Third-party requests: YouTube (only when a video thumbnail is clicked), Vercel Analytics
 
 ## Credit

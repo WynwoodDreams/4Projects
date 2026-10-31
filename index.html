@@ -3256,6 +3256,30 @@
   }
   .constellation-label b { color: var(--green); font-weight: 600; }
   @media (max-width: 900px) { .constellation { width: 70%; right: -12%; opacity: .5; } .constellation-label { display: none; } }
+
+  /* Phones: the hero and quiz were taking two full screens before the first
+     project. Tighter type and padding, CTAs in a grid, the second lede
+     sentence dropped, the quiz sized to its content, and the constellation
+     hidden (it only fits beside the copy on wider screens). */
+  @media (max-width: 640px) {
+    .hero { padding: 14px 0 10px; }
+    .hero-grid { gap: 12px; }
+    .hero > .container > .hero-grid > div:first-child { padding: 18px 18px 18px; }
+    .hero-eyebrow { margin-bottom: 12px; font-size: 9.5px; padding: 6px 12px; }
+    .hero h1 { font-size: clamp(28px, 8.6vw, 34px); line-height: 1.08; margin-bottom: 10px; }
+    .hero-lede { font-size: 14px; line-height: 1.5; }
+    .hero-lede-more { display: none; }
+    .hero-cta-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+    .hero-cta { justify-content: center; padding: 11px 10px; font-size: 10.5px; letter-spacing: 0.08em; gap: 7px; }
+    .hero-cta-primary, .hero-continue { grid-column: 1 / -1; }
+    .constellation, .constellation-label { display: none; }
+    .hero-quiz { min-height: 0; }
+    .hero-side { padding: 14px 16px; }
+    .hero-side-label { margin-bottom: 10px; }
+    .quiz-stage { gap: 8px; }
+    .quiz-question { font-size: 16px; }
+    .quiz-option { padding: 9px 12px; font-size: 13.5px; }
+  }
   @media (prefers-reduced-motion: reduce) {
     .constellation .c-started, .constellation line.is-new, .constellation circle.is-new { animation: none !important; stroke-dashoffset: 0; transform: none; opacity: 1; }
   }
@@ -3447,7 +3471,7 @@
         <div class="hero-eyebrow"><span class="dot"></span>The Career Path Guide</div>
         <h1>Build projects <span class="serif">that</span> <span class="accent">actually</span> get you hired.</h1>
         <p class="hero-lede">
-          Industry-relevant builds across eight career tracks, curated for students chasing internships, first roles, and career pivots. Each project ships with real-world context, showcase tips, and AI prompts.
+          Industry-relevant builds across eight career tracks, curated for students chasing internships, first roles, and career pivots.<span class="hero-lede-more"> Each project ships with real-world context, showcase tips, and AI prompts.</span>
         </p>
         <div class="hero-cta-row">
           <a class="hero-cta hero-cta-primary" href="/match.html" title="Paste a job, get your build-and-certify plan">

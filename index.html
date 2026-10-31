@@ -1072,15 +1072,6 @@
     gap: 6px;
     align-items: center;
   }
-  .filter-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.22em;
-    color: var(--ink-muted);
-    font-weight: 500;
-    margin-right: 4px;
-  }
   .search-field {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 7px 12px; border-radius: 999px;
@@ -1136,7 +1127,6 @@
       0 0 22px -2px rgba(var(--green-rgb),0.55);
     text-shadow: 0 0 10px var(--green-glow);
   }
-  .filter-spacer { flex: 1; }
   .reset-btn {
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
@@ -1150,6 +1140,28 @@
     transition: color 0.15s ease;
   }
   .reset-btn:hover { color: var(--green); text-shadow: 0 0 8px var(--green-glow); }
+
+  /* Status chips: compact, with counts, shown only for returning visitors. */
+  .status-chips[hidden], .status-chips .filter-chip[hidden] { display: none; }
+  .status-chips .filter-chip { padding: 6px 12px; font-size: 11px; letter-spacing: 0.12em; display: inline-flex; align-items: center; gap: 7px; }
+  .chip-count {
+    font-size: 10px; letter-spacing: 0; min-width: 18px; padding: 1px 6px; border-radius: 999px;
+    border: 1px solid var(--line); color: var(--ink-muted); text-align: center; text-shadow: none;
+  }
+  .filter-chip.active .chip-count { border-color: var(--line-3); color: var(--green); }
+  .clear-filters {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-muted); background: none; border: 1px solid transparent; border-radius: 999px;
+    padding: 6px 10px; cursor: pointer; transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .clear-filters[hidden] { display: none; }
+  .clear-filters:hover { color: var(--green); border-color: var(--line-3); }
+  .clear-filters span { font-size: 13px; margin-left: 2px; }
+
+  /* My List lives with My Bench, the list it acts on. */
+  .bench-tools { margin-top: 14px; display: flex; }
+  .bench-tools .list-menu { margin-right: 0; }
+  .bench-tools .list-menu-panel { left: 0; right: auto; }
 
   .list-menu {
     position: relative;
@@ -3097,7 +3109,7 @@
     .filter-row {
       flex-direction: column;
       align-items: stretch;
-      gap: 14px;
+      gap: 10px;
     }
     .search-field { width: 100%; }
     #project-search { flex: 1; width: auto; }
@@ -3106,39 +3118,14 @@
       width: 100%;
       flex-wrap: wrap;
       gap: 6px;
-      position: relative;
-      padding-top: 20px;
     }
-    .filter-label {
-      display: block !important;
-      position: absolute;
-      top: 0; left: 0;
-      font-size: 9.5px;
-      letter-spacing: 0.22em;
-      margin: 0;
-    }
-    .filter-spacer { display: none; }
-    .list-menu {
-      width: 100%;
-      margin-right: 0;
-    }
-    .list-menu-toggle {
-      width: 100%;
-      justify-content: center;
-      padding: 11px;
-    }
-    .list-menu-panel {
-      left: 0;
-      right: 0;
-      min-width: 0;
-    }
-    .reset-btn {
-      align-self: flex-end;
-      font-size: 9.5px;
-      padding: 10px 8px;
-      min-height: 36px;
-      margin-top: -8px;
-    }
+    /* One row: tighter chips, and the row scrolls sideways rather than wrapping
+       if a narrow phone still cannot fit all four. */
+    .status-chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 2px 1px 4px; }
+    .status-chips::-webkit-scrollbar { display: none; }
+    .status-chips .filter-chip { flex: 0 0 auto; padding: 9px 11px; font-size: 10px; letter-spacing: 0.06em; gap: 6px; min-height: 38px; }
+    .status-chips .chip-count { font-size: 9.5px; min-width: 16px; padding: 1px 5px; }
+    .clear-filters { align-self: flex-start; padding: 8px 10px; margin-top: -6px; min-height: 36px; }
     /* Card header: let the time badge drop under the level pill instead of
        wrapping mid-phrase beside it */
     .card-top { flex-wrap: wrap; align-items: center; row-gap: 6px; }
@@ -3535,27 +3522,15 @@
         <input type="search" id="project-search" placeholder="search projects…" aria-label="Search projects" autocomplete="off" spellcheck="false" />
         <kbd class="search-kbd" aria-hidden="true" title="Press / to search">/</kbd>
       </div>
-      <div class="filter-group">
-        <span class="filter-label">Filter by status</span>
-        <button class="filter-chip active" data-status="all">All</button>
-        <button class="filter-chip" data-status="bookmarked">Bookmarked</button>
-        <button class="filter-chip" data-status="started">Started</button>
-        <button class="filter-chip" data-status="done">Done</button>
+      <!-- Status chips appear once the visitor has saved or started something;
+           counts come from renderFilters. -->
+      <div class="filter-group status-chips" id="status-chips" role="group" aria-label="Filter by status" hidden>
+        <button class="filter-chip" data-status="all">All</button>
+        <button class="filter-chip" data-status="bookmarked">Saved <span class="chip-count" data-count="bookmarked"></span></button>
+        <button class="filter-chip" data-status="started">In progress <span class="chip-count" data-count="started"></span></button>
+        <button class="filter-chip" data-status="done">Done <span class="chip-count" data-count="done"></span></button>
       </div>
-      <div class="filter-spacer"></div>
-      <div class="list-menu" id="list-menu">
-        <button class="backup-btn list-menu-toggle" id="list-menu-toggle" aria-haspopup="true" aria-expanded="false" title="Share, export, or import your list">
-          My List
-          <svg class="chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="list-menu-panel" id="list-menu-panel" hidden>
-          <button class="list-menu-item" id="share-btn" title="Copy a shareable link to your list">🔗 Share list</button>
-          <button class="list-menu-item" id="export-btn" title="Download your list as a JSON file">⬇ Export backup</button>
-          <button class="list-menu-item" id="import-btn" title="Load a previously exported list">⬆ Import backup</button>
-        </div>
-        <input type="file" id="import-file" accept="application/json" style="display:none" />
-      </div>
-      <button class="reset-btn" id="reset-btn">Reset filters</button>
+      <button class="clear-filters" id="reset-btn" type="button" hidden>Clear <span aria-hidden="true">×</span></button>
     </div>
   </div>
 </section>
@@ -3572,6 +3547,20 @@
       <h2>My Bench</h2>
       <p>Your bookmarked projects, organized like a sprint board. Drag a card to a new column, or use the arrows on mobile — status updates the roadmap checklist automatically. Pin up to 3 projects with the ◎ button to set this week's focus.</p>
       <div class="bench-velocity" id="bench-velocity"></div>
+      <div class="bench-tools">
+        <div class="list-menu" id="list-menu">
+          <button class="backup-btn list-menu-toggle" id="list-menu-toggle" aria-haspopup="true" aria-expanded="false" title="Share, export, or import your list">
+            My List
+            <svg class="chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="list-menu-panel" id="list-menu-panel" hidden>
+            <button class="list-menu-item" id="share-btn" title="Copy a shareable link to your list">🔗 Share list</button>
+            <button class="list-menu-item" id="export-btn" title="Download your list as a JSON file">⬇ Export backup</button>
+            <button class="list-menu-item" id="import-btn" title="Load a previously exported list">⬆ Import backup</button>
+          </div>
+          <input type="file" id="import-file" accept="application/json" style="display:none" />
+        </div>
+      </div>
     </div>
     <div class="bench-focus" id="bench-focus"></div>
     <div class="bench-board" id="bench-board"></div>
@@ -6978,20 +6967,39 @@ ${tags} #BuildingInPublic #OpenToWork`;
 
   // ===== RENDER FILTERS =====
   function renderFilters() {
+    // A first-time visitor has nothing saved, so status chips would only ever
+    // show empty lists. They appear once there is something to filter, each
+    // with its count, and a chip with nothing in it stays hidden.
+    const counts = {
+      bookmarked: state.bookmarks.length,
+      started: Object.values(state.progress).filter(v => v === 'started').length,
+      done: Object.values(state.progress).filter(v => v === 'done').length,
+    };
+    const hasData = counts.bookmarked + counts.started + counts.done > 0;
+    const group = document.getElementById('status-chips');
+    if (group) group.hidden = !hasData && state.currentStatus === 'all';
     document.querySelectorAll('.filter-chip[data-status]').forEach(b => {
-      const active = b.dataset.status === state.currentStatus;
+      const status = b.dataset.status;
+      const active = status === state.currentStatus;
       b.classList.toggle('active', active);
       b.setAttribute('aria-pressed', active);
-      b.onclick = () => { state.currentStatus = b.dataset.status; state.view = 'grid'; renderAll(); };
+      if (status !== 'all') {
+        b.hidden = !counts[status] && !active;
+        const c = b.querySelector('.chip-count');
+        if (c) c.textContent = counts[status];
+      }
+      b.onclick = () => { state.currentStatus = status; state.view = 'grid'; renderAll(); };
     });
-    document.getElementById('reset-btn').onclick = () => {
-      state.currentPath = 'all';
+    // "Clear" shows only when a search or status filter is active. The path
+    // tabs have their own "All" for the path.
+    const clear = document.getElementById('reset-btn');
+    clear.hidden = state.currentStatus === 'all' && !state.search.trim();
+    clear.onclick = () => {
       state.currentStatus = 'all';
       state.search = '';
       const searchEl = document.getElementById('project-search');
       if (searchEl) searchEl.value = '';
       state.view = 'grid';
-      history.replaceState(null, '', location.pathname + location.search);
       renderAll();
     };
   }
@@ -7438,6 +7446,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
   function renderStats() {
     document.getElementById('bookmark-count').textContent = state.bookmarks.length;
     renderConstellation();
+    renderFilters(); // status chips and their counts track every save and step
     const doneCount = Object.values(state.progress).filter(v => v === 'done').length;
     document.getElementById('done-count').textContent = doneCount;
     refreshBackupButtons();

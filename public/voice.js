@@ -28,6 +28,7 @@
     'no-speech': 'Did not hear anything. Tap the mic and try again.',
     'language-not-supported': 'This browser cannot recognise that language. Type instead.'
   };
+  const ANDROID = /Android/i.test(navigator.userAgent || '');
   const lang = () => /^es\b/i.test(navigator.language || '') ? 'es-US' : 'en-US';
 
   function attach(mic) {
@@ -59,31 +60,49 @@
       field.dispatchEvent(new Event('input', { bubbles: true }));
     };
 
+    const placeholder = field.placeholder;
+    let audioTimer = null, gotAudio = false;
     function start() {
       if (on || field.disabled) return;
       rec = new Rec();
       rec.lang = lang();
       rec.interimResults = true;
-      rec.continuous = !trim;   // a search is a few words; a job description can run on
-      base = field.value; heard = ''; failed = false;
+      // A search is a few words; a job description can run on. Android's recogniser misbehaves
+      // in continuous mode (repeats or drops words), so there it takes one phrase per tap.
+      rec.continuous = !trim && !ANDROID;
+      base = field.value; heard = ''; failed = false; gotAudio = false;
+      rec.onaudiostart = () => { gotAudio = true; clearTimeout(audioTimer); say('Listening… speak now.'); };
+      rec.onspeechstart = () => say('Hearing you… tap the mic when you are done.');
       rec.onresult = e => {
         let text = '';
         for (let i = 0; i < e.results.length; i++) text += e.results[i][0].transcript;
         heard = text.trim();
         write();
       };
+      rec.onnomatch = () => {
+        if (heard) return;
+        failed = true;
+        say('Heard something but could not make out the words. Try again a little closer to the mic.', true);
+      };
       rec.onerror = e => {
+        if (window.console) console.warn('speech recognition error:', e.error, e.message || '');
         if (e.error === 'aborted') return;
         failed = true;
-        say(WHY[e.error] || 'Voice stopped. Type instead, or tap the mic to try again.', true);
+        say(WHY[e.error] || `Voice stopped (${e.error}). Type instead, or tap the mic to try again.`, true);
       };
       rec.onend = () => {
-        set(false); rec = null;
+        clearTimeout(audioTimer); set(false); rec = null; field.placeholder = placeholder;
         if (heard && !failed) say(done);
+        else if (!failed) say(gotAudio ? 'Did not catch any words. Tap the mic and try again.'
+          : 'No sound reached the browser. Check that your microphone is on and is the one selected in Chrome (Settings › Privacy › Microphone).', true);
         field.focus();
       };
-      try { rec.start(); set(true); say('Listening… tap the mic again when you are done.'); }
-      catch (_) { rec = null; set(false); say('Voice could not start. Type instead.', true); }
+      try { rec.start(); set(true); field.placeholder = 'Listening… speak now'; say('Starting the microphone…'); }
+      catch (_) { rec = null; set(false); say('Voice could not start. Type instead.', true); return; }
+      // If no sound has arrived after a few seconds, say so instead of sitting there silently.
+      audioTimer = setTimeout(() => {
+        if (on && !gotAudio) say('Waiting for sound… if you allowed the microphone and still see this, check that the right mic is selected in Chrome.', true);
+      }, 4000);
     }
     function stop() { if (rec) try { rec.stop(); } catch (_) { /* already stopped */ } }
 

@@ -1779,6 +1779,45 @@
     font-weight: 500;
   }
 
+  /* Card peek: four faces under the title, flipped by hovering or tapping a tab */
+  .peek-tabs { display: flex; gap: 4px; margin: -2px 0 12px; }
+  .peek-tab {
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--ink-muted); background: transparent; border: 1px solid transparent; border-radius: 999px;
+    padding: 4px 9px; cursor: pointer; transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  }
+  .peek-tab:hover { color: var(--ink); }
+  .peek-tab.active { color: var(--green); border-color: rgba(var(--green-rgb),0.45); background: rgba(var(--green-rgb),0.08); }
+  .peek { position: relative; flex: 1; min-height: 168px; margin-bottom: 14px; perspective: 700px; }
+  .peek-face { display: none; }
+  .peek-face.active { display: block; }
+  .peek-face.flip { animation: peek-flip 0.32s cubic-bezier(.2,.8,.2,1) both; transform-origin: 50% 0; }
+  @keyframes peek-flip { from { opacity: 0; transform: rotateX(-60deg); } to { opacity: 1; transform: none; } }
+  .peek .summary { margin-bottom: 12px; }
+  .peek-thumb {
+    aspect-ratio: 16 / 9; max-height: 150px; border-radius: 8px; background: var(--deep-grad) center / cover no-repeat;
+    border: 1px solid rgba(var(--w-rgb),0.14); position: relative; overflow: hidden;
+  }
+  .peek-thumb--noimg { background: var(--deep-grad); }
+  .peek-play {
+    position: absolute; left: 50%; top: 50%; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%;
+    background: var(--green); box-shadow: 0 0 0 6px rgba(var(--green-rgb),0.22), 0 6px 18px rgba(0,0,0,0.35);
+  }
+  .peek-play::after { content: ''; position: absolute; left: 16px; top: 12px; border-style: solid; border-width: 8px 0 8px 12px; border-color: transparent transparent transparent var(--on-accent); }
+  .peek-cap { margin: 8px 0 0; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .peek-steps { list-style: none; margin: 0; padding: 0; font-size: 13px; color: var(--ink-soft); line-height: 1.4; }
+  .peek-steps li { display: flex; gap: 8px; align-items: baseline; padding: 3px 0; border-bottom: 1px dashed rgba(var(--w-rgb),0.10); }
+  .peek-steps li:last-child { border-bottom: 0; }
+  .peek-n { flex: none; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--ink-muted); width: 16px; }
+  .peek-steps li.is-done { color: var(--ink-muted); text-decoration: line-through; }
+  .peek-steps li.is-done .peek-n { color: var(--green); }
+  .peek-stuck { list-style: none; margin: 0; padding: 0; font-size: 12.5px; line-height: 1.4; }
+  .peek-stuck li { padding: 5px 0; border-bottom: 1px dashed rgba(var(--w-rgb),0.10); }
+  .peek-stuck li:last-child { border-bottom: 0; }
+  .peek-stuck b { display: block; color: var(--ink); font-weight: 600; }
+  .peek-stuck span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: var(--ink-muted); }
+  @media (prefers-reduced-motion: reduce) { .peek-face.flip { animation: none; } }
+
   .card-footer {
     display: flex;
     justify-content: flex-end;
@@ -7125,7 +7164,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     container.querySelectorAll('.project-card').forEach(card => {
       const id = card.dataset.id;
       card.addEventListener('click', (e) => {
-        if (e.target.closest('.bookmark-btn, .project-guide-link, .project-title-link')) return;
+        if (e.target.closest('.bookmark-btn, .project-guide-link, .project-title-link, .peek-tabs')) return;
         openModal(id, { from: card });
       });
       const bm = card.querySelector('.bookmark-btn');
@@ -7133,7 +7172,74 @@ ${tags} #BuildingInPublic #OpenToWork`;
         e.stopPropagation();
         toggleBookmark(id);
       });
+      wirePeek(card);
     });
+  }
+
+  // ===== CARD PEEK =====
+  // Four faces under the title (Overview, Video, Roadmap, Stuck?) so a visitor can
+  // size up a project without opening it. Nothing moves until they hover or tap a
+  // tab; while the pointer rests on a card it cycles slowly through the faces.
+  const PEEK_FACES = [
+    { id: 'overview', label: 'Overview' },
+    { id: 'video',    label: 'Video' },
+    { id: 'roadmap',  label: 'Roadmap' },
+    { id: 'stuck',    label: 'Stuck?' }
+  ];
+  const PEEK_CYCLE_MS = 2400;
+  const peekFace = {};   // id -> face the visitor last chose, kept across re-renders
+  function peekHTML(p) {
+    const face = peekFace[p.id] || 'overview';
+    const thumbId = p.ytPlaylist ? p.ytThumb : p.youtube;
+    const thumbStyle = thumbId ? ` style="background-image:url('https://img.youtube.com/vi/${thumbId}/mqdefault.jpg')"` : '';
+    const doneSteps = state.stepProgress[p.id] || [];
+    const steps = (p.steps || []).map((st, i) => `<li class="${doneSteps[i] ? 'is-done' : ''}"><span class="peek-n">${i + 1}</span>${st.title}</li>`).join('');
+    const stuck = stuckItems(p).slice(0, 3).map(it => `<li><b>${it.symptom}</b><span>${it.fix}</span></li>`).join('');
+    const faces = {
+      overview: `<p class="summary">${p.summary}</p><div class="tech-tags">${p.tech.slice(0, 4).map(t => `<span class="tag">${t}</span>`).join('')}</div>`,
+      video: p.youtube ? `<div class="peek-thumb${thumbId ? '' : ' peek-thumb--noimg'}"${thumbStyle}><span class="peek-play" aria-hidden="true"></span></div><p class="peek-cap">${p.ytPlaylist ? 'Playlist' : 'Video'} · ${p.ytTitle || 'Watch & learn'}</p>` : `<p class="summary">No video for this one yet.</p>`,
+      roadmap: `<ol class="peek-steps">${steps}</ol>`,
+      stuck: `<ul class="peek-stuck">${stuck}</ul>`
+    };
+    return `
+        <div class="peek-tabs" role="tablist" aria-label="Preview">
+          ${PEEK_FACES.map(f => `<button type="button" class="peek-tab${f.id === face ? ' active' : ''}" role="tab" data-peek="${f.id}" aria-selected="${f.id === face}">${f.label}</button>`).join('')}
+        </div>
+        <div class="peek">
+          ${PEEK_FACES.map(f => `<div class="peek-face${f.id === face ? ' active' : ''}" data-face="${f.id}">${faces[f.id]}</div>`).join('')}
+        </div>`;
+  }
+  function setPeek(card, face, animate) {
+    const id = card.dataset.id;
+    if (peekFace[id] === face && card.querySelector('.peek-face.active[data-face="' + face + '"]')) return;
+    peekFace[id] = face;
+    card.querySelectorAll('.peek-tab').forEach(t => { const on = t.dataset.peek === face; t.classList.toggle('active', on); t.setAttribute('aria-selected', on); });
+    card.querySelectorAll('.peek-face').forEach(f => {
+      const on = f.dataset.face === face;
+      f.classList.toggle('active', on);
+      f.classList.toggle('flip', on && animate !== false && !reducedMotion());
+    });
+  }
+  function wirePeek(card) {
+    const id = card.dataset.id;
+    const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    let timer = 0, pinned = false;
+    const stop = () => { if (timer) clearInterval(timer); timer = 0; };
+    card.querySelectorAll('.peek-tab').forEach(tab => {
+      tab.addEventListener('click', e => { e.stopPropagation(); pinned = true; stop(); setPeek(card, tab.dataset.peek); });
+      if (canHover) tab.addEventListener('mouseenter', () => { pinned = true; stop(); setPeek(card, tab.dataset.peek); });
+    });
+    if (!canHover) return;
+    card.addEventListener('mouseenter', () => {
+      if (reducedMotion()) return;
+      pinned = false; stop();
+      timer = setInterval(() => {
+        if (pinned) return;
+        const cur = PEEK_FACES.findIndex(f => f.id === (peekFace[id] || 'overview'));
+        setPeek(card, PEEK_FACES[(cur + 1) % PEEK_FACES.length].id);
+      }, PEEK_CYCLE_MS);
+    });
+    card.addEventListener('mouseleave', stop);
   }
 
   function cardHTML(p) {
@@ -7155,10 +7261,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
           <span class="time-badge">⏱ ${meta.time}</span>
         </div>
         <h3><a class="project-title-link" href="/projects/${encodeURIComponent(p.id)}/">${p.title}</a></h3>
-        <p class="summary">${p.summary}</p>
-        <div class="tech-tags">
-          ${p.tech.slice(0, 4).map(t => `<span class="tag">${t}</span>`).join('')}
-        </div>
+        ${peekHTML(p)}
         ${total > 0 ? `
         <div class="card-progress status-${statusClass || 'none'}">
           <div class="card-progress-track"><div class="card-progress-fill" style="width:${pct}%"></div></div>

@@ -2,8 +2,9 @@
 //
 // A mic button next to a text field turns the browser's own speech recognition into text in
 // that field. Nothing is submitted for the visitor: they see the words land, fix them if
-// needed, and run the search or match themselves. The button stays hidden where the browser
-// has no speech recognition (Firefox, for one), so typing always works.
+// needed, and run the search or match themselves. The button always shows, so people can find
+// it; where the browser has no speech recognition (Firefox, Chrome on iPhone, in-app
+// browsers) a tap says so and suggests one that does. Typing always works.
 //
 // Markup: <button class="voice-mic" data-voice-for="FIELD_ID" data-voice-note="NOTE_ID"
 //          [data-voice-keywords] [data-voice-done="what to do next"] hidden>…</button>
@@ -11,7 +12,7 @@
 // to match ("show me cloud projects with python" becomes "cloud python").
 (function () {
   const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!Rec) return;
+  const UNSUPPORTED = 'Talking is not available in this browser. Open this page in Safari, Chrome or Edge, or type instead.';
 
   const FILLER = new Set(('a an and any are about can could do find for from get give help i i\'m im in is it ' +
     'like looking me my need of on or please project projects show some something that the to want with ' +
@@ -87,7 +88,7 @@
     function stop() { if (rec) try { rec.stop(); } catch (_) { /* already stopped */ } }
 
     mic.hidden = false;
-    mic.addEventListener('click', () => (on ? stop() : start()));
+    mic.addEventListener('click', () => (!Rec ? say(UNSUPPORTED, true) : on ? stop() : start()));
     field.addEventListener('keydown', () => { if (!on) say(''); });
   }
 

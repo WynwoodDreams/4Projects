@@ -122,8 +122,8 @@ submitted for them; they check the words and search or press "Find my plan" them
   filler list is `FILLER` in `voice.js`.
 - Career Match takes the whole sentence as spoken.
 - Recognition runs in English, or in Spanish when the browser's language is Spanish.
-- The button stays hidden where the browser has no speech recognition (Firefox, for one), so
-  typing always works.
+- The button always shows. Where the browser has no speech recognition (Firefox, Chrome on
+  iPhone, in-app browsers) a tap says so and suggests Safari, Chrome or Edge.
 - `vercel.json` allows `microphone=(self)` for this. In Chrome the recognition may run on
   Google's servers rather than on the device; nothing is sent to BuildersBench.
 

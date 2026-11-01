@@ -1791,7 +1791,7 @@
   .peek { position: relative; flex: 1; min-height: 168px; margin-bottom: 14px; perspective: 700px; }
   .peek-face { display: none; }
   .peek-face.active { display: block; }
-  .peek-face.flip { animation: peek-flip 0.32s cubic-bezier(.2,.8,.2,1) both; transform-origin: 50% 0; }
+  .peek-face.flip { animation: peek-flip 0.16s cubic-bezier(.2,.8,.2,1) both; transform-origin: 50% 0; }
   @keyframes peek-flip { from { opacity: 0; transform: rotateX(-60deg); } to { opacity: 1; transform: none; } }
   .peek .summary { margin-bottom: 12px; }
   .peek-thumb {
@@ -7186,7 +7186,7 @@ ${tags} #BuildingInPublic #OpenToWork`;
     { id: 'roadmap',  label: 'Roadmap' },
     { id: 'stuck',    label: 'Stuck?' }
   ];
-  const PEEK_CYCLE_MS = 2400;
+  const PEEK_CYCLE_MS = 1400;
   const peekFace = {};   // id -> face the visitor last chose, kept across re-renders
   function peekHTML(p) {
     const face = peekFace[p.id] || 'overview';

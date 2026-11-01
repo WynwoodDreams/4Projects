@@ -20,7 +20,7 @@ A curated portfolio project guide for students chasing internships, first roles,
 - A **free-tier deploy cheatsheet** (Vercel, Railway, Render, Cloudflare Workers, Hugging Face Spaces)
 - A **peek** on every card: four tabs under the title (Overview, Video, Roadmap, Stuck?) flip
   the card face so a visitor can size up a project without opening it. Hovering or tapping a
-  tab picks a face; while the pointer rests on a card it cycles slowly through all four and
+  tab picks a face; while the pointer rests on a card it cycles through all four (1.4s each) and
   stops when the pointer leaves. Nothing moves on its own otherwise, and nothing moves under
   "reduce motion". `peekHTML`, `setPeek` and `wirePeek` in `index.html`.
 - **Saved / Started / Done** progress tracking (localStorage — stays on your device)

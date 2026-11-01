@@ -212,23 +212,29 @@
     document.addEventListener('visibilitychange', function () { if (document.hidden) halt(); else start(); });
   }
 
-  // Constellation float. The hero's node graph drops in from above the panel,
-  // bounces to rest on the floor, then drifts slowly around inside the panel,
-  // bouncing off its edges while it turns. It treats the graph as a circle so
-  // a rotating shape never pokes out. Stops off screen and in background
-  // tabs; with reduced motion the graph stays where the stylesheet puts it.
-  var FLOAT_GRAVITY = 520;    // px/s^2 while falling
-  var FLOAT_BOUNCE = 0.5;     // energy kept per floor bounce
-  var FLOAT_DRIFT = 16;       // px/s once it has settled into drifting
-  var FLOAT_SPIN = 7;         // degrees per second
+  // Constellation float. The hero's node graph drops in from above the panel
+  // and never quite settles: gravity keeps it hopping on the floor, it rebounds
+  // off the walls, squashes a little on each landing, and every few seconds it
+  // takes a fresh hop so it stays lively instead of dying down. It treats the
+  // graph as a circle so a rotating shape never pokes out. Stops off screen and
+  // in background tabs; with reduced motion the graph stays where the
+  // stylesheet puts it.
+  var FLOAT_GRAVITY = 900;    // px/s^2, always on
+  var FLOAT_BOUNCE = 0.72;    // energy kept per floor bounce
+  var FLOAT_WALL = 0.86;      // energy kept per wall bounce
+  var FLOAT_DRIFT = 44;       // px/s sideways it tries to keep
+  var FLOAT_SPIN = 26;        // degrees per second
+  var FLOAT_HOP = 430;        // px/s upward kick when it has gone quiet (about 100px high)
+  var FLOAT_HOP_EVERY = 2.6;  // seconds between kicks, give or take
 
   function initConstellationFloat() {
     var svg = document.getElementById('constellation');
     var box = svg && svg.parentElement;
     if (!svg || !box || reduce || !('IntersectionObserver' in window)) return;
 
-    var size = 0, x = 0, y = 0, vx = 0, vy = 0, angle = 0;
-    var mode = 'fall', raf = 0, last = 0, visible = false, ready = false;
+    var size = 0, x = 0, y = 0, vx = 0, vy = 0, angle = 0, spin = FLOAT_SPIN;
+    var squash = 0, sinceHop = 0, falling = true;
+    var raf = 0, last = 0, visible = false, ready = false;
 
     // Fit the viewBox to whatever the graph currently holds and size the
     // element from it: a seed of five nodes is small; a big constellation
@@ -253,13 +259,18 @@
       return { minX: rad - size / 2, maxX: r.width - rad - size / 2, minY: rad - size / 2, maxY: r.height - rad - size / 2 };
     }
 
-    function place() { svg.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px) rotate(' + angle.toFixed(2) + 'deg)'; }
+    function place() {
+      // Squash on landing: wider and shorter, easing back to round.
+      var sx = 1 + squash * 0.16, sy = 1 - squash * 0.14;
+      svg.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px) rotate(' + angle.toFixed(2) + 'deg) scale(' + sx.toFixed(3) + ',' + sy.toFixed(3) + ')';
+    }
 
-    function drift() {
-      mode = 'drift';
-      var a = (Math.random() * 0.8 + 0.1) * Math.PI * (Math.random() < 0.5 ? 1 : -1);
-      vx = Math.cos(a) * FLOAT_DRIFT; vy = Math.sin(a) * FLOAT_DRIFT;
-      if (Math.abs(vy) < 5) vy = vy < 0 ? -5 : 5;
+    function hop(strength) {
+      vy = -(FLOAT_HOP * strength) * (0.8 + Math.random() * 0.4);
+      // Nudge sideways too, favouring whichever way it is already going.
+      var dir = vx >= 0 ? 1 : -1;
+      vx = dir * (FLOAT_DRIFT * (0.7 + Math.random() * 0.6));
+      sinceHop = 0;
     }
 
     function frame(now) {
@@ -270,24 +281,28 @@
       var b = bounds();
       if (b.maxX < b.minX || b.maxY < b.minY) { raf = requestAnimationFrame(frame); return; }
 
-      if (mode === 'fall') {
-        vy += FLOAT_GRAVITY * dt;
-        x += vx * dt; y += vy * dt;
-        if (y >= b.maxY) {
-          y = b.maxY;
-          vy = -vy * FLOAT_BOUNCE;
-          vx *= 0.8;
-          if (Math.abs(vy) < 40) drift();
-        }
-        angle += FLOAT_SPIN * 2.2 * dt;
-      } else {
-        x += vx * dt; y += vy * dt;
-        if (x <= b.minX) { x = b.minX; vx = Math.abs(vx); }
-        else if (x >= b.maxX) { x = b.maxX; vx = -Math.abs(vx); }
-        if (y <= b.minY) { y = b.minY; vy = Math.abs(vy); }
-        else if (y >= b.maxY) { y = b.maxY; vy = -Math.abs(vy); }
-        angle += FLOAT_SPIN * dt;
+      vy += FLOAT_GRAVITY * dt;
+      x += vx * dt; y += vy * dt;
+
+      if (x <= b.minX) { x = b.minX; vx = Math.abs(vx) * FLOAT_WALL; spin = -spin; squash = Math.max(squash, 0.5); }
+      else if (x >= b.maxX) { x = b.maxX; vx = -Math.abs(vx) * FLOAT_WALL; spin = -spin; squash = Math.max(squash, 0.5); }
+      if (!falling && y <= b.minY) { y = b.minY; vy = Math.abs(vy) * FLOAT_WALL; }
+      if (y >= b.maxY) {
+        y = b.maxY; falling = false;
+        var hit = Math.abs(vy);
+        vy = -hit * FLOAT_BOUNCE;
+        squash = Math.min(1, hit / 520);
+        // A floor bounce that has gone soft becomes a fresh hop.
+        if (hit < 140) hop(0.6 + Math.random() * 0.4);
       }
+      // Keep some sideways life, and take a hop now and then on its own.
+      if (Math.abs(vx) < FLOAT_DRIFT * 0.4) vx += (vx >= 0 ? 1 : -1) * FLOAT_DRIFT * dt * 2;
+      sinceHop += dt;
+      if (sinceHop > FLOAT_HOP_EVERY + Math.random() * 1.5 && y > b.maxY - size * 0.3) hop(1);
+
+      angle += spin * (1 + Math.min(1, Math.abs(vy) / 400)) * dt;
+      squash = Math.max(0, squash - dt * 4);
+
       if (x < b.minX) x = b.minX; if (x > b.maxX) x = b.maxX;
       place();
       raf = requestAnimationFrame(frame);
@@ -303,10 +318,11 @@
       // Drop from above the panel, toward the right where the copy is thinner.
       x = b.minX + (b.maxX - b.minX) * (0.55 + Math.random() * 0.35);
       y = -size;
-      vx = (Math.random() < 0.5 ? -1 : 1) * (14 + Math.random() * 10);
+      vx = (Math.random() < 0.5 ? -1 : 1) * (FLOAT_DRIFT * (0.6 + Math.random() * 0.5));
       vy = 0;
       angle = Math.random() * 360;
-      mode = 'fall';
+      spin = (Math.random() < 0.5 ? -1 : 1) * FLOAT_SPIN;
+      falling = true; squash = 0; sinceHop = 0;
       place();
       ready = true;
       start();
@@ -319,7 +335,7 @@
       fit();
       var b = bounds();
       x = Math.min(Math.max(x, b.minX), b.maxX);
-      y = Math.min(Math.max(y, mode === 'fall' ? -size : b.minY), b.maxY);
+      y = Math.min(Math.max(y, falling ? -size : b.minY), b.maxY);
     }).observe(svg, { childList: true });
 
     new IntersectionObserver(function (entries) {

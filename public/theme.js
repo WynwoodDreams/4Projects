@@ -17,7 +17,7 @@
   function apply(theme) {
     document.documentElement.setAttribute('data-theme', theme);
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', theme === 'light' ? '#F3F6F7' : '#0C161B');
+    if (meta) meta.setAttribute('content', theme === 'light' ? '#E9CDBB' : '#0C161B');
     var btn = document.getElementById('theme-toggle');
     if (btn) {
       var label = theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode';

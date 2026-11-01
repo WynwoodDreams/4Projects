@@ -90,7 +90,10 @@ dialog; "Save as PDF" there gives students a handout for advisors.
 `data-theme` on `<html>`. Dark is the default; light is used only when the
 visitor chose it with the header toggle (`localStorage` key `bb-theme`). The
 OS preference is ignored so the site always opens in its own look. Light values live in the
-`html[data-theme="light"]` block right after `:root` in both stylesheets.
+`html[data-theme="light"]` block right after `:root` in both stylesheets. The light palette is
+"Terracotta" (since 2026-11-01): sun-baked clay and peach surfaces, burnt-orange buttons and
+highlights, espresso text, no white anywhere. `public/theme.js` sets the matching browser-chrome
+colour (`theme-color`). Every text pair clears WCAG AA; re-check if you change `--green` or `--bg`.
 
 Colours in the stylesheets are written against channel variables so one block
 can retheme them: `rgba(var(--w-rgb),0.14)` for the white-alpha glass lines,

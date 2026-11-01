@@ -64,46 +64,48 @@
      Neon green on white fails contrast, so the accent darkens and the glass
      highlights flip from white-alpha to ink-alpha via the *-rgb channels. */
   html[data-theme="light"] {
-    --bg:        #F3F6F7;
-    --bg-2:      #FFFFFF;
-    --bg-elev:   #FFFFFF;
-    --bg-sunken: #E8EEF0;
-    --panel:     #FFFFFF;
-    --panel-2:   #EEF3F4;
-    --grad-top:  #FFFFFF;
-    --glass:     rgba(12,22,27,0.035);
-    --line:      rgba(12,22,27,0.13);
-    --line-strong: rgba(12,22,27,0.24);
-    --line-3:    rgba(0,122,69,0.40);
-    --fg:        #0C161B;
-    --ink:       #0C161B;
-    --ink-soft:  #3B4A50;
-    --ink-muted: #5E6E75;
-    --dim:       #94A2A8;
-    --green:     #007A45;
-    --green-2:   #00663A;
-    --accent:    #007A45;
-    --accent-soft: rgba(0,122,69,0.10);
-    --teal:      #00796A;
-    --gold:      #8A5B00;
-    --green-soft: rgba(0,122,69,0.10);
-    --green-glow: rgba(0,122,69,0.22);
-    --teal-glow: rgba(0,121,106,0.22);
-    --shadow-sm: 0 1px 2px rgba(12,22,27,0.10);
-    --shadow-md: 0 8px 28px rgba(12,22,27,0.12);
-    --shadow-lg: 0 24px 60px rgba(12,22,27,0.16);
-    --w-rgb:     12,22,27;
-    --green-rgb: 0,122,69;
-    --teal-rgb:  0,121,106;
-    --gold-rgb:  138,91,0;
-    --on-accent: #FFFFFF;
-    --brand-core: #F3F6F7;
-    --bg-rgb:    243,246,247;
-    --well-rgb:  182,196,202;  /* soft gray so 40–55% wells read as light slabs */
-    --deep:      #E8EEF0;
-    --deep-rgb:  225,238,232;
-    --deep-grad: linear-gradient(160deg, #DCEEE4 0%, #E8EEF0 60%, #F3F6F7 100%);
-    --ink-code:  #1E2B30;
+    /* "Terracotta": sun-baked clay and peach, burnt-orange buttons, espresso text.
+       Chosen 2026-11-01. Nothing here is white: the lightest surface is the panel. */
+    --bg:        #E9CDBB;
+    --bg-2:      #F0DACB;
+    --bg-elev:   #F3E1D4;
+    --bg-sunken: #DDBFAA;
+    --panel:     #F3E1D4;
+    --panel-2:   #E8CDBA;
+    --grad-top:  #F0DACB;
+    --glass:     rgba(43,24,16,0.035);
+    --line:      rgba(43,24,16,0.14);
+    --line-strong: rgba(43,24,16,0.26);
+    --line-3:    rgba(154,52,16,0.45);
+    --fg:        #2B1810;
+    --ink:       #2B1810;
+    --ink-soft:  #4F3427;
+    --ink-muted: #6A4A3A;
+    --dim:       #A07F6C;
+    --green:     #9A3410;
+    --green-2:   #8C2F0D;
+    --accent:    #9A3410;
+    --accent-soft: rgba(154,52,16,0.11);
+    --teal:      #2F5D62;
+    --gold:      #7A5200;
+    --green-soft: rgba(154,52,16,0.11);
+    --green-glow: rgba(154,52,16,0.24);
+    --teal-glow: rgba(47,93,98,0.22);
+    --shadow-sm: 0 1px 2px rgba(43,24,16,0.10);
+    --shadow-md: 0 8px 28px rgba(43,24,16,0.13);
+    --shadow-lg: 0 24px 60px rgba(43,24,16,0.17);
+    --w-rgb:     43,24,16;
+    --green-rgb: 154,52,16;
+    --teal-rgb:  47,93,98;
+    --gold-rgb:  122,82,0;
+    --on-accent: #FFF4EC;
+    --brand-core: #E9CDBB;
+    --bg-rgb:    233,205,187;
+    --well-rgb:  210,174,150;  /* warm tan so 40–55% wells read as light slabs */
+    --deep:      #DDBFAA;
+    --deep-rgb:  227,191,166;
+    --deep-grad: linear-gradient(160deg, #E3BFA6 0%, #DDBFAA 60%, #E9CDBB 100%);
+    --ink-code:  #2B1810;
     color-scheme: light;
   }
   /* Black-alpha wells read as gray slabs on white; thin them out. */

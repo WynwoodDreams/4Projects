@@ -18,3 +18,5 @@ jobs:
       # Catalog and stylesheet consistency checks run as part of the build.
       - run: npm run build
       - run: npm run test:match
+      # Scout's engine against the scripted gateway: no key, no network.
+      - run: npm test

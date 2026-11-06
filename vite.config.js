@@ -42,6 +42,7 @@ export default defineConfig({
         certifications: fileURLToPath(new URL('./certifications.html', import.meta.url)),
         prompts: fileURLToPath(new URL('./prompts.html', import.meta.url)),
         match: fileURLToPath(new URL('./match.html', import.meta.url)),
+        assistant: fileURLToPath(new URL('./assistant.html', import.meta.url)),
         premium: fileURLToPath(new URL('./premium.html', import.meta.url)),
       },
     },

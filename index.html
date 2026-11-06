@@ -6,6 +6,7 @@
 <title>Tech Portfolio Projects for AI, Cybersecurity &amp; Cloud | BuildersBench</title>
 <meta name="description" content="Build portfolio-ready tech projects across AI, cloud, cybersecurity, data, software, and IT. Follow guided roadmaps, choose tools, use AI prompts, and showcase your work." />
 <meta name="theme-color" content="#0C161B" />
+<meta name="catalog-updated" content="2026-11-06" />
 <script src="/theme.js"></script>
 <script src="/motion.js" defer></script>
 <script src="/voice.js" defer></script>
@@ -3502,6 +3503,10 @@
       </div>
     </div>
     <div class="header-actions">
+      <a class="stat-pill nav-link" href="/assistant.html" title="Talk to Scout: say the role you want, get the projects to build (beta)">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1M12 18v4M8 22h8"/></svg>
+        <span>Scout</span>
+      </a>
       <a class="stat-pill nav-link" href="/match.html" title="Paste a job, get your plan">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
         <span>Match</span>
@@ -3935,6 +3940,7 @@
         <h5>Resources</h5>
         <ul class="footer-paths">
           <li><a href="/match.html">Career Match</a></li>
+          <li><a href="/assistant.html">Scout, the projects agent (beta)</a></li>
           <li><a href="/certifications.html">Free AI Certs</a></li>
           <li><a href="/prompts.html">Prompt Library</a></li>
           <li><a href="#deploy-cheatsheet">Deploy cheatsheet</a></li>
@@ -8598,6 +8604,18 @@ ${tags} #BuildingInPublic #OpenToWork`;
     if (m) {
       if (PROJECTS.find(p => p.id === m[1])) openModal(m[1]);
       else toast('That project is no longer in the catalog');
+      return;
+    }
+    // #q=<text> fills the project search (Scout's "Search the site instead" link uses it)
+    m = location.hash.match(/^#q=(.+)$/);
+    if (m) {
+      const search = document.getElementById('project-search');
+      let q = ''; try { q = decodeURIComponent(m[1]); } catch (e) { q = m[1]; }
+      if (search && q) {
+        search.value = q.slice(0, 120);
+        search.dispatchEvent(new Event('input', { bubbles: true }));
+        search.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
       return;
     }
     m = location.hash.match(/^#path=([\w-]+)$/);
